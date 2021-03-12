@@ -1,4 +1,4 @@
-# bmvc
+# Bmvc
 
 
 [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/mirarus/bmvc?style=flat-square)](https://packagist.org/packages/mirarus/bmvc)
@@ -8,3 +8,7 @@
 
 
  Mirarus BMVC (Basic MVC)
+
+## License
+
+Licensed under the MIT license, see [LICENSE](LICENSE)
