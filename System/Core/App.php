@@ -1,0 +1,202 @@
+<?php
+
+/**
+ * App
+ *
+ * @package System\Core
+ * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
+ * @license http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version 2.7
+ */
+
+namespace System;
+
+class App
+{
+
+	protected static 
+	$routes = [],
+	$groups = [],
+	$baseRoute = '/',
+	$ip = '';
+
+	static $notFound = '';
+
+	private static $patterns  = [
+		'{all}'       => '(.*)',
+		'{al}'        => '([^/]+)',
+		'{num}'       => '([0-9]+)',
+		'{alpha}'	  => '([a-zA-Z]+)',
+		'{alpnum}'    => '([a-zA-Z0-9_-]+)',
+		'{lowercase}' => '([a-z]+)',
+		'{uppercase}' => '([A-Z]+)',
+	];
+
+	function __construct()
+	{
+		if (is_cli()) {
+			die("Cli Not Available, Browser Only.");
+		}
+
+		if (session_status() !== PHP_SESSION_ACTIVE || session_id() === "") {
+			session_name("MMVC");
+			session_start();
+		}
+		
+		header("X-Frame-Options: sameorigin");
+		header("Strict-Transport-Security: max-age=15552000; preload");
+		header("X-Powered-By: PHP/MMVC");
+
+		if (function_exists('handler_error')) {
+			set_error_handler("handler_error");
+		}
+		if (function_exists('handler_shutdown')) {
+			register_shutdown_function("handler_shutdown");
+		}
+		if (function_exists('loader_mmvc')) {
+			spl_autoload_register("loader_mmvc");
+		}
+	}
+
+	static function Route($method, $pattern, $callback)
+	{
+		$closure = null;
+		if ($pattern == '/') {
+			$pattern = self::$baseRoute . trim($pattern, '/');
+		} else {
+			if (self::$baseRoute == '/') {
+				$pattern = self::$baseRoute . trim($pattern, '/');
+			} else {
+				$pattern = self::$baseRoute . $pattern;
+			}
+		}
+		foreach (self::$patterns as $key => $value) {
+			$pattern = str_replace($key, $value, $pattern);
+		}
+		if (is_callable($callback)) {
+			$closure = $callback;
+		} elseif (stripos($callback, '@') !== false) {
+			$closure = $callback;
+		}
+		$route_ = [
+			'method'   => $method,
+			'pattern'  => $pattern,
+			'callback' => @$closure
+		];
+		if (self::$ip) {
+			$route_['ip'] = self::$ip;
+		}
+		self::$routes[] = $route_;
+	}
+
+	static function Run()
+	{
+		if (isset(self::$routes) && !empty(self::$routes) && is_array(self::$routes)) {
+			$match = 0;
+			foreach (self::$routes as $route) {
+				$method = $route['method'];
+				$action = $route['callback'];
+				$url 	= $route['pattern'];
+				$route['ip'] = $route['ip'] ?? null;
+				$_GET['url'] = $_GET['url'] ?? null;
+
+				if (preg_match("#^{$url}$#", '/' . rtrim(@$_GET['url'], '/'), $params)) {
+					if ($method === @self::get_request_method() && @self::check_ip(@$route['ip'])) {
+
+						if (strstr(@$_SERVER['REQUEST_URI'], '/Public/')) {
+							self::get_404();
+						}
+
+						$match++;
+						array_shift($params);
+						
+						if (is_callable($action)) {
+							return call_user_func_array($action, array_values($params));
+						} else {
+							if (!isset($_GET['url']) && empty($_GET['url'])) {
+								$action = [
+									config('default/module'), 
+									config('default/controller'), 
+									config('default/method')
+								];
+							}
+							if (is_dir(APPDIR . '/Modules/') && opendir(APPDIR . '/Modules/')) {
+								@Controller::call(@$action, @$params);
+							} else {
+								MError::title('Module Error!')::print('Modules Dir Not Found!');
+							}
+						}
+					}
+				}
+			}
+			if ($match === 0) {
+				self::get_404();
+			}
+		} else {
+		//	MError::title('Route Error!')::print('Route Not Found!', null, null, null, null, true, 404);
+			MError::title('Route Error!')::print('Route Not Found!');
+			http_response_code(404);
+			exit();
+		}
+	}
+
+	protected static function get_404()
+	{
+		http_response_code(404);
+
+		if (self::$notFound) {
+			if (is_callable(self::$notFound)) {
+				call_user_func(self::$notFound);
+			} else {
+				@Controller::call(@self::$notFound, null);
+			}
+		} else {
+		//	MError::print('404 Not Found!', null, true, null, null, true, 404);
+			MError::print('404 Not Found!', null, true);
+		}
+		http_response_code(404);
+		exit();
+	}
+
+	protected static function get_request_method()
+	{
+		$method = @$_SERVER['REQUEST_METHOD'];
+		if ($method == "HEAD") {
+			ob_start();
+			$method = "GET";
+		} elseif ($method == "POST") {
+			if (function_exists('getallheaders'))
+				getallheaders();
+			$headers = [];
+			foreach ($_SERVER as $name => $value) {
+				if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH'))
+					$headers[str_replace(array(' ', 'Http'), array('-', 'HTTP'), ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+			}
+			if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], array("PUT", "DELETE", "PATCH")))
+				$method = $headers['X-HTTP-Method-Override'];
+		}
+		return $method;
+	}
+
+	protected static function check_ip($ip=null)
+	{
+		if (isset($ip) && !empty($ip)) {
+			if (is_array($ip)) {
+				if (!in_array($_SERVER['REMOTE_ADDR'], $ip)) {
+					return false;
+				}
+				return true;
+			} else {
+				if ($_SERVER['REMOTE_ADDR'] != $ip) {
+					return false;
+				}
+				return true;
+			}
+			return true;
+		}
+		return true;
+	}
+}
+
+# Initialize
+// new App;
