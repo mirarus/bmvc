@@ -145,7 +145,6 @@ class App
 				self::get_404();
 			}
 		} else {
-		//	MError::title('Route Error!')::print('Route Not Found!', null, null, null, null, true, 404);
 			MError::title('Route Error!')::print('Route Not Found!');
 			http_response_code(404);
 			exit();
@@ -163,7 +162,6 @@ class App
 				@Controller::call(@self::$notFound, null);
 			}
 		} else {
-		//	MError::print('404 Not Found!', null, true, null, null, true, 404);
 			MError::print('404 Not Found!', null, true);
 		}
 		http_response_code(404);
