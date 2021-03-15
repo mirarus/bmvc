@@ -36,25 +36,9 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 	if (!defined("TIMEZONE")) {
 		define("TIMEZONE", "Europe/Istanbul");
 	}
-	date_default_timezone_set(TIMEZONE);
 
 	if (!defined("ENVIRONMENT")) {
 		define("ENVIRONMENT", "production");
-	}
-	switch (ENVIRONMENT) {
-		case 'development':
-		error_reporting(-1);
-		ini_set('display_errors', 0);
-		break;
-		case 'testing':
-		case 'production':
-		ini_set('display_errors', 0);
-		error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
-		break;
-		default:
-		header('HTTP/1.1 503 Service Unavailable.', true, 503);
-		echo 'The application environment is not set correctly.';
-		exit(1);
 	}
 
 	if (!defined("URL")) {

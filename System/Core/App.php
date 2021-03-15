@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.8
+ * @version 2.9
  */
 
 namespace System;
@@ -46,6 +46,24 @@ class App
 		header("X-Frame-Options: sameorigin");
 		header("Strict-Transport-Security: max-age=15552000; preload");
 		header("X-Powered-By: PHP/MMVC");
+
+		date_default_timezone_set(TIMEZONE);
+
+		switch (ENVIRONMENT) {
+			case 'development':
+			error_reporting(-1);
+			ini_set('display_errors', 0);
+			break;
+			case 'testing':
+			case 'production':
+			ini_set('display_errors', 0);
+			error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
+			break;
+			default:
+			header('HTTP/1.1 503 Service Unavailable.', true, 503);
+			echo 'The application environment is not set correctly.';
+			exit(1);
+		}
 
 		if (function_exists('loader_mmvc')) {
 			spl_autoload_register("loader_mmvc");
