@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.9
+ * @version 3.0
  */
 
 namespace System;
@@ -39,13 +39,13 @@ class App
 		}
 
 		if (session_status() !== PHP_SESSION_ACTIVE || session_id() === "") {
-			session_name("MMVC");
+			session_name("BMVC-MMVC");
 			session_start();
 		}
 		
 		header("X-Frame-Options: sameorigin");
 		header("Strict-Transport-Security: max-age=15552000; preload");
-		header("X-Powered-By: PHP/MMVC");
+		header("X-Powered-By: PHP/BMVC-MMVC");
 
 		date_default_timezone_set(TIMEZONE);
 
@@ -209,6 +209,3 @@ class App
 		return true;
 	}
 }
-
-# Initialize
-// new App;
