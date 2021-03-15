@@ -9,7 +9,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/basic-mvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.4
+ * @version 1.5
  *
 */
 
@@ -28,6 +28,8 @@ require_once 'Core/MError.php';
 require_once 'Core/Lang.php';
 require_once 'Core/Helper.php';
 require_once 'Core/Library.php';
+require_once 'Core/Log.php';
+require_once 'Core/Exception.php';
 
 require_once 'Core/App.php';
 require_once 'Core/Model.php';

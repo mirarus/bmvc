@@ -83,43 +83,6 @@ if (!function_exists('_dir')) {
 	}
 }
 
-if (!function_exists('handler_error')) {
-	function handler_error($number=null, $error=null, $file=null, $line=null) {
-		if (@ENVIRONMENT === "production") return;
-
-		if ($number == 1 || $number == 4 || $number == 16 || $number == 64 || $number == 256 || $number == 4096) {
-			System\MError::print("Error [{$number}]: {$error}", "File: {$file}<br>Line: {$line}", null, 'danger');
-		} elseif ($number == 2 || $number == 32 || $number == 128 || $number == 512) {
-			System\MError::print("Error [{$number}]: {$error}", "File: {$file}<br>Line: {$line}", null, 'warning');
-		} elseif ($number == 8 || $number == 1024) {
-			System\MError::print("Error [{$number}]: {$error}", "File: {$file}<br>Line: {$line}", null, 'info');
-		} elseif ($number == 8192 || $number == 16384) {
-			System\MError::print("Error [{$number}]: {$error}", "File: {$file}<br>Line: {$line}", null, 'success');
-		} else {
-			System\MError::print("Error [{$number}]: {$error}", "File: {$file}<br>Line: {$line}");
-		}
-	}
-}
-
-if (!function_exists('handler_shutdown')) {
-	function handler_shutdown() {
-		$error = error_get_last();
-		if (isset($error['type'])) {
-			switch ($error['type']) {
-				case E_ERROR:
-				case E_CORE_ERROR:
-				case E_COMPILE_ERROR:
-				case E_USER_ERROR:
-				case E_RECOVERABLE_ERROR:
-				case E_CORE_WARNING:
-				case E_COMPILE_WARNING:
-				case E_PARSE:
-				handler_error($error['type'], $error['message'], $error['file'], $error['line']);
-			}
-		}
-	}
-}
-
 if (!function_exists('loader_mmvc')) {
 	function loader_mmvc($class) {
 		$file = APPDIR . DIRECTORY_SEPARATOR . str_replace('\\', '/', $class) . '.php';

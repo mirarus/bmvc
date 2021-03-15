@@ -3,13 +3,13 @@
 /**
  * Log
  *
- * @package System\Libraries
+ * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version 1.0
-*/
+ */
 
-use System\MError;
+namespace System;
 
 class Log
 {
@@ -54,7 +54,7 @@ class Log
 		self::write('debug', $message);
 	}
 
-	protected static function write($level, $message)
+	private static function write($level, $message)
 	{
 		if (is_array($message)) {
 			$message = serialize($message);
@@ -62,7 +62,7 @@ class Log
 		self::save('[' . date('d.m.Y H:i:s') . '] - [' . $level . '] - [' . self::get_request_method() . '] -> ' . $message);
 	}
 
-	protected static function save($text)
+	private static function save($text)
 	{
 		$file = 'Log_' . date('d.m.Y') . '.log';
 		$file = fopen(SYSTEMDIR . '/Logs/' . $file, 'a');
@@ -72,7 +72,7 @@ class Log
 		fclose($file);
 	}
 
-	protected static function get_request_method()
+	private static function get_request_method()
 	{
 		$method = @$_SERVER['REQUEST_METHOD'];
 		if ($method == 'HEAD') {

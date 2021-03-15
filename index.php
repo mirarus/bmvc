@@ -12,7 +12,6 @@
  *
 */
 
-
 define("ROOTDIR", str_replace("System", "", realpath(getcwd())));
 define("PUBLICDIR", ROOTDIR . "/Public");
 define("APPDIR", ROOTDIR . "/App");
@@ -31,6 +30,8 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 } elseif (!version_compare(PHP_VERSION, '7.3.0', '>=')) {
 	die('This software requires a minimum php 7.3.0');
 } else {
+
+	require_once SYSTEMDIR . '/init.php';
 
 	if (!defined("TIMEZONE")) {
 		define("TIMEZONE", "Europe/Istanbul");
@@ -64,6 +65,5 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 		define("URL", $url);
 	}
 
-	require_once SYSTEMDIR . '/init.php';
 	\System\App::Run();
 }

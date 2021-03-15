@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.7
+ * @version 2.8
  */
 
 namespace System;
@@ -47,12 +47,6 @@ class App
 		header("Strict-Transport-Security: max-age=15552000; preload");
 		header("X-Powered-By: PHP/MMVC");
 
-		if (function_exists('handler_error')) {
-			set_error_handler("handler_error");
-		}
-		if (function_exists('handler_shutdown')) {
-			register_shutdown_function("handler_shutdown");
-		}
 		if (function_exists('loader_mmvc')) {
 			spl_autoload_register("loader_mmvc");
 		}
