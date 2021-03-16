@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.4
+ * @version 3.5
  */
 
 namespace System;
@@ -14,7 +14,8 @@ namespace System;
 class Lang
 {
 
-	private static $lang_dir = (APPDIR  . '/Languages/'), $lang = 'en';
+	private static $lang_dir = (APPDIR . '/Languages/');
+	private static $lang = 'en';
 
 	function __construct()
 	{
@@ -155,5 +156,5 @@ class Lang
 	}
 }
 
-# Initialize
-new Lang;
+# Initialize - AutoInitialize
+# new Lang;

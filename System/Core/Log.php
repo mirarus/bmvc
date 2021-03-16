@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.1
  */
 
 namespace System;
@@ -96,5 +96,5 @@ class Log
 	}
 }
 
-# Initialize
-new Log;
+# Initialize - AutoInitialize
+# new Log;

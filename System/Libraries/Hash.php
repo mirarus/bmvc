@@ -6,7 +6,7 @@
  * @package System\Libraries
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.1
 */
 
 use System\MError;
@@ -14,7 +14,7 @@ use System\MError;
 class Hash
 {
 
-	protected static $cost = 10;
+	private static $cost = 10;
 
 	static function make($value, array $options=[])
 	{
@@ -41,6 +41,3 @@ class Hash
 		return password_needs_rehash($hashedValue, PASSWORD_DEFAULT, $options);
 	}
 }
-
-# Initialize
-new Hash;

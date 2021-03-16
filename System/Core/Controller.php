@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.1
+ * @version 3.2
  */
 
 namespace System;
@@ -14,7 +14,7 @@ namespace System;
 class Controller
 {	
 
-	protected static $params = [];
+	private static $params = [];
 
 	static function view($view, $data=[], $layout=false)
 	{
@@ -115,5 +115,5 @@ class Controller
 	}
 }
 
-# Initialize
-new Controller;
+# Initialize - AutoInitialize
+# new Controller;

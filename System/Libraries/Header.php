@@ -6,13 +6,13 @@
  * @package System\Libraries
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.1
 */
 
 class Header
 {
 
-    protected static $special = [
+    private static $special = [
         'CONTENT_TYPE',
         'CONTENT_LENGTH',
         'PHP_AUTH_USER',

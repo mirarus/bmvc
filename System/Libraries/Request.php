@@ -20,8 +20,8 @@ class Request
     const METHOD_OPTIONS = 'OPTIONS';
     const METHOD_OVERRIDE = '_METHOD';
 
-    protected static $formDataMediaTypes = array('application/x-www-form-urlencoded');
-    protected $server;
+    private static $formDataMediaTypes = array('application/x-www-form-urlencoded');
+    private $server;
     public $header;
 
     public function __construct()

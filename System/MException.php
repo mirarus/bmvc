@@ -1,17 +1,15 @@
 <?php
 
 /**
- * Exception
+ * MException
  *
- * @package System\Core
+ * @package System
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.2
  */
 
-namespace System;
-
-class Exception
+class MException
 {
 
 	private $error = [
@@ -42,22 +40,24 @@ class Exception
 
 	function error_handler($number, $error, $file, $line)
 	{
-		$message_head = "Error [{$this->error[$number]}:{$number}]: {$error}";
-		$message_body = "File: {$file}<br>Line: {$line}";
-		$message_log  = $message_head . " - File: {$file} - Line: {$line}";
+		$e_error = $this->error[$number] ? $this->error[$number] : 'Error';
+		$e_title = "{$e_error} - [System Error]";
+		$e_head  = "{$e_error} [{$number}]: {$error}";
+		$e_body  = "File: {$file}<br>Line: {$line}";
+		$e_log   = $e_head . " - File: {$file} - Line: {$line}";
 
-		Log::error($message_log);
+		@System\Log::error($e_log);
 
 		if ($number == 1 || $number == 4 || $number == 16 || $number == 64 || $number == 256 || $number == 4096) {
-			MError::print($message_head, $message_body, null, 'danger');
+			ep($e_head, $e_body, true, $e_title, 'danger');
 		} elseif ($number == 2 || $number == 32 || $number == 128 || $number == 512) {
-			MError::print($message_head, $message_body, null, 'warning');
+			ep($e_head, $e_body, true, $e_title, 'warning');
 		} elseif ($number == 8 || $number == 1024) {
-			MError::print($message_head, $message_body, null, 'info');
+			ep($e_head, $e_body, true, $e_title, 'info');
 		} elseif ($number == 8192 || $number == 16384) {
-			MError::print($message_head, $message_body, null, 'success');
+			ep($e_head, $e_body, true, $e_title, 'success');
 		} else {
-			MError::print($message_head, $message_body);
+			ep($e_head, $e_body, true, $e_title);
 		}
 	}
 
@@ -82,4 +82,4 @@ class Exception
 }
 
 # Initialize
-new Exception;
+new MException;

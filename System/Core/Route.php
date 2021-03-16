@@ -6,10 +6,12 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.2
+ * @version 1.3
  */
 
-class Route extends System\App
+namespace System;
+
+class Route extends App
 {
 
 	private static $groupped = 0;
@@ -171,5 +173,5 @@ class Route extends System\App
 	}
 }
 
-# Initialize
-new Route;
+# Initialize - AutoInitialize
+# new Route;

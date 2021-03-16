@@ -6,13 +6,13 @@
  * @package System\Libraries
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.1
 */
 
 class Response
 {
 	
-	protected static $statusCodes = [
+	private static $statusCodes = [
 		100 => 'Continue',
 		101 => 'Switching Protocols',
 		200 => 'OK',
@@ -90,6 +90,3 @@ class Response
 		return json_encode(['status' => $code < 300, 'message' => $data]);
 	}
 }
-
-# Initialize
-new Response;

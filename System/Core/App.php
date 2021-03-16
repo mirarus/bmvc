@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.0
+ * @version 3.1
  */
 
 namespace System;
@@ -39,6 +39,11 @@ class App
 		}
 
 		if (session_status() !== PHP_SESSION_ACTIVE || session_id() === "") {
+			@ini_set('session.cookie_httponly', 1);
+			@ini_set('session.use_only_cookies', 1);
+			@ini_set('session.gc_maxlifetime', 3600);
+			@session_set_cookie_params(3600);
+			
 			session_name("BMVC-MMVC");
 			session_start();
 		}
@@ -65,9 +70,7 @@ class App
 			exit(1);
 		}
 
-		if (function_exists('loader_mmvc')) {
-			spl_autoload_register("loader_mmvc");
-		}
+
 	}
 
 	static function Route($method, $pattern, $callback)
@@ -168,7 +171,7 @@ class App
 		exit();
 	}
 
-	protected static function get_request_method()
+	private static function get_request_method()
 	{
 		$method = @$_SERVER['REQUEST_METHOD'];
 		if ($method == "HEAD") {
@@ -188,7 +191,7 @@ class App
 		return $method;
 	}
 
-	protected static function check_ip($ip=null)
+	private static function check_ip($ip=null)
 	{
 		if (isset($ip) && !empty($ip)) {
 			if (is_array($ip)) {
@@ -207,3 +210,6 @@ class App
 		return true;
 	}
 }
+
+define("BMVC_END", microtime(true));
+define("BMVC_LOAD", number_format((BMVC_END - BMVC_START), 5));

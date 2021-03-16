@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.1
+ * @version 1.2
  */
 
 namespace System;
@@ -19,26 +19,6 @@ class Helper
 		if (config('helpers') != null) {
 			self::import(config('helpers'));
 		}
-
-		spl_autoload_register(function($class) {
-			$prefix = '\\';
-			$base_dir = APPDIR . '/Helpers/';
-			$len = strlen($prefix);
-			if (strncmp($prefix, $class, $len) !== 0) {
-				return;
-			}
-			$relative_class = substr($class, $len);
-			$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-			if (file_exists($file)) {
-				require $file;
-			} else {
-				MError::title('File Error!')::print('File Not Found!', 'File Name: ' . $file);
-			}
-		});
-
-		array_map(function ($file) {
-			require_once $file;
-		}, glob(SYSTEMDIR . "/Helpers/*.php"));
 	}
 
 	private static function include($helper, $type=null)
@@ -71,5 +51,5 @@ class Helper
 	}
 }
 
-# Initialize
-new Helper;
+# Initialize - AutoInitialize
+# new Helper;

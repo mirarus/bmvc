@@ -83,18 +83,33 @@ if (!function_exists('_dir')) {
 	}
 }
 
-if (!function_exists('loader_mmvc')) {
-	function loader_mmvc($class) {
-		$file = APPDIR . DIRECTORY_SEPARATOR . str_replace('\\', '/', $class) . '.php';
-		$file = str_replace("//", "/", $file);
+if (!function_exists('ep')) {
+	function ep($text, $message, $html=false, $title=null, $color=null, $stop=false, $response_code=200)
+	{
+		$colors = [
+			'danger' => '244 67 54',
+			'warning' => '255 235 59',
+			'info' => '3 169 244',
+			'success' => '76 175 80',
+			'primary' => '33 150 243'
+		];
 
-		if (file_exists($file)) {
-			require_once($file);
+		if ($color == null) {
+			$color = $color;
 		} else {
-			$file = APPDIR . '/Libraries' . DIRECTORY_SEPARATOR . str_replace('\\', '/', $class) . '.php';
-			if (file_exists($file)) {
-				require_once($file);
-			}
+			$color = isset($colors[$color]) ? $colors[$color] : $colors['primary'];
 		}
+
+		http_response_code($response_code);
+		if (function_exists('mb_internal_encoding')) {
+			mb_internal_encoding("UTF-8");
+		}
+		echo $html == true ? '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>' . ($title ? $title : "System Error") . '</title></head><body>' : null;
+		echo '<div style="padding: 15px; border-left: 5px solid rgb(' . $color . ' / 80%); border-top: 5px solid rgb(' . $color . ' / 60%); background: #f8f8f8; margin-bottom: 10px;border-radius: 5px 5px 0 3px;">';
+		echo isset($text) && !empty($text) ? '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif; font-size: 16px; font-weight: 500; color: black;">' . $text . "</div>" : null;
+		echo isset($message) && !empty($message) ? '<div style="margin-top: 15px; font-size: 14px; font-family: Consolas, Monaco, Menlo, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif; color: #ac0e10;">' . $message . "</div>" : null; 
+		echo "</div>";
+		echo $html == true ? "</body></html>\n" : "\n";
+		if ($stop === true) exit();
 	}
 }

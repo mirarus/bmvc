@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.8
+ * @version 2.0
  */
 
 namespace System;
@@ -14,109 +14,130 @@ namespace System;
 class MError
 {
 
-	const COLOR_DANGER = '#f44336';
-	const COLOR_WARNING = '#ffeb3b';
-	const COLOR_INFO = '#03a9f4';
-	const COLOR_SUCCESS = '#4caf50';
-	const COLOR_PRIMARY = '#2196f3';
+	private static $instance;
+	protected static $html;
+	protected static $title;
+	protected static $color;
+	protected static $colors = [
+		'danger' => '244 67 54',
+		'warning' => '255 235 59',
+		'info' => '3 169 244',
+		'success' => '76 175 80',
+		'primary' => '33 150 243'
+	];
 
-	protected static $color = self::COLOR_PRIMARY, $title;
+	function __construct()
+	{
+		self::reset();
+	}
 
-	protected static function templateTitle($color, $title, $text, $message, $stop, $response_code)
+	static function getInstance(): self
+	{
+		if (!self::$instance) {
+			self::$instance = new MErrorA;
+		}
+		return self::$instance;
+	}
+
+	private static function reset(): void
+	{
+		self::$html = false;
+		self::$title = "System Error";
+		self::$color = self::$colors['primary'];
+	}
+
+	private static function template($text, $message, $html=false, $title=null, $color=null, $stop=false, $response_code=200): void
 	{
 		http_response_code($response_code);
 		if (function_exists('mb_internal_encoding')) {
 			mb_internal_encoding("UTF-8");
 		}
-		echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>' . ($title ?? "System Error") . '</title></head><body>';
-		echo '<div style="padding: 15px; border-left: 5px solid ' . $color . '; background: #f8f8f8; margin-bottom: 10px;">';
+		echo $html == true ? '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /><title>' . $title . '</title></head><body>' : null;
+		echo '<div style="padding: 15px; border-left: 5px solid rgb(' . $color . ' / 80%); border-top: 5px solid rgb(' . $color . ' / 60%); background: #f8f8f8; margin-bottom: 10px;border-radius: 5px 5px 0 3px;">';
 		echo isset($text) && !empty($text) ? '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif; font-size: 16px; font-weight: 500; color: black;">' . $text . "</div>" : null;
 		echo isset($message) && !empty($message) ? '<div style="margin-top: 15px; font-size: 14px; font-family: Consolas, Monaco, Menlo, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif; color: #ac0e10;">' . $message . "</div>" : null; 
 		echo "</div>";
-		echo "</body></html>\n";
+		echo $html == true ? "</body></html>\n" : "\n";
 		if ($stop === true) exit();
 	}
 
-	protected static function template($color, $text, $message, $stop, $response_code)
-	{
-		http_response_code($response_code);
-		if (function_exists('mb_internal_encoding')) {
-			mb_internal_encoding("UTF-8");
-		}
-		echo '<div style="padding: 15px; border-left: 5px solid ' . $color . '; background: #f8f8f8; margin-bottom: 10px;">';
-		echo isset($text) && !empty($text) ? '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif; font-size: 16px; font-weight: 500; color: black;">' . $text . "</div>" : null;
-		echo isset($message) && !empty($message) ? '<div style="margin-top: 15px; font-size: 14px; font-family: Consolas, Monaco, Menlo, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif; color: #ac0e10;">' . $message . "</div>" : null; 
-		echo "</div>\n";
-		if ($stop === true) exit();
-	}
-
-	static function print($text=null, $message=null, $se=false, $color=null, $title=null, $stop=false, $response_code=200)
+	static function print($text, $message=null, $html=false, $title=null, $color=null, $stop=false, $response_code=200): void
 	{
 		if ($color == null) {
 			$color = self::$color;
 		} else {
-			if ($color == 'danger') {
-				$color = self::COLOR_DANGER;
-			} elseif ($color == 'warning') {
-				$color = self::COLOR_WARNING;
-			} elseif ($color == 'info') {
-				$color = self::COLOR_INFO;
-			}  elseif ($color == 'success') {
-				$color = self::COLOR_SUCCESS;
-			}  elseif ($color == 'primary') {
-				$color = self::COLOR_PRIMARY;
-			} else {
-				$color = self::COLOR_PRIMARY;
-			}
+			$color = isset(self::$colors[$color]) ? self::$colors[$color] : self::$colors['primary'];
 		}
 
-		if ($title == null) {
-			$title = self::$title;
+		if ((self::$html == true ? self::$html : $html) == true) {
+			$title = isset(self::$title) ? self::$title : $title;
 		}
 
-		if ($title) {
-			self::templateTitle($color, $title, $text, $message, $stop, $response_code);
-		} elseif ($se == true) {
-			self::templateTitle($color, null, $text, $message, $stop, $response_code);
-		} else {
-			self::template($color, $text, $message, $stop, $response_code);
-		}
+		self::template($text, $message, $html, $title, $color, $stop, $response_code);
+		self::reset();
 	}
 
-	static function set($key, $value)
+	static function set(array $array): self
 	{
-		if ($key == 'title') {
-			self::title($value);
-		} elseif ($key == 'color') {
-			self::color($value);
-		}
-		return new self;
+		return self::getInstance()->setData($array);
 	}
 
-	static function title($title)
+	static function color(string $color): self
 	{
-		self::$title = $title;
-		return new self;
+		return self::getInstance()->setColor($color);
 	}
 
-	static function color($color)
+	static function html(bool $bool): self
 	{
-		if ($color == 'danger') {
-			self::$color = self::COLOR_DANGER;
-		} elseif ($color == 'warning') {
-			self::$color = self::COLOR_WARNING;
-		} elseif ($color == 'info') {
-			self::$color = self::COLOR_INFO;
-		}  elseif ($color == 'success') {
-			self::$color = self::COLOR_SUCCESS;
-		}  elseif ($color == 'primary') {
-			self::$color = self::COLOR_PRIMARY;
-		} else {
-			self::$color = self::COLOR_PRIMARY;
-		}
-		return new self;
+		return self::getInstance()->setHtml($bool);
+	}
+
+	static function title(string $title): self
+	{
+		return self::getInstance()->setTitle($title);
 	}
 }
 
-# Initialize
-new MError;
+class MErrorA extends MError
+{
+
+	function __construct()
+	{
+		parent::__construct();
+	}
+
+	public function setData(array $array): self
+	{
+		array_map(function ($key, $value) {
+			if ($key == 'color') {
+				return $this->setColor($value);
+			} if ($key == 'html') {
+				return $this->setHtml($value);
+			} if ($key == 'title') {
+				return $this->setTitle($value);
+			}
+		}, array_keys($array), array_values($array));
+		return $this;
+	}
+
+	public function setColor(string $color): self
+	{
+		self::$color = self::$colors[$color] ? self::$colors[$color] : self::$colors['primary'];
+		return $this;
+	}
+
+	public function setHtml(bool $bool): self
+	{
+		self::$html = $bool;
+		return $this;
+	}
+
+	public function setTitle(string $title): self
+	{
+		self::$title = $title;
+		return $this;
+	}
+}
+
+# Initialize - AutoInitialize
+# new MError;

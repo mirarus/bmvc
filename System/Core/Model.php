@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.6
+ * @version 2.7
  */
 
 namespace System;
@@ -14,7 +14,7 @@ namespace System;
 class Model
 {
 
-	protected static $params = [];
+	private static $params = [];
 
 	function __construct()
 	{
@@ -94,5 +94,5 @@ class Model
 	}
 }
 
-# Initialize
-new Model;
+# Initialize - AutoInitialize
+# new Model;

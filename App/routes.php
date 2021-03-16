@@ -1,3 +1,5 @@
 <?php
 
-Route::get('/', 'default@main@index');
+use System\Route;
+
+Route::any('/', 'default@main@index');
