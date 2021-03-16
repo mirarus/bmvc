@@ -47,9 +47,9 @@ class Main
 
 		ob_start();
 		echo "<br>";
-		echo "Page Load Time: " . BMVC_LOAD; 
+		echo "Page Load Time: " . BMVC_LOAD . " Sn";; 
 		echo "<br>";
-		echo "Memory Usage: " . round(memory_get_usage()/1024,2)." Kb";
+		echo "Memory Usage: " . round(memory_get_usage() / 1024, 2) . " Kb";
 		echo "<br>";
 		$benchmark_area = ob_get_contents();
 		ob_clean();
