@@ -8,6 +8,10 @@ class Main
 
 	public function index()
 	{
+
+		// pr(Model::import('default/Main')->settings());
+
+
 		MError::print("Example");
 
 		View::load("default@index");

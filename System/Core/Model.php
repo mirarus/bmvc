@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.7
+ * @version 2.8
  */
 
 namespace System;
@@ -23,13 +23,14 @@ class Model
 
 	static function DB()
 	{
+		$active = config('db/active');
 		$host = config('db/host');
 		$name = config('db/name');
 		$user = config('db/user');
 		$pass = config('db/pass');
 
-		if ($host != null && $name != null && $user != null) {
-			return new BasicDB($host, $name, $user, $pass);
+		if ($active == true) {
+			return new \BasicDB($host, $name, $user, $pass);
 		}
 	}
 

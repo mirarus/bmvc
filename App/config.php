@@ -6,6 +6,7 @@ $_config['general'] = [
 ];
 
 $_config['db'] = [
+	'active' => false,
 	'host' => 'localhost',
 	'name' => '',
 	'user' => '',

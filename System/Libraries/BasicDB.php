@@ -570,7 +570,7 @@ class BasicDB extends \PDO
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 			<title>Database Error!</title>
 			<style type="text/css">
-				.error-msg-content { padding: 15px; border-left: 5px solid #2196f3; background: #f8f8f8; margin-bottom: 10px; }
+				.error-msg-content { padding: 15px; border-left: 5px solid rgb(33 150 243 / 80%); border-top: 5px solid rgb(33 150 243 / 60%); background: #f8f8f8; margin-bottom: 10px; border-radius: 5px 5px 0 3px; }
 				.error-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 16px; font-weight: 500; color: black; }
 				.error-msg { margin-top: 15px; font-size: 14px; font-family: Consolas, Monaco, Menlo, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif; color: #ac0e10; }
 			</style>
@@ -581,7 +581,8 @@ class BasicDB extends \PDO
 				<?php echo isset($message) && !empty($message) ? "<div class='error-msg'>" . $message . "</div>\n" : null; ?>
 			</div>
 		</body>
-		</html><?php exit();
+		</html>
+		<?php exit();
 	}
 
 

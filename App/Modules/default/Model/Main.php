@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Model;
-use Model;
+use System\Model;
 
 class Main
 {
