@@ -2,7 +2,7 @@
 
 $_config['general'] = [
 	'timezone' => 'Europe/Istanbul',
-	'environment' => 'development' // production | development
+	'environment' => 'development', // production | development
 	'blade' => false, // Blade theme engine support -- FileName.blade.php if true is selected
 ];
 
