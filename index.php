@@ -30,6 +30,8 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 	die('init.php file not found!');
 } elseif (!version_compare(PHP_VERSION, '7.3.0', '>=')) {
 	die('This software requires a minimum php 7.3.0');
+} elseif (!file_exists(ROOTDIR . '/vendor/autoload.php')) {
+	die('This software requires composer');
 } else {
 
 	require_once SYSTEMDIR . '/init.php';
