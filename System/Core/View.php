@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.8
+ * @version 2.9
  */
 
 namespace System;
@@ -16,26 +16,36 @@ class View
 
 	private static function import($module, $view, $data=[], $return=false)
 	{
-		$data ? extract($data) : null;
 		@$_REQUEST['vd'] = $data;
 		$dir = (APPDIR . '/Modules/' . $module);
 
-		if (file_exists($file = $dir . '/View/' . $view . '.blade.php')) { // $view . '.php' -> $view . '.blade.php'
+		if (config('general/blade') == false) {
 
-			$blade = new \Jenssegers\Blade\Blade($dir . '/View', $dir . '/Cache');
-			return $blade->make($view, $data)->render();
+			$data ? extract($data) : null;
 
-			/*if ($return == false) {
-				require_once $file;
+			if (file_exists($file = $dir . '/View/' . $view . '.php')) {
+
+				if ($return == false) {
+					require_once $file;
+				} else {
+					ob_start();
+					require_once $file;
+					$text = ob_get_contents();
+					ob_end_clean();
+					return $text;
+				}
 			} else {
-				ob_start();
-				require_once $file;
-				$text = ob_get_contents();
-				ob_end_clean();
-				return $text;
-			}*/
+				MError::title('View Error!')::print('View File Found!', 'View Name: ' . $module . '/' . $view);
+			}
 		} else {
-			MError::title('View Error!')::print('View File Found!', 'View Name: ' . $module . '/' . $view);
+
+			if (file_exists($file = $dir . '/View/' . $view . '.blade.php')) {
+
+				$blade = new \Jenssegers\Blade\Blade($dir . '/View', $dir . '/Cache');
+				return $blade->make($view, $data)->render();
+			} else {
+				MError::title('Blade View Error!')::print('Blade View File Found!', 'Blade View Name: ' . $module . '/' . $view);
+			}
 		}
 	}
 
