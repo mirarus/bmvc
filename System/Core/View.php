@@ -17,7 +17,7 @@ class View
 	private static function import($module, $view, $data=[], $return=false)
 	{
 		$data ? extract($data) : null;
-		$_REQUEST['vd'] = $data;
+		@$_REQUEST['vd'] = $data;
 
 		if (file_exists($file = APPDIR . '/Modules/' . $module . '/View/' . $view . '.php')) {
 
