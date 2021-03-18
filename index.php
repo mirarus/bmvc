@@ -45,8 +45,8 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 	if (!defined("URL")) {
 		$url = ((((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PORT']) && $_SERVER['HTTP_X_FORWARDED_PORT'] == 443)) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
 		$url = str_replace(['\\', '//'], '/', $url . dirname($_SERVER['PHP_SELF']));
-		$url = str_replace(['/Public', '/public'], null, $url) . '/';
-		define("URL", $url);
+		$url = str_replace(['/Public', '/public'], null, $url);
+		define("URL", $url . '/');
 	}
 
 	\System\App::Run();
