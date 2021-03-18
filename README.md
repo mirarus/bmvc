@@ -8,6 +8,18 @@ Mirarus BMVC (Basic MVC)
 [![Packagist License](https://img.shields.io/packagist/l/mirarus/bmvc?style=flat-square)](https://packagist.org/packages/mirarus/bmvc)
 
 
+## Installation
+
+Install using composer:
+
+```bash
+composer create-project mirarus/bmvc
+```
+
+## Usage
+
+> composer create-project mirarus/bmvc
+
 ## License
 
 Licensed under the MIT license, see [LICENSE](LICENSE)
