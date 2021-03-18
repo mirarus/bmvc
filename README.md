@@ -16,10 +16,6 @@ Install using composer:
 composer create-project mirarus/bmvc
 ```
 
-## Usage
-
-> composer create-project mirarus/bmvc
-
 ## License
 
 Licensed under the MIT license, see [LICENSE](LICENSE)
