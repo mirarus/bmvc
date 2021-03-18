@@ -3,6 +3,8 @@ RewriteEngine On
 RewriteCond $1 !^(index\.php|robots\.txt)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/Public/
+RewriteRule (.*) Public/$1 [L]
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 
 <IfModule mod_headers.c>
