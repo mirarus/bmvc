@@ -95,7 +95,7 @@ if (!function_exists('ep')) {
 		];
 
 		if ($color == null) {
-			$color = $color;
+			$color = $colors['primary'];
 		} else {
 			$color = isset($colors[$color]) ? $colors[$color] : $colors['primary'];
 		}

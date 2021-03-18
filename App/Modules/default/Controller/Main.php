@@ -14,7 +14,9 @@ class Main
 
 		MError::print("Example");
 
-		View::load("default@index");
+		View::load("default@index", [
+			'title' => 'BMVC'
+		]);
 
 		echo "<br>";
 

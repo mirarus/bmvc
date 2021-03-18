@@ -13,6 +13,7 @@
         "php": ">=7.3",
         "ext-json": "*",
         "ext-pdo": "*",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "jenssegers/blade": "^1.4"
     }
 }

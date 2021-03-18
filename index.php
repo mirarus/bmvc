@@ -13,7 +13,7 @@
 */
 
 define("BMVC_START", microtime(true));
-define("ROOTDIR", str_replace("System", "", realpath(getcwd())));
+define("ROOTDIR", str_replace(['\\', '//'], '/', str_replace("System", "", realpath(getcwd()))));
 define("PUBLICDIR", ROOTDIR . "/Public");
 define("APPDIR", ROOTDIR . "/App");
 define("SYSTEMDIR", ROOTDIR . "/System");

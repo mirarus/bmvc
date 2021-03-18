@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.7
+ * @version 2.8
  */
 
 namespace System;
@@ -18,10 +18,14 @@ class View
 	{
 		$data ? extract($data) : null;
 		@$_REQUEST['vd'] = $data;
+		$dir = (APPDIR . '/Modules/' . $module);
 
-		if (file_exists($file = APPDIR . '/Modules/' . $module . '/View/' . $view . '.php')) {
+		if (file_exists($file = $dir . '/View/' . $view . '.blade.php')) { // $view . '.php' -> $view . '.blade.php'
 
-			if ($return == false) {
+			$blade = new \Jenssegers\Blade\Blade($dir . '/View', $dir . '/Cache');
+			return $blade->make($view, $data)->render();
+
+			/*if ($return == false) {
 				require_once $file;
 			} else {
 				ob_start();
@@ -29,7 +33,7 @@ class View
 				$text = ob_get_contents();
 				ob_end_clean();
 				return $text;
-			}
+			}*/
 		} else {
 			MError::title('View Error!')::print('View File Found!', 'View Name: ' . $module . '/' . $view);
 		}
