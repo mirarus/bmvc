@@ -43,8 +43,9 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 	}
 
 	if (!defined("URL")) {
-		$_SERVER['HTTP_X_FORWARDED_PORT'] = $_SERVER['HTTP_X_FORWARDED_PORT'] ?? null;
-		$url = (((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' || $_SERVER['SERVER_PORT'] == 443 || @$_SERVER['HTTP_X_FORWARDED_PORT'] == 443) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
+		$https = @$_SERVER['HTTPS'];
+		$fport = @$_SERVER['HTTP_X_FORWARDED_PORT'] ? $_SERVER['HTTP_X_FORWARDED_PORT'] : null;
+		$url = (((isset($https) && $https == 'on' || $_SERVER['SERVER_PORT'] == 443 || @$fport == 443) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
 		$url = str_replace('\\', '/', $url . dirname($_SERVER['PHP_SELF']));
 		$url = str_replace(['/Public', '/public'], null, $url) . '/';
 		define("URL", $url);
