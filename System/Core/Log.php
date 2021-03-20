@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.1
+ * @version 1.2
  */
 
 namespace System;
@@ -54,7 +54,7 @@ class Log
 		self::write('debug', $message);
 	}
 
-	private static function write($level, $message)
+	static private function write($level, $message)
 	{
 		if (is_array($message)) {
 			$message = serialize($message);
@@ -62,7 +62,7 @@ class Log
 		self::save('[' . date('d.m.Y H:i:s') . '] - [' . $level . '] - [' . self::get_request_method() . '] -> ' . $message);
 	}
 
-	private static function save($text)
+	static private function save($text)
 	{
 		$file = 'Log_' . date('d.m.Y') . '.log';
 		$file = fopen(SYSTEMDIR . '/Logs/' . $file, 'a');
@@ -72,7 +72,7 @@ class Log
 		fclose($file);
 	}
 
-	private static function get_request_method()
+	static private function get_request_method()
 	{
 		$method = @$_SERVER['REQUEST_METHOD'];
 		if ($method == 'HEAD') {

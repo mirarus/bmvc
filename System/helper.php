@@ -113,3 +113,13 @@ if (!function_exists('ep')) {
 		if ($stop === true) exit();
 	}
 }
+
+if (!function_exists('_ob')) {
+	function _ob($file) {
+		ob_start();
+		require_once $file;
+		$ob_content = ob_get_contents();
+		ob_end_clean();
+		return $ob_content;
+	}
+}

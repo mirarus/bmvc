@@ -157,7 +157,6 @@ class App
 	protected static function get_404()
 	{
 		http_response_code(404);
-
 		if (self::$notFound) {
 			if (is_callable(self::$notFound)) {
 				call_user_func(self::$notFound);
@@ -167,7 +166,6 @@ class App
 		} else {
 			MError::print('404 Not Found!', null, true);
 		}
-		http_response_code(404);
 		exit();
 	}
 

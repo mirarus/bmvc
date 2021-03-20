@@ -49,9 +49,10 @@ class AutoLoader
 
 			if (class_exists($class)) {
 				new $class;
-			} else {
-				ep('Class Not Defined in System\Core File!', 'Class Name: ' . $class);
 			}
+			/* else {
+				ep('Class Not Defined in System\Core File!', 'Class Name: ' . $class);
+			}*/
 		} else {
 			ep('Class Not Found!', 'Class Name: ' . $class);
 		}
@@ -66,9 +67,9 @@ class AutoLoader
 
 			require_once $file;
 
-			if (!class_exists($class)) {
+			/*if (!class_exists($class)) {
 				ep('Class Not Defined in System\Libraries File!', 'Class Name: ' . $class);
-			}
+			}*/
 		}
 	}
 
@@ -81,9 +82,9 @@ class AutoLoader
 
 			require_once $file;
 
-			if (!class_exists($class)) {
+			/*if (!class_exists($class)) {
 				ep('Class Not Defined in System\Libraries File!', 'Class Name: ' . $class);
-			}
+			}*/
 		}
 	}
 

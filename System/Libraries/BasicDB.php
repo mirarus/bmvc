@@ -561,7 +561,6 @@ class BasicDB extends \PDO
 
 	function error_print($message=null)
 	{
-		http_response_code(404);
 		mb_internal_encoding("UTF-8");
 		?><!DOCTYPE html>
 		<html lang="en">

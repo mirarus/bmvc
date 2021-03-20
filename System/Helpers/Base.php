@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('error_print')) {
-	function error_print($title=null, $text=null, $message=null, $stop=true, $response_code=404) {
+	function error_print($title=null, $text=null, $message=null, $stop=true, $response_code=200) {
 		http_response_code($response_code);
 		if (function_exists('mb_internal_encoding')) {
 			mb_internal_encoding("UTF-8");

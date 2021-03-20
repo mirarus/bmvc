@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.9
+ * @version 3.0
  */
 
 namespace System;
@@ -14,25 +14,23 @@ namespace System;
 class View
 {
 
-	private static function import($module, $view, $data=[], $return=false)
+	private static function import($module, $view, $data=[], &$return=null)
 	{
 		@$_REQUEST['vd'] = $data;
 		$dir = (APPDIR . '/Modules/' . $module);
+		$viewDir = ($dir . '/View');
+		$cacheDir = ($dir . '/Cache');
 
-		if (config('general/blade') == false) {
+		if (config('general/view/blade') == false) {
 
 			$data ? extract($data) : null;
 
-			if (file_exists($file = $dir . '/View/' . $view . '.php')) {
+			if (file_exists($file = $viewDir . '/' . $view . '.php')) {
 
-				if ($return == false) {
-					require_once $file;
+				if (config('general/view/cache') == true) {
+					return $return = self::cache($view, $file, $cacheDir);
 				} else {
-					ob_start();
-					require_once $file;
-					$text = ob_get_contents();
-					ob_end_clean();
-					return $text;
+					return $return = _ob($file);
 				}
 			} else {
 				MError::title('View Error!')::print('View File Found!', 'View Name: ' . $module . '/' . $view);
@@ -41,7 +39,7 @@ class View
 
 			if (file_exists($file = $dir . '/View/' . $view . '.blade.php')) {
 
-				$blade = new \Jenssegers\Blade\Blade($dir . '/View', $dir . '/Cache');
+				$blade = new \Jenssegers\Blade\Blade($viewDir, $cacheDir);
 				return $blade->make($view, $data)->render();
 			} else {
 				MError::title('Blade View Error!')::print('Blade View File Found!', 'Blade View Name: ' . $module . '/' . $view);
@@ -49,7 +47,7 @@ class View
 		}
 	}
 
-	static function load($action, $data=[], $layout=false)
+	static function load($action, $data=[], $layout=false, &$return=null)
 	{
 		$module = null;
 		$view = null;
@@ -75,7 +73,7 @@ class View
 						if (_dir(APPDIR . '/Modules/' . $module . '/Layout')) {
 							if (file_exists($file = APPDIR . '/Modules/' . $module . '/Layout/Main.php')) {
 
-								$content = $view != null ? self::import($module, $view, $data, true) : null;
+								$content = $view != null ? self::import($module, $view, $data, $return) : null;
 								require_once $file;
 							} else {
 								MError::title('View Error!')::print('Layout File Found!', 'Layout Name: Main');
@@ -84,7 +82,7 @@ class View
 							MError::title('View Error!')::print('Layout Dir Not Found!');
 						}
 					} else {
-						echo self::import($module, $view, $data, true);
+						echo self::import($module, $view, $data, $return);
 					}
 				} else {
 					MError::title('View Error!')::print('View Dir Not Found!');
@@ -92,6 +90,23 @@ class View
 			} else {
 				MError::title('View Error!')::print('Module Not Found!', 'Module Name: ' . $module);
 			}
+		}
+	}
+
+	static private function cache($fileName, $fileContent, $dir, $expire=120)
+	{
+		$file = ($cacheDir . '/' . md5($fileName) . '.php');
+
+		if (!file_exists($file) || (filemtime($file) < (time() - $expire))) {
+
+			$content = file_get_contents($fileContent);
+			$signature = "\n<?php /** FILE: " . basename($content) . " - DATE: " . date(DATE_RFC822) ." - EXPIRE: " . date(DATE_RFC822, time() + $expire) . " */ ?>";
+			$content = $content . $signature;
+			file_put_contents($file, $content, LOCK_EX);
+
+			return _ob($file);
+		} else {
+			return _ob($file);
 		}
 	}
 }

@@ -6,7 +6,7 @@
  * @package System
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.2
+ * @version 1.3
  */
 
 class MException
@@ -46,7 +46,9 @@ class MException
 		$e_body  = "File: {$file}<br>Line: {$line}";
 		$e_log   = $e_head . " - File: {$file} - Line: {$line}";
 
-		@System\Log::error($e_log);
+		if (config('general/log') == true) {
+			@System\Log::error($e_log);
+		}
 
 		if ($number == 1 || $number == 4 || $number == 16 || $number == 64 || $number == 256 || $number == 4096) {
 			ep($e_head, $e_body, true, $e_title, 'danger');
