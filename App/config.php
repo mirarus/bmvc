@@ -3,7 +3,7 @@
 $_config['general'] = [
 	'timezone' => 'Europe/Istanbul',
 	'environment' => 'development', // production | development
-	'log' => false,
+	'log' => true,
 	'view' => [
 		'cache' => false,
 		'cacheExpire' => 120, // Second
