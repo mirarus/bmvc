@@ -71,8 +71,6 @@ class App
 			echo 'The application environment is not set correctly.';
 			exit(1);
 		}
-
-
 	}
 
 	static function Route($method, $pattern, $callback)
