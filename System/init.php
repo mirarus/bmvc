@@ -1,17 +1,15 @@
 <?php
 
 /**
+ * INIT
  *
- * Mirarus Basic MVC
- *
- * PHP version 7
- *
+ * Mirarus BMVC
+ * @package System
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
- * @link https://github.com/mirarus/basic-mvc
+ * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version 1.7
- *
-*/
+ */
 
 if (file_exists(ROOTDIR . '/vendor/autoload.php')) {
 	require_once ROOTDIR . '/vendor/autoload.php';

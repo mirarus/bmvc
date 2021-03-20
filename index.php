@@ -1,19 +1,17 @@
 <?php
 
 /**
- *
  * Mirarus BMVC
  *
  * PHP version 7
  *
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
- * @link https://github.com/mirarus/basic-mvc
+ * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- *
 */
 
 define("BMVC_START", microtime(true));
-define("ROOTDIR", str_replace(['\\', '//'], '/', realpath(getcwd())));
+define("ROOTDIR", str_replace(['\\', '//'], '/', str_replace(['Public', 'public'], null, realpath(getcwd()))));
 define("PUBLICDIR", ROOTDIR . "/Public");
 define("APPDIR", ROOTDIR . "/App");
 define("SYSTEMDIR", ROOTDIR . "/System");
