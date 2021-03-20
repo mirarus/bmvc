@@ -6,6 +6,7 @@ $_config['general'] = [
 	'log' => false,
 	'view' => [
 		'cache' => false,
+		'cacheExpire' => 120, // Second
 		'blade' => false // Blade theme engine support -- FileName.blade.php if true is selected
 	]
 ];

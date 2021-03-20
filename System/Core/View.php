@@ -6,7 +6,7 @@
  * @package System\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.0
+ * @version 3.1
  */
 
 namespace System;
@@ -28,9 +28,21 @@ class View
 			if (file_exists($file = $viewDir . '/' . $view . '.php')) {
 
 				if (config('general/view/cache') == true) {
-					return $return = self::cache($view, $file, $cacheDir);
+					
+					$cacheFile = self::cache($view, $file, $cacheDir);
+
+					ob_start();
+					require_once $cacheFile;
+					$ob_content = ob_get_contents();
+					ob_end_clean();
+					return $return = $ob_content;
 				} else {
-					return $return = _ob($file);
+
+					ob_start();
+					require_once $file;
+					$ob_content = ob_get_contents();
+					ob_end_clean();
+					return $return = $ob_content;
 				}
 			} else {
 				MError::title('View Error!')::print('View File Found!', 'View Name: ' . $module . '/' . $view);
@@ -93,21 +105,24 @@ class View
 		}
 	}
 
-	static private function cache($fileName, $fileContent, $dir, $expire=120)
+	static private function cache($fileName, $fileContent, $cacheDir)
 	{
 		$file = ($cacheDir . '/' . md5($fileName) . '.php');
 
-		if (!file_exists($file) || (filemtime($file) < (time() - $expire))) {
+		if (config('general/view/cacheExpire') != null) {
+			$cacheExpire = config('general/view/cacheExpire');
+		} else {
+			$cacheExpire = 120;
+		}
+		
+		if (!file_exists($file) || (filemtime($file) < (time() - $cacheExpire))) {
 
 			$content = file_get_contents($fileContent);
-			$signature = "\n<?php /** FILE: " . basename($content) . " - DATE: " . date(DATE_RFC822) ." - EXPIRE: " . date(DATE_RFC822, time() + $expire) . " */ ?>";
+			$signature = "\n<?php /** FILE: " . $fileContent . " - DATE: " . date(DATE_RFC822) ." - EXPIRE: " . date(DATE_RFC822, time() + $cacheExpire) . " */ ?>";
 			$content = $content . $signature;
 			file_put_contents($file, $content, LOCK_EX);
-
-			return _ob($file);
-		} else {
-			return _ob($file);
 		}
+		return $file;
 	}
 }
 
