@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.5
+ * @version 3.6
  */
 
 namespace System;
@@ -31,6 +31,9 @@ class Lang
 		$current_lang = self::get();
 
 		if (_dir(self::$lang_dir)) {
+			
+			if ($current_lang == 'index') return false;
+
 			if (file_exists($file = self::$lang_dir . $current_lang . '.php')) {
 				if ($text != null) {
 
@@ -82,6 +85,9 @@ class Lang
 			
 			$files = [];
 			foreach (glob(self::$lang_dir . '*.php') as $file) {
+
+				if ($file == self::$lang_dir . 'index.php') return false;
+
 				$_lang_ = false;
 				include $file;
 				if ($_lang_ == true) {
@@ -102,6 +108,9 @@ class Lang
 	static function info($lang, $par=null)
 	{
 		if (_dir(self::$lang_dir)) {
+
+			if ($lang == 'index') return false;
+
 			if (file_exists($file = self::$lang_dir . $lang . '.php')) {
 
 				$data = [];

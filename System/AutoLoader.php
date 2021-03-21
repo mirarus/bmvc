@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.1
  */
 
 class AutoLoader
@@ -25,8 +25,10 @@ class AutoLoader
 
 	private function loadApp($class)
 	{
-		$file = APPDIR . '/' . str_replace(['\\', '//'], '/', $class) . '.php';
-		$file = str_replace(['\\', '//'], "/", $file);
+		if ($class == 'index') return false;
+
+		$file = APPDIR . '/' . $class . '.php';
+		$file = @strtr($file, ['\\' => '/', '//' => '/']);
 
 		if (file_exists($file)) {
 			require_once($file);
@@ -42,13 +44,14 @@ class AutoLoader
 		if (strncmp($prefix, $class, $len) !== 0) { return; }
 
 		$relative_class = substr($class, $len);
-		$file = $dir . str_replace(['\\', '//'], '/', $relative_class) . '.php';
-		$file = str_replace(['\\', '//'], "/", $file);
+
+		if ($relative_class == 'index') return false;
+
+		$file = $dir . $relative_class . '.php';
+		$file = @strtr($file, ['\\' => '/', '//' => '/']);
 
 		if (file_exists($file)) {
-
 			require_once $file;
-
 			if (class_exists($class)) {
 				new $class;
 			}
@@ -62,13 +65,13 @@ class AutoLoader
 
 	private function loadSystemLibrary($class)
 	{
-		$file = SYSTEMDIR . '/Libraries/' . str_replace(['\\', '//'], '/', $class) . '.php';
-		$file = str_replace(['\\', '//'], "/", $file);
+		if ($class == 'index') return false;
+
+		$file = SYSTEMDIR . '/Libraries/' . $class . '.php';
+		$file = @strtr($file, ['\\' => '/', '//' => '/']);
 
 		if (file_exists($file)) {
-
 			require_once $file;
-
 			/*if (!class_exists($class)) {
 				ep('Class Not Defined in System\Libraries File!', 'Class Name: ' . $class);
 			}*/
@@ -77,13 +80,13 @@ class AutoLoader
 
 	private function loadAppLibrary($class)
 	{
-		$file = APPDIR . '/Libraries/' . str_replace(['\\', '//'], '/', $class) . '.php';
-		$file = str_replace(['\\', '//'], "/", $file);
+		if ($class == 'index') return false;
+
+		$file = APPDIR . '/Libraries/' . $class . '.php';
+		$file = @strtr($file, ['\\' => '/', '//' => '/']);
 
 		if (file_exists($file)) {
-
 			require_once $file;
-
 			/*if (!class_exists($class)) {
 				ep('Class Not Defined in System\Libraries File!', 'Class Name: ' . $class);
 			}*/
@@ -93,11 +96,17 @@ class AutoLoader
 	private function loadHelpers()
 	{
 		array_map(function ($file) {
+
+			if ($file == APPDIR . '/Helpers/index.php') return false;
 			require_once $file;
+
 		}, glob(APPDIR . "/Helpers/*.php"));
 
 		array_map(function ($file) {
+			
+			if ($file == SYSTEMDIR . '/Helpers/index.php') return false;
 			require_once $file;
+
 		}, glob(SYSTEMDIR . "/Helpers/*.php"));
 	}
 }

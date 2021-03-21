@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.5
+ * @version 1.6
  */
 
 namespace System;
@@ -26,6 +26,9 @@ class Library
 	private static function include($library, $type=null)
 	{
 		if ($library != null) {
+
+			if ($library == 'index') return false;
+
 			$uri = ($type == 'SYSTEM') ? (SYSTEMDIR . '/Libraries/') : (APPDIR . '/Libraries/');
 			if (_dir($uri)) {
 				if (file_exists($file = $uri . $library . '.php')) {

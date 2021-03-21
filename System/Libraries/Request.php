@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.1
  */
 
 class Request
@@ -22,7 +22,7 @@ class Request
     const METHOD_OPTIONS = 'OPTIONS';
     const METHOD_OVERRIDE = '_METHOD';
 
-    private static $formDataMediaTypes = array('application/x-www-form-urlencoded');
+    private static $formDataMediaTypes = ['application/x-www-form-urlencoded'];
     private $server;
     public $header;
 
@@ -111,10 +111,8 @@ class Request
         $contentType = $this->getContentType();
         if ($contentType) {
             $contentTypeParts = preg_split('/\s*[;,]\s*/', $contentType);
-
             return strtolower($contentTypeParts[0]);
         }
-
         return null;
     }
 
@@ -130,7 +128,6 @@ class Request
                 $contentTypeParams[strtolower($paramParts[0])] = $paramParts[1];
             }
         }
-
         return $contentTypeParams;
     }
 
@@ -140,7 +137,6 @@ class Request
         if (isset($mediaTypeParams['charset'])) {
             return $mediaTypeParams['charset'];
         }
-
         return null;
     }
 
@@ -154,13 +150,10 @@ class Request
         if (isset($this->server['HTTP_HOST'])) {
             if (strpos($this->server['HTTP_HOST'], ':') !== false) {
                 $hostParts = explode(':', $this->server['HTTP_HOST']);
-
                 return $hostParts[0];
             }
-
             return $this->server['HTTP_HOST'];
         }
-
         return $this->server['SERVER_NAME'];
     }
 
@@ -210,7 +203,6 @@ class Request
         if (($this->getScheme() === 'https' && $this->getPort() !== 443) || ($this->getScheme() === 'http' && $this->getPort() !== 80)) {
             $url .= sprintf(':%s', $this->getPort());
         }
-
         return $url;
     }
 
@@ -222,7 +214,6 @@ class Request
                 return $this->server[$key];
             }
         }
-
         return $this->server['REMOTE_ADDR'];
     }
 
@@ -252,11 +243,13 @@ class Request
                 getallheaders();
             $headers = [];
             foreach ($_SERVER as $name => $value) {
-                if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH'))
-                    $headers[str_replace(array(' ', 'Http'), array('-', 'HTTP'), ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
+                    $headers[@strtr(ucwords(strtolower(@strtr(substr($name, 5), ['_' => ' ']))), [' ' => '-', 'Http' => 'HTTP'])] = $value;
+                }
             }
-            if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], array(self::METHOD_PUT, self::METHOD_DELETE, self::METHOD_PATCH)))
+            if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], [self::METHOD_PUT, self::METHOD_DELETE, self::METHOD_PATCH])) {
                 $method = $headers['X-HTTP-Method-Override'];
+            }
         }
         return $method;
     }

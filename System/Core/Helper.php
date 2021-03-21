@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.2
+ * @version 1.3
  */
 
 namespace System;
@@ -26,6 +26,9 @@ class Helper
 	private static function include($helper, $type=null)
 	{
 		if ($helper != null) {
+
+			if ($helper == 'index') return false;
+
 			$uri = ($type == 'SYSTEM') ? (SYSTEMDIR . '/Helpers/') : (APPDIR . '/Helpers/');
 			if (_dir($uri)) {
 				if (file_exists($file = $uri . $helper . '.php')) {

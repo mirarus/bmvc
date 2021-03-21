@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.1
+ * @version 3.2
  */
 
 namespace System;
@@ -86,7 +86,8 @@ class App
 			}
 		}
 		foreach (self::$patterns as $key => $value) {
-			$pattern = str_replace($key, $value, $pattern);
+			$pattern = @strtr($pattern, [$key => $value]);
+			//$pattern = str_replace($key, $value, $pattern);
 		}
 		if (is_callable($callback)) {
 			$closure = $callback;
@@ -180,11 +181,13 @@ class App
 				getallheaders();
 			$headers = [];
 			foreach ($_SERVER as $name => $value) {
-				if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH'))
-					$headers[str_replace(array(' ', 'Http'), array('-', 'HTTP'), ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+				if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
+					$headers[@strtr(ucwords(strtolower(@strtr(substr($name, 5), ['_' => ' ']))), [' ' => '-', 'Http' => 'HTTP'])] = $value;
+				}
 			}
-			if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], array("PUT", "DELETE", "PATCH")))
+			if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], ["PUT", "DELETE", "PATCH"])) {
 				$method = $headers['X-HTTP-Method-Override'];
+			}
 		}
 		return $method;
 	}

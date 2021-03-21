@@ -8,10 +8,17 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version 1.0
 */
 
 define("BMVC_START", microtime(true));
-define("ROOTDIR", str_replace(['\\', '//'], '/', str_replace(['Public', 'public'], null, realpath(getcwd()))));
+
+$_ROOTDIR = realpath(getcwd());
+$_ROOTDIR = @strtr($_ROOTDIR, ["Public" => null, "public" => null]);
+$_ROOTDIR = @substr($_ROOTDIR, -1) == '/' ? @substr($_ROOTDIR, 0, -1) : $_ROOTDIR;
+$_ROOTDIR = strtr($_ROOTDIR, ['\\' => '/', '//' => '/']);
+define("ROOTDIR", $_ROOTDIR);
+
 define("PUBLICDIR", ROOTDIR . "/Public");
 define("APPDIR", ROOTDIR . "/App");
 define("SYSTEMDIR", ROOTDIR . "/System");
@@ -37,15 +44,16 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 	if (!defined("TIMEZONE")) {
 		define("TIMEZONE", "Europe/Istanbul");
 	}
-
 	if (!defined("ENVIRONMENT")) {
 		define("ENVIRONMENT", "production");
 	}
 
 	if (!defined("URL")) {
 		$url = ((((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PORT']) && $_SERVER['HTTP_X_FORWARDED_PORT'] == 443)) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
-		$url = str_replace('\\', '/', $url . dirname($_SERVER['PHP_SELF']));
-		$url = str_replace(['/Public', '/public'], null, $url);
+		
+		$url = $url . dirname($_SERVER['PHP_SELF']);
+		$url = @strtr($url, ["Public" => null, "public" => null]);
+		$url = strtr($url, ['\\' => '/', '//' => '/']);
 		define("URL", $url . '/');
 	}
 
