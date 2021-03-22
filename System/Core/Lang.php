@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.7
+ * @version 3.8
  */
 
 namespace System;
@@ -30,23 +30,26 @@ class Lang
 
 	static function routes()
 	{
-		Route::match(['GET', 'POST'], 'set_lang/{lowercase}',  function($lang) {
-			Lang::set($lang);
-			if (check_method('GET')) {
-				redirect(url());
-			}
-		});
+		Route::prefix('lang')::group(function() {
 
-		Route::match(['GET', 'POST'], 'get_lang/{alpnum}',  function($text) {
-			Lang::__($text, _filter('replace', 'request'));
-		});
+			Route::match(['GET', 'POST'], 'set/{lowercase}',  function($lang) {
+				Lang::set($lang);
+				if (check_method('GET')) {
+					redirect(url());
+				}
+			});
 
-		Route::match(['GET', 'POST'], 'get_lang/{alpnum}/{lowercase}',  function($text, bool $return=false) {
-			if ($return == true) {
-				Lang::___($text, _filter('replace', 'request'));
-			} else {
+			Route::match(['GET', 'POST'], 'get/{alpnum}',  function($text) {
 				Lang::__($text, _filter('replace', 'request'));
-			}
+			});
+
+			Route::match(['GET', 'POST'], 'get/{alpnum}/{lowercase}',  function($text, bool $return=false) {
+				if ($return == true) {
+					Lang::___($text, _filter('replace', 'request'));
+				} else {
+					Lang::__($text, _filter('replace', 'request'));
+				}
+			});
 		});
 	}
 
@@ -63,7 +66,7 @@ class Lang
 
 					$_lang = [];
 					include $file;
-					if (@$_lang[$text] != null) {
+					if (isset($_lang[$text])) {
 						return $_lang[$text];
 					} else {
 						MError::print('Language Not Found!', 'Language Text: ' . $text);
@@ -167,7 +170,7 @@ class Lang
 		$info = self::_get_info($langs);
 		$current = self::get_lang() == $langs ? true : false;
 		$name = $current ? $info['name'] : $info['global'];
-		$url = url('set_lang/' . $info['code']);
+		$url = url('lang/set/' . $info['code']);
 
 		return [
 			'info' => $info,
