@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.3
+ * @version 1.4
  */
 
 namespace System;
@@ -104,7 +104,7 @@ class Route extends App
 	function where($expressions)
 	{
 		$routeKey = array_search(end(self::$routes), self::$routes);
-		$pattern = self::_parseUri(self::$routes[$routeKey]['uri'], $expressions);
+		$pattern = self::_parseUri(self::$routes[$routeKey]['pattern'], $expressions);
 		$pattern = '/' . implode('/', $pattern);
 		$pattern = '/^' . str_replace('/', '\/', $pattern) . '$/';
 		self::$routes[$routeKey]['pattern'] = $pattern;
@@ -122,8 +122,8 @@ class Route extends App
 	{
 		foreach (self::$routes as $route) {
 			if (array_key_exists('name', $route) && $route['name'] == $name) {
-				$uri = $route['uri'];
-				$pattern = self::_parseUri($uri, $params);
+				$pattern = $route['pattern'];
+				$pattern = self::_parseUri($pattern, $params);
 				$pattern = implode('/', $pattern);
 				break;
 			}

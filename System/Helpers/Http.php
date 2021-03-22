@@ -66,7 +66,7 @@ if (!function_exists('res')) {
 		if (nis_em($var)) {
 			return $_SERVER;
 		} else {
-			return $_SERVER[$var];
+			return isset($_SERVER[$var]) ? $_SERVER[$var] : null;
 		}
 	}
 }
@@ -76,7 +76,7 @@ if (!function_exists('req')) {
 		if (nis_em($var)) {
 			return $_REQUEST;
 		} else {
-			return $_REQUEST[$var];
+			return isset($_REQUEST[$var]) ? $_REQUEST[$var] : null;
 		}
 	}
 }
@@ -86,7 +86,7 @@ if (!function_exists('reg')) {
 		if (nis_em($var)) {
 			return $_GET;
 		} else {
-			return $_GET[$var];
+			return isset($_GET[$var]) ? $_GET[$var] : null;
 		}
 	}
 }
@@ -96,7 +96,7 @@ if (!function_exists('rep')) {
 		if (nis_em($var)) {
 			return $_POST;
 		} else {
-			return $_POST[$var];
+			return isset($_POST[$var]) ? $_POST[$var] : null;
 		}
 	}
 }
@@ -106,7 +106,7 @@ if (!function_exists('ref')) {
 		if (nis_em($var)) {
 			return $_FILES;
 		} else {
-			return $_FILES[$var];
+			return isset($_FILES[$var]) ? $_FILES[$var] : null;
 		}
 	}
 }
@@ -175,20 +175,20 @@ if (!function_exists('filter')) {
 if (!function_exists('_filter')) {
 	function _filter($data, $type='post', $db_filter=true) {
 		if ($type == 'server') {
-			$_SERVER = FilterClass::filterXSS($_SERVER);
-			return $db_filter == true ? @filter(@$_SERVER[$data]) : @$_SERVER[$data];
+			$_SERVER = @FilterClass::filterXSS($_SERVER);
+			return $db_filter == true ? @filter(@res($data)) : @res($data);
 		} elseif ($type == 'request') {
-			$_REQUEST = FilterClass::filterXSS($_REQUEST);
-			return $db_filter == true ? @filter(@$_REQUEST[$data]) : @$_REQUEST[$data];
+			$_REQUEST = @FilterClass::filterXSS($_REQUEST);
+			return $db_filter == true ? @filter(@req($data)) : @req($data);
 		} elseif ($type == 'get') {
-			$_GET = FilterClass::filterXSS($_GET);
-			return $db_filter == true ? @filter(@$_GET[$data]) : @$_GET[$data];
+			$_GET = @FilterClass::filterXSS($_GET);
+			return $db_filter == true ? @filter(@reg($data)) : @reg($data);
 		} elseif ($type == 'post') {
-			$_POST = FilterClass::filterXSS($_POST);
-			return $db_filter == true ? @filter(@$_POST[$data]) : @$_POST[$data];
+			$_POST = @FilterClass::filterXSS($_POST);
+			return $db_filter == true ? @filter(@rep($data)) : @rep($data);
 		} elseif ($type == 'files') {
-			$_FILES = FilterClass::filterXSS($_FILES);
-			return $db_filter == true ? @filter(@$_FILES[$data]) : @$_FILES[$data];
+			$_FILES = @FilterClass::filterXSS($_FILES);
+			return $db_filter == true ? @filter(@ref($data)) : @ref($data);
 		}
 	}
 }

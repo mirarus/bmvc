@@ -8,10 +8,12 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.6
+ * @version 3.7
  */
 
 namespace System;
+
+use System\Route;
 
 class Lang
 {
@@ -24,6 +26,28 @@ class Lang
 		if (config('default/lang') != null) {
 			self::$lang = config('default/lang');
 		}
+	}
+
+	static function routes()
+	{
+		Route::match(['GET', 'POST'], 'set_lang/{lowercase}',  function($lang) {
+			Lang::set($lang);
+			if (check_method('GET')) {
+				redirect(url());
+			}
+		});
+
+		Route::match(['GET', 'POST'], 'get_lang/{alpnum}',  function($text) {
+			Lang::__($text, _filter('replace', 'request'));
+		});
+
+		Route::match(['GET', 'POST'], 'get_lang/{alpnum}/{lowercase}',  function($text, bool $return=false) {
+			if ($return == true) {
+				Lang::___($text, _filter('replace', 'request'));
+			} else {
+				Lang::__($text, _filter('replace', 'request'));
+			}
+		});
 	}
 
 	private static function init($text)
@@ -47,6 +71,7 @@ class Lang
 				} else {
 					MError::print('Language Not Found!', 'Language Text: ' . $text);
 				}
+			} else {
 				MError::print('Language Not Found!', 'Language Name: ' . $current_lang);
 			}
 		} else {
@@ -79,7 +104,7 @@ class Lang
 		}
 	}
 
-	static function get_langs()
+	private static function _get_langs()
 	{
 		if (_dir(self::$lang_dir)) {
 			
@@ -88,9 +113,9 @@ class Lang
 
 				if ($file == self::$lang_dir . 'index.php') return false;
 
-				$_lang_ = false;
+				$_lang = [];
 				include $file;
-				if ($_lang_ == true) {
+				if ($_lang != null) {
 					$files[] = str_replace([self::$lang_dir, '.php'], '', $file);
 				}
 			}
@@ -100,12 +125,7 @@ class Lang
 		}
 	}
 
-	static function get_lang()
-	{
-		return self::get();
-	}
-
-	static function info($lang, $par=null)
+	private static function _get_info($lang, $par=null)
 	{
 		if (_dir(self::$lang_dir)) {
 
@@ -114,14 +134,15 @@ class Lang
 			if (file_exists($file = self::$lang_dir . $lang . '.php')) {
 
 				$data = [];
+				$_lang = [];
 				include $file;
 
 				$data = [
-					'init' => @$_lang_,
+					'code' => @$lang,
 					'name' => @$_lang_name,
-					'name_global' => @$_lang_name_global
+					'global' => @$_lang_global
 				];
-				if ($data['init'] != null && $data['name'] != null && $data['name_global'] != null) {
+				if ($_lang != null && $data['code'] != null && $data['name'] != null && $data['global'] != null) {
 					if ($par != null) {
 						return $data[$par];
 					} else {
@@ -135,6 +156,35 @@ class Lang
 			MError::print('Language Dir Not Found!');
 		}
 	}
+	
+	static function get_lang()
+	{
+		return self::get();
+	}
+
+	static function get_info($langs)
+	{
+		$info = self::_get_info($langs);
+		$current = self::get_lang() == $langs ? true : false;
+		$name = $current ? $info['name'] : $info['global'];
+		$url = url('set_lang/' . $info['code']);
+
+		return [
+			'info' => $info,
+			'name' => $name,
+			'url' => $url,
+			'current' => $current
+		];
+	}
+
+	static function get_langs()
+	{
+		$_langs = [];
+		foreach (self::_get_langs() as $langs) {
+			$_langs[$langs] = self::get_info($langs);
+		}
+		return $_langs;
+	}
 
 	static function get()
 	{
@@ -146,12 +196,12 @@ class Lang
 	}
 
 	static function set($lang='')
-	{		
+	{
 		if (!is_string($lang)) {
 			return false;
 		} if (empty($lang)) {
 			$lang = self::get();
-		} if (in_array($lang, self::get_langs())) {
+		} if (in_array($lang, self::_get_langs())) {
 			$_SESSION[md5('language')] = $lang;
 		}
 	}

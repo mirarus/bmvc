@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.7
+ * @version 1.8
  */
 
 if (file_exists(ROOTDIR . '/vendor/autoload.php')) {
@@ -29,4 +29,5 @@ if (config('general/environment')) {
 	define("ENVIRONMENT", config('general/environment'));
 }
 
+require_once 'routes.php';
 require_once APPDIR . '/routes.php';

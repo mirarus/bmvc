@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.1
 */
 
 define("BMVC_START", microtime(true));
@@ -49,12 +49,12 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 	}
 
 	if (!defined("URL")) {
-		$url = ((((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PORT']) && $_SERVER['HTTP_X_FORWARDED_PORT'] == 443)) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
+		$url = ((((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PORT']) && $_SERVER['HTTP_X_FORWARDED_PORT'] == 443)) ? 'https' : 'http') . ':///' . $_SERVER['HTTP_HOST']);
 		
 		$url = $url . dirname($_SERVER['PHP_SELF']);
 		$url = @strtr($url, ["Public" => null, "public" => null]);
 		$url = strtr($url, ['\\' => '/', '//' => '/']);
-		define("URL", $url . '/');
+		define("URL", $url);
 	}
 
 	\System\App::Run();

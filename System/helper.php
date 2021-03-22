@@ -123,3 +123,30 @@ if (!function_exists('_ob')) {
 		return $ob_content;
 	}
 }
+
+if (!function_exists('_substr')) {
+	function _substr(string $string, int $start, int $length = null, string $encoding=null) : string {
+		$encoding = $encoding == null ? "UTF-8" : null;
+
+		if (function_exists('mb_substr')) {
+			return mb_substr($string, $start, $length, $encoding);
+		} else {
+			return substr($string, $start, $length);
+		}
+	}
+}
+
+if (!function_exists('_route')) {
+	function _route($method, string $pattern, $callback) {
+		if (is_array($method)) {
+			System\Route::match($method, $pattern, $callback);
+		} else {
+			$method = strtoupper($method);
+			$methods = ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'];
+			
+			if (in_array($method, $methods)) {
+				System\Route::$method($pattern, $callback);
+			}
+		}
+	}
+}
