@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.2
+ * @version 3.3
  */
 
 namespace System;
@@ -45,8 +45,8 @@ class Controller
 
 			if (_dir(APPDIR . '/Modules/' . $module)) {
 				if (_dir(APPDIR . '/Modules/' . $module . '/Controller')) {
-
 					if (file_exists($file = APPDIR . '/Modules/' . $module . '/Controller/' . $controller . '.php')) {
+						
 						require_once $file;
 
 						if (strpos($controller, "/") || strpos($controller, "\\")) {
@@ -104,14 +104,18 @@ class Controller
 		if ($module != null && $controller != null && $method != null) {
 
 			@$class = self::import([$module, $controller]);
-			if (method_exists(@$class, $method)) {
-				if ($params == null) {
-					return $return = call_user_func([$class, $method]);
+			
+			if (isset($class)) {
+
+				if (method_exists(@$class, $method)) {
+					if ($params == null) {
+						return $return = call_user_func([$class, $method]);
+					} else {
+						return $return = call_user_func_array([$class, $method], array_values($params));
+					}
 				} else {
-					return $return = call_user_func_array([$class, $method], array_values($params));
+					MError::title('Controller Error!')::print('Controller Method Not Found!', 'Controller Name: ' . $module . '/' . $controller . '<br>Method Name: ' . $method);
 				}
-			} else {
-				MError::title('Controller Error!')::print('Controller Method Not Found!', 'Controller Name: ' . $module . '/' . $controller . '<br>Method Name: ' . $method);
 			}
 		}
 	}

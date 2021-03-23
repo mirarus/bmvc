@@ -201,3 +201,7 @@ if (!function_exists('slug')) {
 		return $str;
 	}
 }
+
+function html_decode($par) : string {
+	return htmlspecialchars_decode(html_entity_decode(htmlspecialchars_decode($par, ENT_QUOTES), ENT_QUOTES), ENT_QUOTES);
+}
