@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.1
+ * @version 1.2
  */
 
 class AutoLoader
@@ -21,6 +21,12 @@ class AutoLoader
 		spl_autoload_register(array($this, 'loadSystemLibrary'));
 		spl_autoload_register(array($this, 'loadAppLibrary'));
 		$this->loadHelpers();
+		$this->init();
+	}
+
+	private function init()
+	{
+		new System\Model;
 	}
 
 	private function loadApp($class)
@@ -62,7 +68,7 @@ class AutoLoader
 			ep('Class Not Found!', 'Class Name: ' . $class);
 		}
 	}
-
+	
 	private function loadSystemLibrary($class)
 	{
 		if ($class == 'index') return false;

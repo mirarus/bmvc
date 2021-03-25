@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.1
+ * @version 1.2
 */
 
 define("BMVC_START", microtime(true));
@@ -19,9 +19,9 @@ $_ROOTDIR = @substr($_ROOTDIR, -1) == '/' ? @substr($_ROOTDIR, 0, -1) : $_ROOTDI
 $_ROOTDIR = strtr($_ROOTDIR, ['\\' => '/', '//' => '/']);
 define("ROOTDIR", $_ROOTDIR);
 
-define("PUBLICDIR", ROOTDIR . "/Public");
-define("APPDIR", ROOTDIR . "/App");
-define("SYSTEMDIR", ROOTDIR . "/System");
+define("PUBLICDIR", ROOTDIR . "Public");
+define("APPDIR", ROOTDIR . "App");
+define("SYSTEMDIR", ROOTDIR . "System");
 
 if (!is_file(ROOTDIR . '/.htaccess')) {
 	exit('The .htaccess file does not exist.');
