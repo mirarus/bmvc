@@ -228,3 +228,19 @@ function arrayToXml($array, &$xml=false){
 	}
 	return $xml->asXML();
 }
+
+function datetotime($date, $format='YYYY-MM-DD') {
+    if ($format == 'YYYY-MM-DD') list($year, $month, $day) = explode('-', $date);
+    if ($format == 'YYYY/MM/DD') list($year, $month, $day) = explode('/', $date);
+    if ($format == 'YYYY.MM.DD') list($year, $month, $day) = explode('.', $date);
+
+    if ($format == 'DD-MM-YYYY') list($day, $month, $year) = explode('-', $date);
+    if ($format == 'DD/MM/YYYY') list($day, $month, $year) = explode('/', $date);
+    if ($format == 'DD.MM.YYYY') list($day, $month, $year) = explode('.', $date);
+
+    if ($format == 'MM-DD-YYYY') list($month, $day, $year) = explode('-', $date);
+    if ($format == 'MM/DD/YYYY') list($month, $day, $year) = explode('/', $date);
+    if ($format == 'MM.DD.YYYY') list($month, $day, $year) = explode('.', $date);
+
+    return mktime(0, 0, 0, $month, $day, $year);
+}
