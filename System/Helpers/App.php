@@ -205,3 +205,25 @@ if (!function_exists('slug')) {
 function html_decode($par) : string {
 	return htmlspecialchars_decode(html_entity_decode(htmlspecialchars_decode($par, ENT_QUOTES), ENT_QUOTES), ENT_QUOTES);
 }
+
+/**
+ * Example:
+ *
+ * $array = json_decode($json, true);
+ * $xml = new SimpleXMLElement('<root/>');
+ *
+ * arrayToXml($array, $xml);
+ */
+function arrayToXml($array, &$xml) {
+	foreach ($array as $key => $value) {
+		if (is_array($value)) {
+			if (is_int($key)) {
+				$key = "e";
+			}
+			$label = $xml->addChild($key);
+			$this->arrayToXml($value, $label);
+		} else {
+			$xml->addChild($key, $value);
+		}
+	}
+}
