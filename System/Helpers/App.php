@@ -210,20 +210,21 @@ function html_decode($par) : string {
  * Example:
  *
  * $array = json_decode($json, true);
- * $xml = new SimpleXMLElement('<root/>');
+ * $xml = new SimpleXMLElement('<result/>');
  *
  * arrayToXml($array, $xml);
  */
-function arrayToXml($array, &$xml) {
-	foreach ($array as $key => $value) {
+function arrayToXml($array, &$xml=false){
+	if ($xml === false) {
+		$xml = new SimpleXMLElement('<result/>');
+	}
+
+	foreach($array as $key => $value){
 		if (is_array($value)) {
-			if (is_int($key)) {
-				$key = "e";
-			}
-			$label = $xml->addChild($key);
-			$this->arrayToXml($value, $label);
+			arrayToXml($value, $xml->addChild($key));
 		} else {
 			$xml->addChild($key, $value);
 		}
 	}
+	return $xml->asXML();
 }
