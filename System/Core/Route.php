@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.4
+ * @version 1.5
  */
 
 namespace System;
@@ -162,16 +162,11 @@ class Route extends App
 		App::get_404();
 	}
 
-	static function __callStatic($method, $args)
+	static function url_check(array $urls=[], string $url)
 	{
-		//if ($method == 'module')
-		return new self;
-	}
-
-	function __call($method, $args)
-	{
-		//if ($method == 'module')
-		return new self;
+		if (!in_array($url, $urls)) {
+			self::get_404();
+		}
 	}
 }
 

@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.2
+ * @version 3.3
  */
 
 namespace System;
@@ -139,7 +139,7 @@ class App
 							if (is_dir(APPDIR . '/Modules/') && opendir(APPDIR . '/Modules/')) {
 								@Controller::call(@$action, @$params);
 							} else {
-								MError::title('Module Error!')::print('Modules Dir Not Found!');
+								MError::title('Module Error!')::print('Modules Dir Not Found!', null, true);
 							}
 						}
 					}
@@ -149,7 +149,7 @@ class App
 				self::get_404();
 			}
 		} else {
-			MError::title('Route Error!')::print('Route Not Found!');
+			MError::title('Route Error!')::print('Route Not Found!', null, true);
 			http_response_code(404);
 			exit();
 		}
@@ -165,7 +165,8 @@ class App
 				@Controller::call(@self::$notFound, null);
 			}
 		} else {
-			MError::print('404 Not Found!', null, true);
+			MError::title('Page Error!')::print('404 Page Not Found!', 'Page: ' . reg('url'), true);
+			// MError::print('404 Not Found!', null, true);
 		}
 		exit();
 	}
