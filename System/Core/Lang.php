@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.8
+ * @version 3.9
  */
 
 namespace System;
@@ -142,10 +142,12 @@ class Lang
 
 				$data = [
 					'code' => @$lang,
-					'name' => @$_lang_name,
-					'global' => @$_lang_global
+					'name' => [
+						'global' => @$_lang_name[0],
+						'local' => @$_lang_name[1]
+					]
 				];
-				if ($_lang != null && $data['code'] != null && $data['name'] != null && $data['global'] != null) {
+				if (@$_lang != null && @$data['code'] != null && @$data['name']['local'] != null && @$data['name']['global'] != null) {
 					if ($par != null) {
 						return $data[$par];
 					} else {
@@ -169,7 +171,7 @@ class Lang
 	{
 		$info = self::_get_info($langs);
 		$current = self::get_lang() == $langs ? true : false;
-		$name = $current ? $info['name'] : $info['global'];
+		$name = $current ? $info['name']['local'] : $info['name']['global'];
 		$url = url('lang/set/' . $info['code']);
 
 		return [

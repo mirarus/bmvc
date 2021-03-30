@@ -1,7 +1,6 @@
 <?php
 
-$_lang_name = 'Türkçe';
-$_lang_global = 'Turkish';
+$_lang_name = ['Turkish', 'Türkçe'];
 
 
 $_lang['error'] = 'Hata!';
