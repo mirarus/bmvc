@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.2
+ * @version 1.3
 */
 
 define("BMVC_START", microtime(true));
@@ -39,15 +39,6 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 	die('This software requires composer');
 } else {
 
-	require_once SYSTEMDIR . '/init.php';
-
-	if (!defined("TIMEZONE")) {
-		define("TIMEZONE", "Europe/Istanbul");
-	}
-	if (!defined("ENVIRONMENT")) {
-		define("ENVIRONMENT", "production");
-	}
-
 	if (!defined("URL")) {
 		$url = ((((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PORT']) && $_SERVER['HTTP_X_FORWARDED_PORT'] == 443)) ? 'https' : 'http') . ':///' . $_SERVER['HTTP_HOST']);
 		
@@ -57,5 +48,5 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 		define("URL", $url);
 	}
 
-	\System\App::Run();
+	require_once SYSTEMDIR . '/init.php';
 }

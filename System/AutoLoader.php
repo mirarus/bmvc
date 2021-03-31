@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.2
+ * @version 1.4
  */
 
 class AutoLoader
@@ -16,6 +16,7 @@ class AutoLoader
 
 	function __construct()
 	{
+		spl_autoload_register(array($this, 'autoload'));
 		spl_autoload_register(array($this, 'loadApp'));
 		spl_autoload_register(array($this, 'loadSystemCore'));
 		spl_autoload_register(array($this, 'loadSystemLibrary'));
@@ -27,6 +28,38 @@ class AutoLoader
 	private function init()
 	{
 		new System\Model;
+
+		app()->route = System\Route::instance();
+		app()->controller = System\Controller::instance();
+		app()->model = System\Model::instance();
+		app()->view = System\View::instance();
+		app()->lang = System\Lang::instance();
+		app()->error = System\MError::instance();
+		app()->log = System\Log::instance();
+		app()->library = System\Library::instance();
+		app()->helper = System\Helper::instance();
+		app()->session = System\Session::instance();
+	}
+
+	function autoload($class)
+	{
+		$class = str_replace("\\", DIRECTORY_SEPARATOR, $class);
+		$class_ = basename($class);
+		$namespace = substr($class, 0, -strlen($class_));
+		$dir = SYSTEMDIR . '/';
+
+		if (is_file($file = $dir . $class . '.php')) {
+			return include_once $file;
+		} elseif (is_file($file = $dir . strtolower($namespace). $class_ . '.php')) {
+			return include_once $file;
+		} elseif (is_file($file = $dir . strtolower($class) . '.php')) {
+			return include_once $file;
+		} elseif (is_file($file = $dir . $namespace . lcfirst($class_) . '.php')) {
+			return include_once $file;
+		} elseif (is_file($file = $dir . strtolower($namespace) . lcfirst($class_) . '.php')) {
+			return include_once $file;
+		}
+		return false;
 	}
 
 	private function loadApp($class)

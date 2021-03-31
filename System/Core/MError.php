@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.0
+ * @version 2.1
  */
 
 namespace System;
@@ -17,6 +17,7 @@ class MError
 {
 
 	private static $instance;
+	private static $getInstance;
 	protected static $html;
 	protected static $title;
 	protected static $color;
@@ -33,12 +34,20 @@ class MError
 		self::reset();
 	}
 
-	static function getInstance(): self
+	static function instance()
 	{
-		if (!self::$instance) {
-			self::$instance = new MErrorA;
+		if (self::$instance === null) {
+			self::$instance = new self;
 		}
 		return self::$instance;
+	}
+
+	static function getInstance(): self
+	{
+		if (!self::$getInstance) {
+			self::$getInstance = new MErrorA;
+		}
+		return self::$getInstance;
 	}
 
 	private static function reset(): void
@@ -97,6 +106,21 @@ class MError
 	static function title(string $title): self
 	{
 		return self::getInstance()->setTitle($title);
+	}
+
+	function __call($method, $args)
+	{
+		return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
+	}
+
+	static function __callStatic($method, $args)
+	{
+		return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
+	}
+
+	function __set($key, $value)
+	{
+		$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
 	}
 }
 

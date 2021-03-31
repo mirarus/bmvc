@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.5
+ * @version 1.6
  */
 
 namespace System;
@@ -16,8 +16,17 @@ namespace System;
 class Route extends App
 {
 
+	private static $instance;
 	private static $groupped = 0;
 	private static $mainRoute = '/';
+
+	static function instance()
+	{
+		if (self::$instance === null) {
+			self::$instance = new self;
+		}
+		return self::$instance;
+	}
 
 	static function group($callback)
 	{
@@ -167,6 +176,21 @@ class Route extends App
 		if (!in_array($url, $urls)) {
 			self::get_404();
 		}
+	}
+
+	function __call($method, $args)
+	{
+		return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
+	}
+
+	static function __callStatic($method, $args)
+	{
+		return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
+	}
+
+	function __set($key, $value)
+	{
+		$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
 	}
 }
 

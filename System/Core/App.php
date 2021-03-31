@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.3
+ * @version 3.4
  */
 
 namespace System;
@@ -24,6 +24,7 @@ class App
 
 	static $notFound = '';
 
+	private static $instance;
 	private static $patterns  = [
 		'{all}'       => '(.*)',
 		'{al}'        => '([^/]+)',
@@ -71,6 +72,14 @@ class App
 			echo 'The application environment is not set correctly.';
 			exit(1);
 		}
+	}
+
+	static function instance()
+	{
+		if (self::$instance === null) {
+			self::$instance = new self;
+		}
+		return self::$instance;
 	}
 
 	static function Route($method, $pattern, $callback)
@@ -210,6 +219,21 @@ class App
 			return true;
 		}
 		return true;
+	}
+
+	function __call($method, $args)
+	{
+		return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
+	}
+
+	static function __callStatic($method, $args)
+	{
+		return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
+	}
+
+	function __set($key, $value)
+	{
+		$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
 	}
 }
 

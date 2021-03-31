@@ -73,15 +73,6 @@ if (!function_exists('is_cli')) {
 	}
 }
 
-if (!function_exists('_dir')) {
-	function _dir($dir) {
-		if (is_dir($dir) && opendir($dir)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-}
 
 if (!function_exists('ep')) {
 	function ep($text, $message, $html=false, $title=null, $color=null, $stop=false, $response_code=200)
@@ -111,6 +102,16 @@ if (!function_exists('ep')) {
 		echo "</div>";
 		echo $html == true ? "</body></html>\n" : "\n";
 		if ($stop === true) exit();
+	}
+}
+
+if (!function_exists('_dir')) {
+	function _dir($dir) {
+		if (is_dir($dir) && opendir($dir)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 
@@ -148,5 +149,15 @@ if (!function_exists('_route')) {
 				System\Route::$method($pattern, $callback);
 			}
 		}
+	}
+}
+
+if (!function_exists('app')) {
+	function app($class=null) {
+		$app = \System\App::instance();
+		if ($class) {
+			return $app->$class;
+		}
+		return $app;
 	}
 }

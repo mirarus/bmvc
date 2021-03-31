@@ -8,26 +8,34 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.8
+ * @version 1.9
  */
 
 if (file_exists(ROOTDIR . '/vendor/autoload.php')) {
 	require_once ROOTDIR . '/vendor/autoload.php';
 }
 
-require_once APPDIR . '/config.php';
-
 require_once 'helper.php';
-require_once 'MException.php';
-require_once 'AutoLoader.php';
+
 
 if (config('general/timezone')) {
 	define("TIMEZONE", config('general/timezone'));
+} else {
+	define("TIMEZONE", "Europe/Istanbul");
 }
-
 if (config('general/environment')) {
 	define("ENVIRONMENT", config('general/environment'));
+} else {
+	define("ENVIRONMENT", "production");
 }
 
+
+require_once 'MException.php';
+require_once 'AutoLoader.php';
 require_once 'routes.php';
+
 require_once APPDIR . '/routes.php';
+require_once APPDIR . '/config.php';
+
+
+app()->Run();
