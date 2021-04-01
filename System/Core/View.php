@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.3
+ * @version 3.4
  */
 
 namespace System;
@@ -57,7 +57,7 @@ class View
 					return $return = $ob_content;
 				}
 			} else {
-				MError::title('View Error!')::print('View File Found!', 'View Name: ' . $module . '/' . $view);
+				MError::title('View Error!')::stop(true)::print('View File Found!', 'View Name: ' . $module . '/' . $view);
 			}
 		} else {
 
@@ -66,7 +66,7 @@ class View
 				$blade = new \Jenssegers\Blade\Blade($viewDir, $cacheDir);
 				return $blade->make($view, $data)->render();
 			} else {
-				MError::title('Blade View Error!')::print('Blade View File Found!', 'Blade View Name: ' . $module . '/' . $view);
+				MError::title('Blade View Error!')::stop(true)::print('Blade View File Found!', 'Blade View Name: ' . $module . '/' . $view);
 			}
 		}
 	}
@@ -105,19 +105,19 @@ class View
 								$content = $view != null ? self::import($module, $view, $data, $return) : null;
 								require_once $file;
 							} else {
-								MError::title('View Error!')::print('Layout File Found!', 'Layout Name: Main');
+								MError::title('View Error!')::stop(true)::print('Layout File Found!', 'Layout Name: Main');
 							}
 						} else {
-							MError::title('View Error!')::print('Layout Dir Not Found!');
+							MError::title('View Error!')::stop(true)::print('Layout Dir Not Found!');
 						}
 					} else {
 						echo self::import($module, $view, $data, $return);
 					}
 				} else {
-					MError::title('View Error!')::print('View Dir Not Found!');
+					MError::title('View Error!')::stop(true)::print('View Dir Not Found!');
 				}
 			} else {
-				MError::title('View Error!')::print('Module Not Found!', 'Module Name: ' . $module);
+				MError::title('View Error!')::stop(true)::print('Module Not Found!', 'Module Name: ' . $module);
 			}
 		}
 	}

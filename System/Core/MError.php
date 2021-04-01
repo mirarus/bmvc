@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.1
+ * @version 2.2
  */
 
 namespace System;
@@ -20,6 +20,7 @@ class MError
 	private static $getInstance;
 	protected static $html;
 	protected static $title;
+	protected static $stop;
 	protected static $color;
 	protected static $colors = [
 		'danger' => '244 67 54',
@@ -69,7 +70,7 @@ class MError
 		echo isset($message) && !empty($message) ? '<div style="margin-top: 15px; font-size: 14px; font-family: Consolas, Monaco, Menlo, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif; color: #ac0e10;">' . $message . "</div>" : null; 
 		echo "</div>";
 		echo $html == true ? "</body></html>\n" : "\n";
-		if ($stop === true) exit();
+		if ($stop == true) exit();
 	}
 
 	static function print($text, $message=null, $html=false, $title=null, $color=null, $stop=false, $response_code=200): void
@@ -83,6 +84,8 @@ class MError
 		if ((self::$html == true ? self::$html : $html) == true) {
 			$title = isset(self::$title) ? self::$title : $title;
 		}
+
+		$stop = isset(self::$stop) ? self::$stop : $stop;
 
 		self::template($text, $message, $html, $title, $color, $stop, $response_code);
 		self::reset();
@@ -106,6 +109,11 @@ class MError
 	static function title(string $title): self
 	{
 		return self::getInstance()->setTitle($title);
+	}
+
+	static function stop(string $stop): self
+	{
+		return self::getInstance()->setStop($stop);
 	}
 
 	function __call($method, $args)
@@ -141,6 +149,8 @@ class MErrorA extends MError
 				return $this->setHtml($value);
 			} if ($key == 'title') {
 				return $this->setTitle($value);
+			} if ($key == 'stop') {
+				return $this->setStop($value);
 			}
 		}, array_keys($array), array_values($array));
 		return $this;
@@ -161,6 +171,12 @@ class MErrorA extends MError
 	public function setTitle(string $title): self
 	{
 		self::$title = $title;
+		return $this;
+	}
+
+	public function setStop(string $stop): self
+	{
+		self::$stop = $stop;
 		return $this;
 	}
 }
