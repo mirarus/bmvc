@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.9
+ * @version 2.0
  */
 
 if (file_exists(ROOTDIR . '/vendor/autoload.php')) {
@@ -32,7 +32,6 @@ if (config('general/environment')) {
 
 require_once 'MException.php';
 require_once 'AutoLoader.php';
-require_once 'routes.php';
 
 require_once APPDIR . '/routes.php';
 require_once APPDIR . '/config.php';

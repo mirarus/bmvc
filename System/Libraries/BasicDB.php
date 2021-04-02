@@ -14,7 +14,7 @@ if (function_exists('mb_internal_encoding')) {
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.1
+ * @version 1.2
  */
 
 
@@ -52,6 +52,7 @@ class BasicDB extends \PDO
 	$orderBy,
 	$groupBy,
 	$limit,
+	$sqlq,
 	$page,
 	$totalRecord,
 	$paginationLimit,
@@ -150,15 +151,15 @@ class BasicDB extends \PDO
 		return $this;
 	}
 
-	public function join($targetTable, $joinSql, $joinType = 'inner')
+	public function join($targetTable, $joinSql, $joinType = 'inner', $and)
 	{
 		$this->join[] = ' ' . strtoupper($joinType) . ' JOIN ' . $targetTable . ' ON ' . sprintf($joinSql, $targetTable, $this->tableName);
 		return $this;
 	}
 
-	public function leftJoin($targetTable, $joinSql)
+	public function leftJoin($targetTable, $joinSql, $and)
 	{
-		$this->join($targetTable, $joinSql, 'left');
+		$this->join($targetTable, $joinSql, 'left', $and);
 		return $this;
 	}
 
@@ -183,6 +184,12 @@ class BasicDB extends \PDO
 	public function limit($start, $limit)
 	{
 		$this->limit = ' LIMIT ' . $start . ',' . $limit;
+		return $this;
+	}
+
+	public function sql($sqlq)
+	{
+		$this->sqlq = $sqlq;
 		return $this;
 	}
 
@@ -253,6 +260,10 @@ class BasicDB extends \PDO
 		}
 		if ($this->debug) {
 			echo $this->getSqlString();
+		}
+		if ($this->sqlq) {
+			$this->sql .= $this->sqlq;
+			$this->sqlq = null;
 		}
 		$this->type = '';
 		$query = $this->query($this->sql);
