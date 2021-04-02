@@ -62,134 +62,44 @@ if (!function_exists('GetIP')) {
 }
 
 if (!function_exists('res')) {
-	function res($var=null) {
-		if (nis_em($var)) {
-			return $_SERVER;
-		} else {
-			return isset($_SERVER[$var]) ? $_SERVER[$var] : null;
-		}
+	function res($data=null) {
+		return System\Request::filter($data, 'server', false);
 	}
 }
 
 if (!function_exists('req')) {
-	function req($var=null) {
-		if (nis_em($var)) {
-			return $_REQUEST;
-		} else {
-			return isset($_REQUEST[$var]) ? $_REQUEST[$var] : null;
-		}
-	}
-}
-
-if (!function_exists('reg')) {
-	function reg($var=null) {
-		if (nis_em($var)) {
-			return $_GET;
-		} else {
-			return isset($_GET[$var]) ? $_GET[$var] : null;
-		}
+	function req($data=null) {
+		return System\Request::filter($data, 'request', false);
 	}
 }
 
 if (!function_exists('rep')) {
-	function rep($var=null) {
-		if (nis_em($var)) {
-			return $_POST;
-		} else {
-			return isset($_POST[$var]) ? $_POST[$var] : null;
-		}
+	function rep($data=null) {
+		return System\Request::filter($data, 'post', false);
+	}
+}
+
+if (!function_exists('reg')) {
+	function reg($data=null) {
+		return System\Request::filter($data, 'get', false);
 	}
 }
 
 if (!function_exists('ref')) {
-	function ref($var=null) {
-		if (nis_em($var)) {
-			return $_FILES;
-		} else {
-			return isset($_FILES[$var]) ? $_FILES[$var] : null;
-		}
+	function ref($data=null) {
+		return System\Request::filter($data, 'files', false);
 	}
 }
 
 if (!function_exists('rea')) {
-	function rea($val=null, $var=null) {
-		if ($val == 'server') {
-			return res($var);
-		} elseif ($val == 'request') {
-			return req($var);
-		} elseif ($val == 'get') {
-			return reg($var);
-		} elseif ($val == 'post') {
-			return rep($var);
-		} elseif ($val == 'files') {
-			return ref($var);
-		}
+	function rea($type=null, $data=null) {
+		return System\Request::filter($data, $type, false);
 	}
 }
 
 if (!function_exists('filter')) {
-	function filter($text) {
-        $check[1] = chr(34); // symbol "
-        $check[2] = chr(39); // symbol '
-        $check[3] = chr(92); // symbol /
-        $check[4] = chr(96); // symbol `
-        $check[5] = "drop table";
-        $check[6] = "update";
-        $check[7] = "alter table";
-        $check[8] = "drop database";
-        $check[9] = "drop";
-        $check[10] = "select";
-        $check[11] = "delete";
-        $check[12] = "insert";
-        $check[13] = "alter";
-        $check[14] = "destroy";
-        $check[15] = "table";
-        $check[16] = "database";
-        $check[17] = "union";
-        $check[18] = "TABLE_NAME";
-        $check[19] = "1=1";
-        $check[20] = 'or 1';
-        $check[21] = 'exec';
-        $check[22] = 'INFORMATION_SCHEMA';
-        $check[23] = 'like';
-        $check[24] = 'COLUMNS';
-        $check[25] = 'into';
-        $check[26] = 'VALUES';
-        $check[27] = 'kill';
-        $check[28] = 'union';
-        $check[29] = '$';
-        $check[30] = '<?php';
-        $check[31] = '?>';
-        $y = 1;
-        $x = sizeof($check);
-        while ($y <= $x) {
-        	$target = strpos($text, $check[$y]);
-        	if ($target !== false)
-        		$text = str_replace($check[$y], "", $text);
-        	$y++;
-        }
-        return $text;
-    }
-}
-
-if (!function_exists('_filter')) {
-	function _filter($data, $type='post', $db_filter=true) {
-		if ($type == 'server') {
-			$_SERVER = @FilterClass::filterXSS($_SERVER);
-			return $db_filter == true ? @filter(@res($data)) : @res($data);
-		} elseif ($type == 'request') {
-			$_REQUEST = @FilterClass::filterXSS($_REQUEST);
-			return $db_filter == true ? @filter(@req($data)) : @req($data);
-		} elseif ($type == 'get') {
-			$_GET = @FilterClass::filterXSS($_GET);
-			return $db_filter == true ? @filter(@reg($data)) : @reg($data);
-		} elseif ($type == 'post') {
-			$_POST = @FilterClass::filterXSS($_POST);
-			return $db_filter == true ? @filter(@rep($data)) : @rep($data);
-		} elseif ($type == 'files') {
-			$_FILES = @FilterClass::filterXSS($_FILES);
-			return $db_filter == true ? @filter(@ref($data)) : @ref($data);
-		}
+	function filter($data=null, $type='post', $db_filter=true) {
+		return System\Request::filter($data, $type, $db_filter);
 	}
 }
 

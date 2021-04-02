@@ -8,41 +8,31 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.1
  */
-
-use System\Session;
 
 class Csrf
 {
 
-	function __construct($deleteExpired=false)
+	function __construct($deleteExpired=true)
 	{
-		if (Session::has('csrf') == null) {
-			Session::set('csrf', []);
+		if (self::session_get('csrf') == null) {
+			self::session_set('csrf', []);
 		}
 
 		if ($deleteExpired) {
-			foreach (Session::get('csrf') as $key => $value) {
-				if (Session::has('csrf')) {
-					if (Session::has('csrf', $key)) {
-						if (time() >= Session::get('csrf', $key)['time'] && Session::get('csrf', $key)['token']) {
-							$this->delete($key);
-						}
-					}
-				}
-			}
+			self::deleteExpired();
 		}
 	}
 
 	static function generate($time=3600, $length=10)
 	{
-		if (Session::has('csrf') != null) {
+		if (self::session_get('csrf') != null) {
 
 			$token_id = self::random($length);
 			$token = self::token();
 
-			Session::set(['csrf' => [$token_id => [
+			self::session_set(['csrf' => [$token_id => [
 				"token" => $token, 
 				"time" => (time() + $time)
 			]]]);
@@ -57,9 +47,9 @@ class Csrf
 	static function check($data=[])
 	{
 		foreach (@$data as $key => $value) {
-			if (Session::has('csrf') != null) {
-				if (Session::has('csrf', $key)) {
-					if (time() <= Session::get('csrf', $key)['time'] && Session::get('csrf', $key)['token'] == $value) {
+			if (self::session_get('csrf') != null) {
+				if (self::session_get('csrf', $key)) {
+					if (time() <= self::session_get('csrf', $key)['time'] && self::session_get('csrf', $key)['token'] == $value) {
 						return true;
 					}
 					self::delete($key);
@@ -80,18 +70,31 @@ class Csrf
 		}
 	}
 
+	static function deleteExpired()
+	{
+		foreach (self::session_get('csrf') as $key => $value) {
+			if (self::session_get('csrf')) {
+				if (self::session_get('csrf', $key)) {
+					if (time() >= self::session_get('csrf', $key)['time'] && self::session_get('csrf', $key)['token']) {
+						self::delete($key);
+					}
+				}
+			}
+		}
+	}
+
 	private static function delete($key)
 	{
-		if (Session::has('csrf') != null) {
-			if (Session::has('csrf', $key)) {
-				Session::delete('csrf', $key);
+		if (self::session_get('csrf') != null) {
+			if (self::session_get('csrf', $key)) {
+				self::session_del('csrf', $key);
 			}
 		}
 	}
 
 	private static function token()
 	{
-		if (Session::has('csrf')) {
+		if (self::session_get('csrf')) {
 			return base64_encode(hash('sha256', self::random(500)));
 		}
 	}
@@ -128,7 +131,36 @@ class Csrf
 		}
 		return $return;
 	}
+
+	private static function session_get($storage, $child=false)
+	{
+		if ($child == false) {
+			if (isset($_SESSION[md5($storage)])) {
+				return $_SESSION[md5($storage)];
+			}
+		} else {
+			if (isset($_SESSION[md5($storage)][$child])) {
+				return $_SESSION[md5($storage)][$child];
+			}
+		}
+	}
+
+	private static function session_set($storage, $content=null)
+	{
+		if (is_array($storage)) {
+			foreach ($storage as $key => $value) {
+				$_SESSION[md5($key)] = $value;
+			}
+		} else {
+			$_SESSION[md5($storage)] = $content;
+		}
+	}
+
+	private static function session_del($storage, $child)
+	{
+		unset($_SESSION[md5($storage)][$child]);
+	}
 }
 
 # Initialize
-new Csrf(true);
+new Csrf;

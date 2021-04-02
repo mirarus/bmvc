@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.3
+ * @version 1.4
  */
 
 class AutoLoader
@@ -27,8 +27,6 @@ class AutoLoader
 
 	private function init()
 	{
-		new System\Model;
-
 		app()->route = System\Route::instance();
 		app()->controller = System\Controller::instance();
 		app()->model = System\Model::instance();
@@ -39,6 +37,9 @@ class AutoLoader
 		app()->library = System\Library::instance();
 		app()->helper = System\Helper::instance();
 		app()->session = System\Session::instance();
+		app()->request = System\Request::instance();
+		app()->header = System\Header::instance();
+		app()->filter = System\Filter::instance();
 	}
 
 	function autoload($class)
@@ -94,9 +95,6 @@ class AutoLoader
 			if (class_exists($class)) {
 				new $class;
 			}
-			/* else {
-				ep('Class Not Defined in System\Core File!', 'Class Name: ' . $class);
-			}*/
 		} else {
 			ep('Class Not Found!', 'Class Name: ' . $class);
 		}
@@ -111,9 +109,6 @@ class AutoLoader
 
 		if (file_exists($file)) {
 			require_once $file;
-			/*if (!class_exists($class)) {
-				ep('Class Not Defined in System\Libraries File!', 'Class Name: ' . $class);
-			}*/
 		}
 	}
 
@@ -126,26 +121,19 @@ class AutoLoader
 
 		if (file_exists($file)) {
 			require_once $file;
-			/*if (!class_exists($class)) {
-				ep('Class Not Defined in System\Libraries File!', 'Class Name: ' . $class);
-			}*/
 		}
 	}
 
 	private function loadHelpers()
 	{
 		array_map(function ($file) {
-
 			if ($file == APPDIR . '/Helpers/index.php') return false;
 			require_once $file;
-
 		}, glob(APPDIR . "/Helpers/*.php"));
 
 		array_map(function ($file) {
-			
 			if ($file == SYSTEMDIR . '/Helpers/index.php') return false;
 			require_once $file;
-
 		}, glob(SYSTEMDIR . "/Helpers/*.php"));
 	}
 }

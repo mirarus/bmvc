@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.4
+ * @version 3.5
  */
 
 namespace System;
@@ -26,8 +26,14 @@ class App
 
 	private static $instance;
 	private static $patterns  = [
+		':all'        => '(.*)',
+		':num'        => '([0-9]+)',
+		':alpha'	  => '([a-zA-Z]+)',
+		':alpnum'     => '([a-zA-Z0-9_-]+)',
+		':lowercase'  => '([a-z]+)',
+		':uppercase'  => '([A-Z]+)',
+
 		'{all}'       => '(.*)',
-		'{al}'        => '([^/]+)',
 		'{num}'       => '([0-9]+)',
 		'{alpha}'	  => '([a-zA-Z]+)',
 		'{alpnum}'    => '([a-zA-Z0-9_-]+)',
