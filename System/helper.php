@@ -153,10 +153,14 @@ if (!function_exists('_route')) {
 }
 
 if (!function_exists('app')) {
-	function app($class=null) {
+	function app($class=null, $method=null, $params=[]) {
 		$app = \System\App::instance();
 		if ($class) {
-			return $app->$class;
+			if (isset($method) && !empty($method)) {
+				return call_user_func_array([$app->$class, $method], $params);
+			} else {
+				return $app->$class;
+			}
 		}
 		return $app;
 	}

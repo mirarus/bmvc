@@ -8,12 +8,12 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 4.1
+ * @version 4.3
  */
 
 namespace System;
 
-use System\Route;
+use System\{Route, Request};
 
 class Lang
 {
@@ -50,21 +50,21 @@ class Lang
 		Route::prefix('lang')::group(function() {
 
 			Route::match(['GET', 'POST'], 'set/{lowercase}',  function($lang) {
-				Lang::set($lang);
+				self::set($lang);
 				if (check_method('GET')) {
 					redirect(url());
 				}
 			});
 
-			Route::match(['GET', 'POST'], 'get/{alpnum}',  function($text) {
-				Lang::__($text, _filter('replace', 'request'));
+			Route::match(['GET', 'POST'], 'get/{all}',  function($text) {
+				self::__($text, Request::request('replace'));
 			});
 
-			Route::match(['GET', 'POST'], 'get/{alpnum}/{lowercase}',  function($text, bool $return=false) {
+			Route::match(['GET', 'POST'], 'get/{all}/{lowercase}',  function($text, bool $return=false) {
 				if ($return == true) {
-					Lang::___($text, _filter('replace', 'request'));
+					self::___($text, Request::request('replace'));
 				} else {
-					Lang::__($text, _filter('replace', 'request'));
+					self::__($text, Request::request('replace'));
 				}
 			});
 		});
@@ -119,7 +119,8 @@ class Lang
 							if (isset($_lang[$text])) {
 								return $_lang[$text];
 							} else {
-								MError::print('Language Not Found!', 'Language Text: ' . $text);
+								return $text;
+								// MError::print('Language Not Found!', 'Language Text: ' . $text);
 							}
 						} else {
 							MError::print('Language Not Found!', 'Language Name: ' . self::$current_lang);
@@ -135,7 +136,8 @@ class Lang
 						if (isset($_lang[$text])) {
 							return $_lang[$text];
 						} else {
-							MError::print('Language Not Found!', 'Language Text: ' . $text);
+							return $text;
+							// MError::print('Language Not Found!', 'Language Text: ' . $text);
 						}
 					} else {
 						MError::print('Language Not Found!', 'Language Name: ' . self::$current_lang);
@@ -188,11 +190,11 @@ class Lang
 		}
 	}
 
-	private static function _get_lang_info($lang, $par=null)
+	private static function _get_lang_info($_xlang, $par=null)
 	{
 		if (_dir(self::$lang_dir)) {
 
-			if ($lang == 'index') return false;
+			if ($_xlang == 'index') return false;
 			
 			$_config = false;
 			$_data = [];
@@ -203,38 +205,38 @@ class Lang
 				$inc_file = include ($file);
 
 				if (is_array($inc_file) && !empty($inc_file)) {
-					
-					$_config = true;
 
-					$_lang_ = $inc_file[$lang];
+					$_lang_ = $inc_file[$_xlang];
 
 					if (isset($_lang_) && isset($_lang_['info'])) {
+
+						$_config = true;
 
 						$_lang = $_lang_['langs'];
 
 						$_data = [
-							'code' => @$lang,
+							'code' => @$_xlang,
 							'name-global' => @$_lang_['info']['name-global'],
 							'name-local' => @$_lang_['info']['name-local']
 						];
 					} else {
-						MError::print('Language Not Found!', 'Language Name: ' . $lang);
+						MError::print('Language Not Found!', 'Language Name: ' . $_xlang);
 					}
 				}
 			}
 
 			if ($_config == false) {
-				if (file_exists($file = self::$lang_dir . $lang . '.php')) {
+				if (file_exists($file = self::$lang_dir . $_xlang . '.php')) {
 
 					include $file;
 
 					$_data = [
-						'code' => @$lang,
+						'code' => @$_xlang,
 						'name-global' => @$_lang_name[0],
 						'name-local' => @$_lang_name[1]
 					];
 				} else {
-					MError::print('Language Not Found!', 'Language Name: ' . $lang);
+					MError::print('Language Not Found!', 'Language Name: ' . $_xlang);
 				}
 			}
 
