@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.4
+ * @version 1.5
  */
 
 class AutoLoader
@@ -39,6 +39,7 @@ class AutoLoader
 		app()->session = System\Session::instance();
 		app()->request = System\Request::instance();
 		app()->header = System\Header::instance();
+		app()->ip = System\IP::instance();
 		app()->filter = System\Filter::instance();
 	}
 

@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.5
+ * @version 3.6
  */
 
 namespace System;
@@ -22,7 +22,7 @@ class App
 	$baseRoute = '/',
 	$ip = '';
 
-	static $notFound = '';
+	public static $notFound = '';
 
 	private static $instance;
 	private static $patterns  = [
@@ -41,7 +41,7 @@ class App
 		'{uppercase}' => '([A-Z]+)',
 	];
 
-	function __construct()
+	public function __construct()
 	{
 		if (is_cli()) {
 			die("Cli Not Available, Browser Only.");
@@ -80,7 +80,7 @@ class App
 		}
 	}
 
-	static function instance()
+	public static function instance()
 	{
 		if (self::$instance === null) {
 			self::$instance = new self;
@@ -88,7 +88,7 @@ class App
 		return self::$instance;
 	}
 
-	static function Route($method, $pattern, $callback)
+	public static function Route($method, $pattern, $callback)
 	{
 		$closure = null;
 		if ($pattern == '/') {
@@ -102,7 +102,6 @@ class App
 		}
 		foreach (self::$patterns as $key => $value) {
 			$pattern = @strtr($pattern, [$key => $value]);
-			//$pattern = str_replace($key, $value, $pattern);
 		}
 		if (is_callable($callback)) {
 			$closure = $callback;
@@ -120,19 +119,21 @@ class App
 		self::$routes[] = $route_;
 	}
 
-	static function Run()
+	public static function Run()
 	{
 		if (isset(self::$routes) && !empty(self::$routes) && is_array(self::$routes)) {
 			$match = 0;
+
 			foreach (self::$routes as $route) {
+
 				$method = $route['method'];
 				$action = $route['callback'];
 				$url 	= $route['pattern'];
-				$route['ip'] = $route['ip'] ?? null;
-				$_GET['url'] = $_GET['url'] ?? null;
+				$ip 	= (isset($route['ip']) ? $route['ip'] : null);
+				$_url   = isset($_GET['url']) ? $_GET['url'] : null;
 
-				if (preg_match("#^{$url}$#", '/' . rtrim(@$_GET['url'], '/'), $params)) {
-					if ($method === @self::get_request_method() && @self::check_ip(@$route['ip'])) {
+				if (preg_match("#^{$url}$#", '/' . rtrim(@$_url, '/'), $params)) {
+					if ($method === @Request::getRequestMethod() && @Request::checkIp($ip)) {
 
 						if (strstr(@$_SERVER['REQUEST_URI'], '/Public/')) {
 							self::get_404();
@@ -144,7 +145,7 @@ class App
 						if (is_callable($action)) {
 							return call_user_func_array($action, array_values($params));
 						} else {
-							if (!isset($_GET['url']) && empty($_GET['url'])) {
+							if (!isset($_url) && empty($_url)) {
 								$action = [
 									config('default/module'), 
 									config('default/controller'), 
@@ -181,63 +182,21 @@ class App
 			}
 		} else {
 			MError::title('Page Error!')::print('404 Page Not Found!', 'Page: ' . reg('url'), true);
-			// MError::print('404 Not Found!', null, true);
 		}
 		exit();
 	}
 
-	private static function get_request_method()
-	{
-		$method = @$_SERVER['REQUEST_METHOD'];
-		if ($method == "HEAD") {
-			ob_start();
-			$method = "GET";
-		} elseif ($method == "POST") {
-			if (function_exists('getallheaders'))
-				getallheaders();
-			$headers = [];
-			foreach ($_SERVER as $name => $value) {
-				if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
-					$headers[@strtr(ucwords(strtolower(@strtr(substr($name, 5), ['_' => ' ']))), [' ' => '-', 'Http' => 'HTTP'])] = $value;
-				}
-			}
-			if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], ["PUT", "DELETE", "PATCH"])) {
-				$method = $headers['X-HTTP-Method-Override'];
-			}
-		}
-		return $method;
-	}
-
-	private static function check_ip($ip=null)
-	{
-		if (isset($ip) && !empty($ip)) {
-			if (is_array($ip)) {
-				if (!in_array($_SERVER['REMOTE_ADDR'], $ip)) {
-					return false;
-				}
-				return true;
-			} else {
-				if ($_SERVER['REMOTE_ADDR'] != $ip) {
-					return false;
-				}
-				return true;
-			}
-			return true;
-		}
-		return true;
-	}
-
-	function __call($method, $args)
+	public function __call($method, $args)
 	{
 		return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
 	}
 
-	static function __callStatic($method, $args)
+	public static function __callStatic($method, $args)
 	{
 		return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
 	}
 
-	function __set($key, $value)
+	public function __set($key, $value)
 	{
 		$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
 	}

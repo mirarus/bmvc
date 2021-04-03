@@ -8,15 +8,14 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.1
+ * @version 1.2
  */
 
 namespace System;
 
-use System\{Header, Filter};
-
 class Request
 {
+
 	const METHOD_HEAD = 'HEAD';
 	const METHOD_GET = 'GET';
 	const METHOD_POST = 'POST';
@@ -28,16 +27,41 @@ class Request
 
 	private static $instance;
 	private static $formDataMediaTypes = ['application/x-www-form-urlencoded'];
-	private $server;
-	public $header;
+	private static $_server;
+	private static $_header;
+	private static $_ip;
+	private static $_body;
+
+	public $body;
+	public $server;
+	public $request;
+	public $env;
+	public $session;
+	public $cookie;
+	public $files;
+	public $post;
+	public $get;
 
 	public function __construct()
 	{
-		$this->server = $_SERVER;
-		$this->header = Header::extract($this->server);
+		self::$_server = $_SERVER;
+		self::$_header = Header::extract(self::$_server);
+		self::$_ip = IP::get();
+		self::$_body = [
+			'server'  => self::server(),
+			'request' => self::request(),
+			'env'     => self::env(),
+			'session' => self::session(),
+			'cookie'  => self::cookie(),
+			'files'   => self::files(),
+			'post'    => self::post(),
+			'get'     => self::get()
+		];
+
+		$this->getBody('object');
 	}
 
-	static function instance()
+	public static function instance()
 	{
 		if (self::$instance === null) {
 			self::$instance = new self;
@@ -45,83 +69,115 @@ class Request
 		return self::$instance;
 	}
 
-	public function getMethod()
+	private function getBody(string $type='object')
 	{
-		return $this->server['REQUEST_METHOD'];
+		if ($type == 'object') {
+			$this->body    = self::arrayToObject(self::$_body);
+
+			$this->server  = $this->body->server;
+			$this->request = $this->body->request;
+			$this->env     = $this->body->env;
+			$this->session = $this->body->session;
+			$this->cookie  = $this->body->cookie;
+			$this->files   = $this->body->files;
+			$this->post    = $this->body->post;
+			$this->get     = $this->body->get;
+		} elseif ($type == 'array') {
+			$this->body    = self::$_body;
+
+			$this->server  = $this->body['server'];
+			$this->request = $this->body['request'];
+			$this->env     = $this->body['env'];
+			$this->session = $this->body['session'];
+			$this->cookie  = $this->body['cookie'];
+			$this->files   = $this->body['files'];
+			$this->post    = $this->body['post'];
+			$this->get     = $this->body['get'];
+		} else {
+			$this->body    = self::$_body;
+
+			$this->server  = $this->body['server'];
+			$this->request = $this->body['request'];
+			$this->env     = $this->body['env'];
+			$this->session = $this->body['session'];
+			$this->cookie  = $this->body['cookie'];
+			$this->files   = $this->body['files'];
+			$this->post    = $this->body['post'];
+			$this->get     = $this->body['get'];
+		}
 	}
 
-	public function isGet()
+	public static function header($key=null, $default=null)
 	{
-		return $this->getMethod() === self::METHOD_GET;
+		if ($key) {
+			if ($default) {
+				return self::$_header[$key] == $default;
+			}
+			return isset(self::$_header[$key]) ? self::$_header[$key] : null;
+		}
+		return self::$_header;
 	}
 
-	public function isPost()
+	public static function getMethod()
 	{
-		return $this->getMethod() === self::METHOD_POST;
+		return self::$_server['REQUEST_METHOD'];
 	}
 
-	public function isPut()
+	public static function isGet()
 	{
-		return $this->getMethod() === self::METHOD_PUT;
+		return self::getMethod() === self::METHOD_GET;
 	}
 
-	public function isPatch()
+	public static function isPost()
 	{
-		return $this->getMethod() === self::METHOD_PATCH;
+		return self::getMethod() === self::METHOD_POST;
 	}
 
-	public function isDelete()
+	public static function isPut()
 	{
-		return $this->getMethod() === self::METHOD_DELETE;
+		return self::getMethod() === self::METHOD_PUT;
 	}
 
-	public function isHead()
+	public static function isPatch()
 	{
-		return $this->getMethod() === self::METHOD_HEAD;
+		return self::getMethod() === self::METHOD_PATCH;
 	}
 
-	public function isOptions()
+	public static function isDelete()
 	{
-		return $this->getMethod() === self::METHOD_OPTIONS;
+		return self::getMethod() === self::METHOD_DELETE;
 	}
 
-	public function isAjax()
+	public static function isHead()
 	{
-		if ($this->params('isajax')) {
-			return true;
-		} elseif (isset($this->header['X_REQUESTED_WITH']) && $this->header['X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+		return self::getMethod() === self::METHOD_HEAD;
+	}
+
+	public static function isOptions()
+	{
+		return self::getMethod() === self::METHOD_OPTIONS;
+	}
+
+	public static function isAjax()
+	{
+		if (self::header('X_REQUESTED_WITH') !== null && self::header('X_REQUESTED_WITH') === 'XMLHttpRequest') {
 			return true;
 		}
-
 		return false;
 	}
 
-	public function isXhr()
+	public static function isFormData()
 	{
-		return $this->isAjax();
+		return (self::getMethod() === self::METHOD_POST && is_null(self::getContentType())) || in_array(self::getMediaType(), self::$formDataMediaTypes);
+	}
+	public static function getContentType()
+	{
+		return self::header('CONTENT_TYPE');
 	}
 
-	public function isFormData()
+	public static function getMediaType()
 	{
-		return ($this->getMethod() === self::METHOD_POST && is_null($this->getContentType())) || in_array($this->getMediaType(), self::$formDataMediaTypes);
-	}
-
-	public function headers($key = null, $default = null)
-	{
-		if ($key) {
-			return $this->header->get($key, $default);
-		}
-		return $this->header;
-	}
-
-	public function getContentType()
-	{
-		return $this->header->get('CONTENT_TYPE');
-	}
-
-	public function getMediaType()
-	{
-		$contentType = $this->getContentType();
+		$contentType = self::getContentType();
 		if ($contentType) {
 			$contentTypeParts = preg_split('/\s*[;,]\s*/', $contentType);
 			return strtolower($contentTypeParts[0]);
@@ -129,9 +185,9 @@ class Request
 		return null;
 	}
 
-	public function getMediaTypeParams()
+	public static function getMediaTypeParams()
 	{
-		$contentType = $this->getContentType();
+		$contentType = self::getContentType();
 		$contentTypeParams = array();
 		if ($contentType) {
 			$contentTypeParts = preg_split('/\s*[;,]\s*/', $contentType);
@@ -144,114 +200,103 @@ class Request
 		return $contentTypeParams;
 	}
 
-	public function getContentCharset()
+	public static function getContentCharset()
 	{
-		$mediaTypeParams = $this->getMediaTypeParams();
+		$mediaTypeParams = self::getMediaTypeParams();
 		if (isset($mediaTypeParams['charset'])) {
 			return $mediaTypeParams['charset'];
 		}
 		return null;
 	}
 
-	public function getContentLength()
+	public static function getContentLength()
 	{
-		return $this->header->get('CONTENT_LENGTH', 0);
+		return self::header('CONTENT_LENGTH', 0);
 	}
 
-	public function getHost()
+	public static function getHost()
 	{
-		if (isset($this->server['HTTP_HOST'])) {
-			if (strpos($this->server['HTTP_HOST'], ':') !== false) {
-				$hostParts = explode(':', $this->server['HTTP_HOST']);
+		if (isset(self::$_server['HTTP_HOST'])) {
+			if (strpos(self::$_server['HTTP_HOST'], ':') !== false) {
+				$hostParts = explode(':', self::$_server['HTTP_HOST']);
 				return $hostParts[0];
 			}
-			return $this->server['HTTP_HOST'];
+			return self::$_server['HTTP_HOST'];
 		}
-		return $this->server['SERVER_NAME'];
+		return self::$_server['SERVER_NAME'];
 	}
 
-	public function getHostWithPort()
+	public static function getPort()
 	{
-		return sprintf('%s:%s', $this->getHost(), $this->getPort());
+		return (int) self::$_server['SERVER_PORT'];
 	}
 
-	public function getPort()
+	public static function getHostWithPort()
 	{
-		return (int)$this->server['SERVER_PORT'];
+		return sprintf('%s:%s', self::getHost(), self::getPort());
 	}
 
-	public function getScheme()
+	public static function getScheme()
 	{
-		return stripos($this->server['SERVER_PROTOCOL'], 'https') === true ? 'https' : 'http';
+		return stripos(self::$_server['SERVER_PROTOCOL'], 'https') === true ? 'https' : 'http';
 	}
 
-	public function getScriptName()
+	public static function getScriptName()
 	{
-		return $this->server['SCRIPT_NAME'];
+		return self::$_server['SCRIPT_NAME'];
 	}
 
-	public function getRootUri()
+	public static function getPathInfo()
 	{
-		return $this->getScriptName();
+		return self::$_server['PATH_INFO'];
 	}
 
-	public function getPath()
+	public static function getPath()
 	{
-		return $this->getScriptName() . $this->getPathInfo();
+		return self::getScriptName() . self::getPathInfo();
 	}
 
-	public function getPathInfo()
+	public static function getResourceUri()
 	{
-		return $this->server['PATH_INFO'];
+		return self::getPathInfo();
 	}
 
-	public function getResourceUri()
+	public static function getUrl()
 	{
-		return $this->getPathInfo();
-	}
-
-	public function getUrl()
-	{
-		$url = $this->getScheme() . '://' . $this->getHost();
-		if (($this->getScheme() === 'https' && $this->getPort() !== 443) || ($this->getScheme() === 'http' && $this->getPort() !== 80)) {
-			$url .= sprintf(':%s', $this->getPort());
+		$url = self::getScheme() . '://' . self::getHost();
+		if ((self::getScheme() === 'https' && self::getPort() !== 443) || (self::getScheme() === 'http' && self::getPort() !== 80)) {
+			$url .= sprintf(':%s', self::getPort());
 		}
 		return $url;
 	}
 
-	public function getIp()
+	public static function getIp()
 	{
-		$keys = array('X_FORWARDED_FOR', 'HTTP_X_FORWARDED_FOR', 'CLIENT_IP', 'REMOTE_ADDR');
-		foreach ($keys as $key) {
-			if (isset($this->server[$key])) {
-				return $this->server[$key];
-			}
-		}
-		return $this->server['REMOTE_ADDR'];
+		return self::$_ip;
+	}
+	
+	public static function getReferrer()
+	{
+		return self::header('HTTP_REFERER');
 	}
 
-	public function getReferrer()
+	public static function getReferer()
 	{
-		return $this->header->get('HTTP_REFERER');
+		return self::getReferrer();
 	}
 
-	public function getReferer()
+	public static function getUserAgent()
 	{
-		return $this->getReferrer();
+		return self::header('HTTP_USER_AGENT');
 	}
 
-	public function getUserAgent()
+	public static function getRequestMethod()
 	{
-		return $this->header->get('HTTP_USER_AGENT');
-	}
-
-	static public function getRequestMethod()
-	{
-		$method = $_SERVER['REQUEST_METHOD'];
-		if ($method == self::METHOD_HEAD) {
+		$method = self::getMethod();
+		if ($method === self::METHOD_HEAD) {
 			ob_start();
 			$method = self::METHOD_GET;
-		} elseif ($method == self::METHOD_POST) {
+		} elseif ($method === self::METHOD_POST) {
 			if (function_exists('getallheaders'))
 				getallheaders();
 			$headers = [];
@@ -260,32 +305,32 @@ class Request
 					$headers[@strtr(ucwords(strtolower(@strtr(substr($name, 5), ['_' => ' ']))), [' ' => '-', 'Http' => 'HTTP'])] = $value;
 				}
 			}
-			if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], [self::METHOD_PUT, self::METHOD_DELETE, self::METHOD_PATCH])) {
-				$method = $headers['X-HTTP-Method-Override'];
+			if (self::header('X-HTTP-Method-Override') !== null && in_array(self::header('X-HTTP-Method-Override'), [self::METHOD_PUT, self::METHOD_DELETE, self::METHOD_PATCH])) {
+				$method = self::header('X-HTTP-Method-Override');
 			}
 		}
 		return $method;
 	}
 
-	static public function checkDomain($domain)
+	public static function checkDomain($domain)
 	{
 		if (isset($domain) && !empty($domain)) {
-			if ($domain !== trim(str_replace('www.', '', $_SERVER['SERVER_NAME']), '/'))
+			if ($domain !== trim(str_replace('www.', '', self::$_server['SERVER_NAME']), '/'))
 				return false;
 			return true;
 		}
 		return true;
 	}
 
-	static public function checkIp($ip)
+	public static function checkIp($ip)
 	{
 		if (isset($ip) && !empty($ip)) {
 			if (is_array($ip)) {
-				if (!in_array($_SERVER['REMOTE_ADDR'], $ip))
+				if (!in_array(self::getIp(), $ip))
 					return false;
 				return true;
 			} else {
-				if ($_SERVER['REMOTE_ADDR'] != $ip)
+				if (self::getIp() != $ip)
 					return false;
 				return true;
 			}
@@ -294,63 +339,115 @@ class Request
 		return true;
 	}
 
-	static private function rea($method, $data=null, $db_filter=true)
+	public static function server($data=null, $db_filter=true, $xss_filter=true)
 	{
-		$_method = @Filter::filterXSS($method);
+		return self::rea($_SERVER, $data, $db_filter, $xss_filter);
+	}
+
+	public static function request($data=null, $db_filter=true, $xss_filter=true)
+	{
+		return self::rea($_REQUEST, $data, $db_filter, $xss_filter);
+	}
+
+	public static function env($data=null)
+	{
+		return self::rea($_ENV, $data, false, false);
+	}
+
+	public static function session($data=null)
+	{
+		return self::rea($_SESSION, $data, false, false);
+	}
+
+	public static function cookie($data=null)
+	{
+		return self::rea($_COOKIE, $data, false, false);
+	}
+
+	public static function files($data=null, $xss_filter=true)
+	{
+		return self::rea($_FILES, $data, false, $xss_filter);
+	}
+
+	public static function post($data=null, $db_filter=true, $xss_filter=true)
+	{
+		return self::rea($_POST, $data, $db_filter, $xss_filter);
+	}
+
+	public static function get($data=null, $db_filter=true, $xss_filter=true)
+	{
+		return self::rea($_GET, $data, $db_filter, $xss_filter);
+	}
+
+	public static function filter($data=null, $type='post', $db_filter=true, $xss_filter=true)
+	{
+		if ($type == 'server') {
+			return self::server($data, $db_filter, $xss_filter);
+		} elseif ($type == 'request') {
+			return self::request($data, $db_filter, $xss_filter);
+		} elseif ($type == 'env') {
+			return self::env($data);
+		} elseif ($type == 'session') {
+			return self::session($data);
+		} elseif ($type == 'cookie') {
+			return self::cookie($data);
+		} elseif ($type == 'files') {
+			return self::files($data, $xss_filter);
+		} elseif ($type == 'post') {
+			return self::post($data, $db_filter, $xss_filter);
+		} elseif ($type == 'get') {
+			return self::get($data, $db_filter, $xss_filter);
+		}
+	}
+
+	public static function body(string $method=null, string $body_type='object')
+	{
+		self::instance()->getBody($body_type);
+
+		if ($method) {
+			if ($body_type == 'object') {
+				return self::instance()->body->$method;
+			} elseif ($body_type == 'array') {
+				return self::instance()->body[$method];
+			} else {
+				return self::instance()->body[$method];
+			}
+		} else {
+			return self::instance()->body;
+		}
+	}
+
+	private static function rea($method, $data=null, $db_filter=true, $xss_filter=true)
+	{
+		if ($xss_filter == true) {
+			$method = @Filter::filterXSS($method);
+		}
 
 		if (isset($data) && !empty($data)) {
 			if ($db_filter == true) {
-				if (isset($_method[$data])) {
-					return @Filter::filterDB($_method[$data]);
+				if (isset($method[$data])) {
+					return @Filter::filterDB($method[$data]);
 				}
 			} else {
-				if (isset($_method[$data])) {
-					return $_method[$data];
+				if (isset($method[$data])) {
+					return $method[$data];
 				}
 			}
 		} else {
-			return $_method;
+			return $method;
 		}
 	}
 
-	static public function server($data=null, $db_filter=true)
+	private static function arrayToObject(array $array) : object
 	{
-		return self::rea($_SERVER, $data, $db_filter);
-	}
-
-	static public function request($data=null, $db_filter=true)
-	{
-		return self::rea($_REQUEST, $data, $db_filter);
-	}
-
-	static public function post($data=null, $db_filter=true)
-	{
-		return self::rea($_POST, $data, $db_filter);
-	}
-
-	static public function get($data=null, $db_filter=true)
-	{
-		return self::rea($_GET, $data, $db_filter);
-	}
-
-	static public function files($data=null)
-	{
-		return self::rea($_FILES, $data, false);
-	}
-
-	static public function filter($data=null, $type='post', $db_filter=true)
-	{
-		if ($type == 'server') {
-			return self::server($data, $db_filter);
-		} elseif ($type == 'request') {
-			return self::request($data, $db_filter);
-		} elseif ($type == 'post') {
-			return self::post($data, $db_filter);
-		} elseif ($type == 'get') {
-			return self::get($data, $db_filter);
-		} elseif ($type == 'files') {
-			return self::files($data, false);
+		$object = new \stdClass();
+		foreach ($array as $key => $value) {
+			if (is_array($value)) {
+				$value = self::arrayToObject($value);
+			}
+			$object->$key = $value;
 		}
+		return $object;
 	}
 
 	function __call($method, $args)

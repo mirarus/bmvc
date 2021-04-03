@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * ROOT HELPERS
+ *
+ * Mirarus BMVC
+ * @package System
+ * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
+ * @link https://github.com/mirarus/bmvc
+ * @license http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version 1.0
+ */
+
 if (!function_exists('pr')) {
 	function pr($data, $stop=false) {
 		echo "<pre>";
@@ -35,6 +46,17 @@ if (!function_exists('config')) {
 				return $_config;
 			}
 		}
+	}
+}
+
+if (!function_exists('base_url')) {
+	function base_url() {
+		$url = ((((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PORT']) && $_SERVER['HTTP_X_FORWARDED_PORT'] == 443)) ? 'https' : 'http') . ':///' . $_SERVER['HTTP_HOST']);
+
+		$url = $url . dirname($_SERVER['PHP_SELF']);
+		$url = @strtr($url, ["Public" => null, "public" => null]);
+		$url = strtr($url, ['\\' => '/', '//' => '/']);
+		return $url;
 	}
 }
 
