@@ -16,11 +16,10 @@ namespace System;
 class App
 {
 
-	protected static 
-	$routes = [],
-	$groups = [],
-	$baseRoute = '/',
-	$ip = '';
+	protected static $routes = [];
+	protected static $groups = [];
+	protected static $baseRoute = '/';
+	protected static $ip;
 
 	public static $notFound = '';
 
@@ -178,7 +177,7 @@ class App
 			if (is_callable(self::$notFound)) {
 				call_user_func(self::$notFound);
 			} else {
-				@Controller::call(@self::$notFound, null);
+				@Controller::call(self::$notFound, null);
 			}
 		} else {
 			MError::title('Page Error!')::print('404 Page Not Found!', 'Page: ' . reg('url'), true);
