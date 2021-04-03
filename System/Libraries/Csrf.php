@@ -34,7 +34,7 @@ class Csrf
 		}
 	}
 
-	static function verify($token)
+	static function verify($token=null)
 	{
 		return self::verifyToken(null, false, $token);
 	}

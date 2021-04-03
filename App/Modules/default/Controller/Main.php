@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-use System\{View, Controller, Model, Lang, MError, Load, Session};
+use System\{View, Controller, Model, MError};
 
 class Main
 {
@@ -10,7 +10,6 @@ class Main
 	{
 
 		// pr(Model::import('default/Main')->settings());
-
 
 		MError::print("Example");
 
@@ -31,7 +30,7 @@ class Main
 		ob_start();
 		pr($_POST);
 
-		if (\Csrf::check($_POST)) {
+		if (\Csrf::verify()) {
 			echo "Result: Pass";
 		} else {
 			echo "Result: Fail";
