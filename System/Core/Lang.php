@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 4.4
+ * @version 4.5
  */
 
 namespace System;
@@ -16,12 +16,11 @@ namespace System;
 class Lang
 {
 
-	private static
-	$instance,
-	$langs = [],
-	$lang = 'en',
-	$current_lang = 'en',
-	$lang_dir = (APPDIR . '/Languages/');
+	private static $instance;
+	private static $langs = [];
+	private static $lang = 'en';
+	private static $current_lang = 'en';
+	private static $lang_dir = (APPDIR . '/Languages/');
 
 	function __construct()
 	{
@@ -47,18 +46,18 @@ class Lang
 	{
 		Route::prefix('lang')::group(function() {
 
-			Route::match(['GET', 'POST'], 'set/{lowercase}',  function($lang) {
+			Route::match(['GET', 'POST'], 'set/{lowercase}', function($lang) {
 				self::set($lang);
 				if (check_method('GET')) {
 					redirect(url());
 				}
 			});
 
-			Route::match(['GET', 'POST'], 'get/{all}',  function($text) {
+			Route::match(['GET', 'POST'], 'get/{all}', function($text) {
 				self::__($text, Request::request('replace'));
 			});
 
-			Route::match(['GET', 'POST'], 'get/{all}/{lowercase}',  function($text, bool $return=false) {
+			Route::match(['GET', 'POST'], 'get/{all}/{lowercase}', function($text, bool $return=false) {
 				if ($return == true) {
 					self::___($text, Request::request('replace'));
 				} else {
