@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.6
+ * @version 3.7
  */
 
 namespace System;
@@ -44,16 +44,6 @@ class App
 	{
 		if (is_cli()) {
 			die("Cli Not Available, Browser Only.");
-		}
-
-		if (session_status() !== PHP_SESSION_ACTIVE || session_id() === "") {
-			@ini_set('session.cookie_httponly', 1);
-			@ini_set('session.use_only_cookies', 1);
-			@ini_set('session.gc_maxlifetime', 3600);
-			@session_set_cookie_params(3600);
-			
-			session_name("BMVC-MMVC");
-			session_start();
 		}
 		
 		header("X-Frame-Options: sameorigin");
@@ -131,6 +121,7 @@ class App
 				$ip 	= (isset($route['ip']) ? $route['ip'] : null);
 				$_url   = isset($_GET['url']) ? $_GET['url'] : null;
 
+
 				if (preg_match("#^{$url}$#", '/' . rtrim(@$_url, '/'), $params)) {
 					if ($method === @Request::getRequestMethod() && @Request::checkIp($ip)) {
 
@@ -180,7 +171,7 @@ class App
 				@Controller::call(self::$notFound, null);
 			}
 		} else {
-			MError::title('Page Error!')::print('404 Page Not Found!', 'Page: ' . reg('url'), true);
+			MError::title('Page Error!')::print('404 Page Not Found!', 'Page: ' . reg('url'), false);
 		}
 		exit();
 	}

@@ -25,7 +25,3 @@ $_config['default'] = [
 	'method' => 'index',
 	'lang' => 'tr'
 ];
-
-$_config['helpers'] = [];
-
-$_config['libraries'] = [];
