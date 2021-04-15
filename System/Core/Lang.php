@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 4.5
+ * @version 4.6
  */
 
 namespace System;
@@ -53,12 +53,11 @@ class Lang
 				}
 			});
 
-			Route::match(['GET', 'POST'], 'get/{all}', function($text) {
-				self::__($text, Request::request('replace'));
-			});
+			Route::match(['GET', 'POST'], 'get/{all}', function($url) {
+				$par  = explode('/', $url);
+				$text = array_shift($par);
 
-			Route::match(['GET', 'POST'], 'get/{all}/{lowercase}', function($text, bool $return=false) {
-				if ($return == true) {
+				if (isset($par[0]) && $par[0] == "true") {
 					self::___($text, Request::request('replace'));
 				} else {
 					self::__($text, Request::request('replace'));
