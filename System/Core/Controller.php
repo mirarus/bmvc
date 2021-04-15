@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.5
+ * @version 3.6
  */
 
 namespace System;
@@ -54,6 +54,27 @@ class Controller
 
 			if (_dir(APPDIR . '/Modules/' . $module)) {
 				if (_dir(APPDIR . '/Modules/' . $module . '/Controller')) {
+
+					if (file_exists($cxfile = APPDIR . '/Modules/' . $module . '/Controller/_' . $module . '_.php')) {
+
+						require_once $cxfile;
+
+						$cxcontroller = '_' . $module . '_';
+
+						if (strpos($cxcontroller, "/") || strpos($cxcontroller, "\\")) {
+							$cxcontroller = explode('/', $cxcontroller);
+							$cxcontroller = end($cxcontroller);
+						}
+
+						$_cxcontroller = ('App\Controller\\' . $cxcontroller);
+
+						if (class_exists($_cxcontroller)) {
+							new $_cxcontroller();
+						} else {
+							MError::title('Controller Error!')::print('Class Not Defined in Controller File!', 'Controller Name: ' . $module . '/' . $cxcontroller);
+						}
+					}
+
 					if (file_exists($file = APPDIR . '/Modules/' . $module . '/Controller/' . $controller . '.php')) {
 						
 						require_once $file;
