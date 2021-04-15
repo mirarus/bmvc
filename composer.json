@@ -16,5 +16,11 @@
         "ext-mbstring": "*",
         "jenssegers/blade": "^1.4",
         "filp/whoops": "^2.12"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "App",
+            "System\\": "System/Core"
+        }
     }
 }
