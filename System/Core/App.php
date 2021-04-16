@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.7
+ * @version 3.8
  */
 
 namespace System;
@@ -34,7 +34,7 @@ class App
 
 		'{all}'       => '(.*)',
 		'{num}'       => '([0-9]+)',
-		'{alpha}'	  => '([a-zA-Z]+)',
+		'{alpha}'	    => '([a-zA-Z]+)',
 		'{alpnum}'    => '([a-zA-Z0-9_-]+)',
 		'{lowercase}' => '([a-z]+)',
 		'{uppercase}' => '([A-Z]+)',
@@ -171,7 +171,7 @@ class App
 				@Controller::call(self::$notFound, null);
 			}
 		} else {
-			MError::title('Page Error!')::print('404 Page Not Found!', 'Page: ' . reg('url'), false);
+			MError::title('Page Error!')::print('404 Page Not Found!', (reg('url') ? 'Page: ' . reg('url') : null) , false);
 		}
 		exit();
 	}
