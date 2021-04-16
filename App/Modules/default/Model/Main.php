@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Model;
-use System\Model;
+use BMVC\Core\Model;
 
 class Main
 {

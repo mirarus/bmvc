@@ -1,5 +1,5 @@
 <?php
 
-use System\Route;
+use BMVC\Core\Route;
 
 Route::any('/', 'default@main@index');

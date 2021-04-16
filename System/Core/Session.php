@@ -4,39 +4,20 @@
  * Session
  *
  * Mirarus BMVC
- * @package System\Core
+ * @package BMVC\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.2
+ * @version 1.3
  */
 
-namespace System;
+namespace BMVC\Core;
 
 class Session
 {
 
 	private static $instance;
 	
-	function __construct()
-	{
-		//@ini_set('session.cookie_httponly', 1);
-		//@ini_set('session.use_only_cookies', 1);
-		//@ini_set('session.gc_maxlifetime', 3600);
-		//@session_set_cookie_params(3600);
-		
-		/*if (session_status() !== PHP_SESSION_ACTIVE || session_id() === "") {
-			session_name("BMVC-MMVC");
-			session_start();
-			
-			self::set(md5('session_hash'), self::generateHash());
-		} else {
-			if (self::get(md5('session_hash')) != self::generateHash()) {
-				self::destroy();
-			}
-		}*/
-	}
-
 	static function instance()
 	{
 		if (self::$instance === null) {

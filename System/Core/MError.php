@@ -4,14 +4,14 @@
  * MError
  *
  * Mirarus BMVC
- * @package System\Core
+ * @package BMVC\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.2
+ * @version 2.4
  */
 
-namespace System;
+namespace BMVC\Core;
 
 class MError
 {
@@ -59,7 +59,7 @@ class MError
 	}
 
 	private static function template($text, $message, $html=false, $title=null, $color=null, $stop=false, $response_code=200): void
-	{
+	{		
 		http_response_code($response_code);
 		if (function_exists('mb_internal_encoding')) {
 			mb_internal_encoding("UTF-8");
@@ -75,6 +75,10 @@ class MError
 
 	static function print($text, $message=null, $html=false, $title=null, $color=null, $stop=false, $response_code=200): void
 	{
+		if (self::$color == null) {
+			self::$color = self::$colors['primary'];
+		}
+
 		if ($color == null) {
 			$color = self::$color;
 		} else {
@@ -86,7 +90,6 @@ class MError
 		}
 
 		$stop = isset(self::$stop) ? self::$stop : $stop;
-
 		self::template($text, $message, $html, $title, $color, $stop, $response_code);
 		self::reset();
 	}

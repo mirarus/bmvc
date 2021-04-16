@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Controller;
-use System\{View, Controller, Model, MError};
+use BMVC\Core\{View, Controller, Model, MError};
+use BMVC\Libs\{Hash, Csrf};
 
 class Main
 {
@@ -21,7 +22,7 @@ class Main
 
 		#
 		ob_start();
-		echo \Hash::make("ass");
+		echo Hash::make("ass");
 		$pasword_hash_area = ob_get_contents();
 		ob_clean();
 		MError::color("danger")::print("Password Hash", $pasword_hash_area);
@@ -30,14 +31,14 @@ class Main
 		ob_start();
 		pr($_POST);
 
-		if (\Csrf::verify()) {
+		if (Csrf::verify()) {
 			echo "Result: Pass";
 		} else {
 			echo "Result: Fail";
 		} ?>
 		<br><br>
 		<form action="" method="post">
-			<?php echo \Csrf::input(); ?>
+			<?php echo Csrf::input(); ?>
 			<input type="submit">
 		</form>
 		<?php

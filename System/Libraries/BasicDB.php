@@ -1,22 +1,21 @@
 <?php
 
-set_time_limit(0);
-
-if (function_exists('mb_internal_encoding')) {
-	mb_internal_encoding("UTF-8");
-}
-
 /**
  * BasicDB
  *
  * Mirarus BMVC
- * @package System\Libraries
+ * @package BMVC\Libs
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.2
+ * @version 1.3
  */
 
+namespace BMVC\Libs;
+
+use \PDO;
+
+set_time_limit(0);
 
 /**
  * Class BasicDB

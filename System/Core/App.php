@@ -4,69 +4,30 @@
  * App
  *
  * Mirarus BMVC
- * @package System\Core
+ * @package BMVC\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.8
+ * @version 3.9
  */
 
-namespace System;
+namespace BMVC\Core;
 
-class App
+use Whoops\Run as WhoopsRun;
+use Whoops\Handler\PrettyPageHandler as WhoopsPrettyPageHandler;
+use Monolog\Logger as MonologLogger;
+use Monolog\Handler\StreamHandler as MonologStreamHandler;
+
+final class App
 {
 
-	protected static $routes = [];
-	protected static $groups = [];
-	protected static $baseRoute = '/';
-	protected static $ip;
-
-	public static $notFound = '';
-
 	private static $instance;
-	private static $patterns  = [
-		':all'        => '(.*)',
-		':num'        => '([0-9]+)',
-		':alpha'	  => '([a-zA-Z]+)',
-		':alpnum'     => '([a-zA-Z0-9_-]+)',
-		':lowercase'  => '([a-z]+)',
-		':uppercase'  => '([A-Z]+)',
+	private static $init = false;
+	public static $log;
 
-		'{all}'       => '(.*)',
-		'{num}'       => '([0-9]+)',
-		'{alpha}'	    => '([a-zA-Z]+)',
-		'{alpnum}'    => '([a-zA-Z0-9_-]+)',
-		'{lowercase}' => '([a-z]+)',
-		'{uppercase}' => '([A-Z]+)',
-	];
-
-	public function __construct()
+	public function __construct(array $array = [])
 	{
-		if (is_cli()) {
-			die("Cli Not Available, Browser Only.");
-		}
-		
-		header("X-Frame-Options: sameorigin");
-		header("Strict-Transport-Security: max-age=15552000; preload");
-		header("X-Powered-By: PHP/BMVC-MMVC");
-
-		date_default_timezone_set(TIMEZONE);
-
-		switch (ENVIRONMENT) {
-			case 'development':
-			error_reporting(-1);
-			ini_set('display_errors', 0);
-			break;
-			case 'testing':
-			case 'production':
-			ini_set('display_errors', 0);
-			error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
-			break;
-			default:
-			header('HTTP/1.1 503 Service Unavailable.', true, 503);
-			echo 'The application environment is not set correctly.';
-			exit(1);
-		}
+		self::Run($array);
 	}
 
 	public static function instance()
@@ -77,103 +38,142 @@ class App
 		return self::$instance;
 	}
 
-	public static function Route($method, $pattern, $callback)
+	public static function Run(array $array = []): void
 	{
-		$closure = null;
-		if ($pattern == '/') {
-			$pattern = self::$baseRoute . trim($pattern, '/');
-		} else {
-			if (self::$baseRoute == '/') {
-				$pattern = self::$baseRoute . trim($pattern, '/');
-			} else {
-				$pattern = self::$baseRoute . $pattern;
-			}
+		if (self::$init == true) {
+			return;
 		}
-		foreach (self::$patterns as $key => $value) {
-			$pattern = @strtr($pattern, [$key => $value]);
-		}
-		if (is_callable($callback)) {
-			$closure = $callback;
-		} elseif (stripos($callback, '@') !== false) {
-			$closure = $callback;
-		}
-		$route_ = [
-			'method'   => $method,
-			'pattern'  => $pattern,
-			'callback' => @$closure
-		];
-		if (self::$ip) {
-			$route_['ip'] = self::$ip;
-		}
-		self::$routes[] = $route_;
+
+		self::initWhoops();
+		self::initMonolog();
+		self::initSession();
+		self::initHeader();
+		self::init($array);
+		self::initAutoLoader();
+		self::initRoute();
+
+		self::$init = true;
 	}
 
-	public static function Run()
+	private static function initWhoops(): void
 	{
-		if (isset(self::$routes) && !empty(self::$routes) && is_array(self::$routes)) {
-			$match = 0;
-
-			foreach (self::$routes as $route) {
-
-				$method = $route['method'];
-				$action = $route['callback'];
-				$url 	= $route['pattern'];
-				$ip 	= (isset($route['ip']) ? $route['ip'] : null);
-				$_url   = isset($_GET['url']) ? $_GET['url'] : null;
-
-
-				if (preg_match("#^{$url}$#", '/' . rtrim(@$_url, '/'), $params)) {
-					if ($method === @Request::getRequestMethod() && @Request::checkIp($ip)) {
-
-						if (strstr(@$_SERVER['REQUEST_URI'], '/Public/')) {
-							self::get_404();
-						}
-
-						$match++;
-						array_shift($params);
-						
-						if (is_callable($action)) {
-							return call_user_func_array($action, array_values($params));
-						} else {
-							if (!isset($_url) && empty($_url)) {
-								$action = [
-									config('default/module'), 
-									config('default/controller'), 
-									config('default/method')
-								];
-							}
-							if (is_dir(APPDIR . '/Modules/') && opendir(APPDIR . '/Modules/')) {
-								@Controller::call(@$action, @$params);
-							} else {
-								MError::title('Module Error!')::print('Modules Dir Not Found!', null, true);
-							}
-						}
-					}
-				}
-			}
-			if ($match === 0) {
-				self::get_404();
-			}
-		} else {
-			MError::title('Route Error!')::print('Route Not Found!', null, true);
-			http_response_code(404);
-			exit();
+		$whoops = new WhoopsRun;
+		$whoops->pushHandler(new WhoopsPrettyPageHandler);
+		$whoops->register();
+	}
+	
+	private static function initMonolog(): void
+	{
+		$log = new MonologLogger('BMVC');
+		$log->pushHandler(new MonologStreamHandler(SYSTEMDIR . '/Logs/app.log'));
+		self::$log = $log;
+	}
+	
+	private static function initSession(): void
+	{
+		if (session_status() !== PHP_SESSION_ACTIVE || session_id() === null) {
+			@ini_set('session.cookie_httponly', 1);
+			@ini_set('session.use_only_cookies', 1);
+			@ini_set('session.gc_maxlifetime', 3600 * 24);
+			@session_set_cookie_params(3600 * 24);
+			
+			@session_name("BMVC");
+			@session_start();
 		}
 	}
 
-	protected static function get_404()
+	private static function initHeader(): void
 	{
-		http_response_code(404);
-		if (self::$notFound) {
-			if (is_callable(self::$notFound)) {
-				call_user_func(self::$notFound);
-			} else {
-				@Controller::call(self::$notFound, null);
-			}
-		} else {
-			MError::title('Page Error!')::print('404 Page Not Found!', (reg('url') ? 'Page: ' . reg('url') : null) , false);
+		@header("X-Frame-Options: sameorigin");
+		@header("Strict-Transport-Security: max-age=15552000; preload");
+		@header("X-Powered-By: PHP/BMVC");
+	}
+
+	private static function init(array $array = []): void
+	{
+		if (isset($array['routes'])) {
+			require_once $array['routes'];
 		}
-		exit();
+
+		if (isset($array['config'])) {
+			require_once $array['config'];
+		}
+
+		if (function_exists('mb_internal_encoding')) {
+			@mb_internal_encoding("UTF-8");
+		}
+
+		if (is_cli()) {
+			die("Cli Not Available, Browser Only.");
+		}
+
+		@date_default_timezone_set(TIMEZONE);
+
+		switch (ENVIRONMENT) {
+			case 'development':
+			@error_reporting(-1);
+			@ini_set('display_errors', 0);
+			break;
+			case 'testing':
+			case 'production':
+			@ini_set('display_errors', 0);
+			@error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
+			break;
+			default:
+			@header('HTTP/1.1 503 Service Unavailable.', true, 503);
+			echo 'The application environment is not set correctly.';
+			exit(1);
+		}
+	}
+
+	private static function initAutoLoader(): void
+	{
+		spl_autoload_register(function ($class) {
+			if ($class == 'index') return false;
+
+			$file = APPDIR . '/Libraries/' . $class . '.php';
+			$file = @strtr($file, ['\\' => '/', '//' => '/']);
+
+			if (file_exists($file)) {
+				require_once $file;
+			}
+		});
+
+		array_map(function ($file) {
+			if ($file == APPDIR . '/Helpers/index.php') return false;
+			require_once $file;
+		}, glob(APPDIR . "/Helpers/*.php"));
+
+		array_map(function ($file) {
+			if ($file == SYSTEMDIR . '/Helpers/index.php') return false;
+			require_once $file;
+		}, glob(SYSTEMDIR . "/Helpers/*.php"));
+	}
+
+	private static function initRoute()
+	{
+		$route = Route::Run();
+
+		$action = $route['action'];
+		$params = $route['params'];
+		$_url   = $route['_url'];
+
+		if (is_callable($action)) {
+			return call_user_func_array($action, array_values($params));
+		} else {
+			if (!isset($_url) && empty($_url)) {
+				$action = [
+					config('default/module'), 
+					config('default/controller'), 
+					config('default/method')
+				];
+			}
+			if (is_dir(APPDIR . '/Modules/') && opendir(APPDIR . '/Modules/')) {
+				@Controller::call(@$action, @$params);
+			} else {
+				MError::title('Module Error!')::print('Modules Dir Not Found!', null, true);
+			}
+		}
 	}
 
 	public function __call($method, $args)

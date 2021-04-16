@@ -4,14 +4,14 @@
  * Request
  *
  * Mirarus BMVC
- * @package System\Core
+ * @package BMVC\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.2
+ * @version 1.3
  */
 
-namespace System;
+namespace BMVC\Core;
 
 class Request
 {
@@ -27,10 +27,6 @@ class Request
 
 	private static $instance;
 	private static $formDataMediaTypes = ['application/x-www-form-urlencoded'];
-	private static $_server;
-	private static $_header;
-	private static $_ip;
-	private static $_body;
 
 	public $body;
 	public $server;
@@ -44,20 +40,6 @@ class Request
 
 	public function __construct()
 	{
-		self::$_server = $_SERVER;
-		self::$_header = Header::extract(self::$_server);
-		self::$_ip = IP::get();
-		self::$_body = [
-			'server'  => self::server(),
-			'request' => self::request(),
-			'env'     => self::env(),
-			'session' => self::session(),
-			'cookie'  => self::cookie(),
-			'files'   => self::files(),
-			'post'    => self::post(),
-			'get'     => self::get()
-		];
-
 		$this->getBody('object');
 	}
 
@@ -71,8 +53,19 @@ class Request
 
 	private function getBody(string $type='object')
 	{
+		$_body = [
+			'server'  => self::server(),
+			'request' => self::request(),
+			'env'     => self::env(),
+			'session' => self::session(),
+			'cookie'  => self::cookie(),
+			'files'   => self::files(),
+			'post'    => self::post(),
+			'get'     => self::get()
+		];
+
 		if ($type == 'object') {
-			$this->body    = self::arrayToObject(self::$_body);
+			$this->body    = self::arrayToObject($_body);
 
 			$this->server  = $this->body->server;
 			$this->request = $this->body->request;
@@ -83,7 +76,7 @@ class Request
 			$this->post    = $this->body->post;
 			$this->get     = $this->body->get;
 		} elseif ($type == 'array') {
-			$this->body    = self::$_body;
+			$this->body    = $_body;
 
 			$this->server  = $this->body['server'];
 			$this->request = $this->body['request'];
@@ -94,7 +87,7 @@ class Request
 			$this->post    = $this->body['post'];
 			$this->get     = $this->body['get'];
 		} else {
-			$this->body    = self::$_body;
+			$this->body    = $_body;
 
 			$this->server  = $this->body['server'];
 			$this->request = $this->body['request'];
@@ -107,20 +100,30 @@ class Request
 		}
 	}
 
-	public static function header($key=null, $default=null)
+	public static function _server($key=null)
 	{
 		if ($key) {
-			if ($default) {
-				return self::$_header[$key] == $default;
-			}
-			return isset(self::$_header[$key]) ? self::$_header[$key] : null;
+			return isset($_SERVER[$key]) ? $_SERVER[$key] : null;
 		}
-		return self::$_header;
+		return $_SERVER;
+	}
+
+	public static function header($key=null, $default=null)
+	{
+		$_header = Header::extract(self::_server());
+		
+		if ($key) {
+			if ($default) {
+				return $_header[$key] == $default;
+			}
+			return isset($_header[$key]) ? $_header[$key] : null;
+		}
+		return $_header;
 	}
 
 	public static function getMethod()
 	{
-		return self::$_server['REQUEST_METHOD'];
+		return self::_server('REQUEST_METHOD');
 	}
 
 	public static function isGet()
@@ -216,19 +219,19 @@ class Request
 
 	public static function getHost()
 	{
-		if (isset(self::$_server['HTTP_HOST'])) {
-			if (strpos(self::$_server['HTTP_HOST'], ':') !== false) {
-				$hostParts = explode(':', self::$_server['HTTP_HOST']);
+		if (self::_server('HTTP_HOST') !== null) {
+			if (strpos(self::_server('HTTP_HOST'), ':') !== false) {
+				$hostParts = explode(':', self::_server('HTTP_HOST'));
 				return $hostParts[0];
 			}
-			return self::$_server['HTTP_HOST'];
+			return self::_server('HTTP_HOST');
 		}
-		return self::$_server['SERVER_NAME'];
+		return self::_server('SERVER_NAME');
 	}
 
 	public static function getPort()
 	{
-		return (int) self::$_server['SERVER_PORT'];
+		return (int) self::_server('SERVER_PORT');
 	}
 
 	public static function getHostWithPort()
@@ -238,17 +241,17 @@ class Request
 
 	public static function getScheme()
 	{
-		return stripos(self::$_server['SERVER_PROTOCOL'], 'https') === true ? 'https' : 'http';
+		return stripos(self::_server('SERVER_PROTOCOL'), 'https') === true ? 'https' : 'http';
 	}
 
 	public static function getScriptName()
 	{
-		return self::$_server['SCRIPT_NAME'];
+		return self::_server('SCRIPT_NAME');
 	}
 
 	public static function getPathInfo()
 	{
-		return self::$_server['PATH_INFO'];
+		return self::_server('PATH_INFO');
 	}
 
 	public static function getPath()
@@ -272,7 +275,7 @@ class Request
 
 	public static function getIp()
 	{
-		return self::$_ip;
+		return IP::get();
 	}
 	
 	public static function getReferrer()
@@ -300,7 +303,7 @@ class Request
 			if (function_exists('getallheaders'))
 				getallheaders();
 			$headers = [];
-			foreach ($_SERVER as $name => $value) {
+			foreach (self::_server() as $name => $value) {
 				if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
 					$headers[@strtr(ucwords(strtolower(@strtr(substr($name, 5), ['_' => ' ']))), [' ' => '-', 'Http' => 'HTTP'])] = $value;
 				}
@@ -315,7 +318,7 @@ class Request
 	public static function checkDomain($domain)
 	{
 		if (isset($domain) && !empty($domain)) {
-			if ($domain !== trim(str_replace('www.', '', self::$_server['SERVER_NAME']), '/'))
+			if ($domain !== trim(str_replace('www.', '', self::_server('SERVER_NAME')), '/'))
 				return false;
 			return true;
 		}
@@ -341,7 +344,7 @@ class Request
 
 	public static function server($data=null, $db_filter=true, $xss_filter=true)
 	{
-		return self::rea($_SERVER, $data, $db_filter, $xss_filter);
+		return self::rea(self::_server(), $data, $db_filter, $xss_filter);
 	}
 
 	public static function request($data=null, $db_filter=true, $xss_filter=true)

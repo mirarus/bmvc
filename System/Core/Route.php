@@ -4,21 +4,41 @@
  * Route
  *
  * Mirarus BMVC
- * @package System\Core
+ * @package BMVC\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.6
+ * @version 1.7
  */
 
-namespace System;
+namespace BMVC\Core;
 
-class Route extends App
+final class Route
 {
 
 	private static $instance;
+	private static $notFound = '';
+	private static $routes = [];
+	private static $groups = [];
+	private static $prefix = '/';
+	private static $ip;
 	private static $groupped = 0;
 	private static $mainRoute = '/';
+	private static $patterns  = [
+		':all'        => '(.*)',
+		':num'        => '([0-9]+)',
+		':alpha'	  	=> '([a-zA-Z]+)',
+		':alpnum'     => '([a-zA-Z0-9_-]+)',
+		':lowercase'  => '([a-z]+)',
+		':uppercase'  => '([A-Z]+)',
+
+		'{all}'       => '(.*)',
+		'{num}'       => '([0-9]+)',
+		'{alpha}'	    => '([a-zA-Z]+)',
+		'{alpnum}'    => '([a-zA-Z0-9_-]+)',
+		'{lowercase}' => '([a-z]+)',
+		'{uppercase}' => '([A-Z]+)',
+	];
 
 	static function instance()
 	{
@@ -28,28 +48,107 @@ class Route extends App
 		return self::$instance;
 	}
 
+	static function Run(&$return = null)
+	{
+		$routes = Route::getRoutes();
+
+		if (isset($routes) && !empty($routes) && is_array($routes)) {
+			$match = 0;
+
+			foreach ($routes as $route) {
+
+				$method = $route['method'];
+				$action = $route['callback'];
+				$url 	= $route['pattern'];
+				$ip 	= (isset($route['ip']) ? $route['ip'] : null);
+				$_url = isset($_GET['url']) ? $_GET['url'] : null;
+
+				if (preg_match("#^{$url}$#", '/' . rtrim(@$_url, '/'), $params)) {
+
+					if ($method === @Request::getRequestMethod() && @Request::checkIp($ip)) {
+
+						if (strstr(@$_SERVER['REQUEST_URI'], '/Public/')) {
+							self::get_404();
+						}
+
+						$match++;
+						array_shift($params);
+
+						return $return = [
+							'method' => $method,
+							'action' => $action,
+							'params' => $params,
+							'url' => $url,
+							'_url' => $_url
+						];
+					}
+				}
+			}
+			if ($match === 0) {
+				self::get_404();
+			}
+		} else {
+			MError::title('Route Error!')::print('Route Not Found!', null, true);
+			http_response_code(404);
+			exit();
+		}
+	}
+
+	private static function Route($method, $pattern, $callback)
+	{
+		$closure = null;
+		if ($pattern == '/') {
+			$pattern = self::$prefix . trim($pattern, '/');
+		} else {
+			if (self::$prefix == '/') {
+				$pattern = self::$prefix . trim($pattern, '/');
+			} else {
+				$pattern = self::$prefix . $pattern;
+			}
+		}
+
+		foreach (self::$patterns as $key => $value) {
+			$pattern = @strtr($pattern, [$key => $value]);
+		}
+		if (is_callable($callback)) {
+			$closure = $callback;
+		} elseif (stripos($callback, '@') !== false) {
+			$closure = $callback;
+		}
+		$route_ = [
+			'method'   => $method,
+			'pattern'  => $pattern,
+			'callback' => @$closure
+		];
+		if (self::$ip) {
+			$route_['ip'] = self::$ip;
+		}
+		self::$routes[] = $route_;
+	}
+
 	static function group($callback)
 	{
 		self::$groupped++;
 		self::$groups[] = [
-			'baseRoute' => self::$baseRoute,
+			'baseRoute' => self::$prefix,
 			'ip'        => self::$ip
 		];
 		call_user_func($callback);
 		if (self::$groupped > 0) {
-			self::$baseRoute = self::$groups[self::$groupped-1]['baseRoute'];
-			self::$ip        = self::$groups[self::$groupped-1]['ip'];
+			self::$prefix = self::$groups[self::$groupped-1]['baseRoute'];
+			self::$ip     = self::$groups[self::$groupped-1]['ip'];
 		}
 		self::$groupped--;
 		if (self::$groupped <= 0) {
-			self::$baseRoute = '/';
-			self::$ip        = '';
+			self::$prefix = '/';
+			self::$ip     = '';
 		}
+		self::$prefix = @self::$groups[self::$groupped-1]['baseRoute'];
 	}
 
 	static function prefix($prefix)
 	{
-		self::$baseRoute = self::$mainRoute . $prefix;
+		self::$prefix = self::$mainRoute . $prefix;
 		return new self;
 	}
 
@@ -168,7 +267,17 @@ class Route extends App
 
 	static function get_404()
 	{
-		App::get_404();
+		http_response_code(404);
+		if (self::$notFound) {
+			if (is_callable(self::$notFound)) {
+				call_user_func(self::$notFound);
+			} else {
+				@Controller::call(self::$notFound, null);
+			}
+		} else {
+			MError::title('Page Error!')::print('404 Page Not Found!', (@Request::get('url') ? 'Page: ' . Request::get('url') : null) , false);
+		}
+		exit();
 	}
 
 	static function url_check(array $urls=[], string $url)

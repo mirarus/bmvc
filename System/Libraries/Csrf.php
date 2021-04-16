@@ -4,12 +4,14 @@
  * Csrf
  *
  * Mirarus BMVC
- * @package System\Libraries
+ * @package BMVC\Libs
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.3
+ * @version 1.4
  */
+
+namespace BMVC\Libs;
 
 class Csrf
 {

@@ -4,7 +4,7 @@
  * VERIABLES
  *
  * Mirarus BMVC
- * @package System
+ * @package BMVC
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0

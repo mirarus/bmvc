@@ -4,14 +4,15 @@
  * Model
  *
  * Mirarus BMVC
- * @package System\Core
+ * @package BMVC\Core
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.9
+ * @version 3.0
  */
 
-namespace System;
+namespace BMVC\Core;
+use BMVC\Libs\BasicDB;
 
 class Model
 {
@@ -41,7 +42,7 @@ class Model
 		$pass = config('db/pass');
 
 		if ($active == true) {
-			return new \BasicDB($host, $name, $user, $pass);
+			return new BasicDB($host, $name, $user, $pass);
 		}
 	}
 

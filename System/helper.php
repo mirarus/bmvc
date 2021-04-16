@@ -4,11 +4,11 @@
  * ROOT HELPERS
  *
  * Mirarus BMVC
- * @package System
+ * @package BMVC
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.1
+ * @version 1.3
  */
 
 if (!function_exists('pr')) {
@@ -66,14 +66,14 @@ if (!function_exists('base_url')) {
 
 if (!function_exists('get_404')) {
 	function get_404() {
-		System\Route::get_404();
+		BMVC\Core\Route::get_404();
 	}
 }
 
 if (!function_exists('set_404')) {
 	function set_404($callback) {
 		if (is_nem($callback)) {
-			System\Route::set_404($callback);
+			BMVC\Core\Route::set_404($callback);
 		}
 	}
 }
@@ -166,13 +166,13 @@ if (!function_exists('_substr')) {
 if (!function_exists('_route')) {
 	function _route($method, string $pattern, $callback) {
 		if (is_array($method)) {
-			System\Route::match($method, $pattern, $callback);
+			BMVC\Core\Route::match($method, $pattern, $callback);
 		} else {
 			$method = strtoupper($method);
 			$methods = ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'];
 			
 			if (in_array($method, $methods)) {
-				System\Route::$method($pattern, $callback);
+				BMVC\Core\Route::$method($pattern, $callback);
 			}
 		}
 	}
@@ -180,14 +180,14 @@ if (!function_exists('_route')) {
 
 if (!function_exists('app')) {
 	function app($class=null, $method=null, $params=[]) {
-		$app = \System\App::instance();
+		$std = new \stdClass;
 		if ($class) {
 			if (isset($method) && !empty($method)) {
-				return call_user_func_array([$app->$class, $method], $params);
+				return call_user_func_array([$std->$class, $method], $params);
 			} else {
-				return $app->$class;
+				return $std->$class;
 			}
 		}
-		return $app;
+		return $std;
 	}
 }
