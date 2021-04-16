@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 4.9
+ * @version 5.0
  */
 
 namespace BMVC\Libs;
@@ -34,10 +34,10 @@ class Lang
 				$_lang = call_user_func_array($func, $_lang);
 
 				if ($_lang) {
-					self::$lang = $_lang;
+					self::$current_lang = self::$lang = $_lang;
 				}
 			} else {
-				self::$lang = $_lang;
+				self::$current_lang = self::$lang = $_lang;
 			}
 		}
 
