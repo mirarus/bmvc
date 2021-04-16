@@ -17,5 +17,3 @@ BMVC\Core\App::Run([
 	'routes' => APPDIR . '/routes.php',
 	'config' => APPDIR . '/config.php'
 ]);
-
-BMVC\Core\App::$log->info('Run');
