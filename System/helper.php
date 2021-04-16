@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.0
+ * @version 1.1
  */
 
 if (!function_exists('pr')) {
@@ -23,9 +23,9 @@ if (!function_exists('pr')) {
 }
 
 if (!function_exists('config')) {
-	function config($par) {
+	function config($par, $value=null) {
 		if ($par != null) {
-			include APPDIR . '/config.php'; 
+			require APPDIR . '/config.php'; 
 
 			if (is_array($par)) {
 				$vars = $par;
@@ -40,7 +40,11 @@ if (!function_exists('config')) {
 			if ($vars != null) {
 				foreach ($vars as $key) {
 					if (isset($_config[$key])) {	
-						$_config = $_config[$key];
+						if ($value != null) {
+							$_config = $_config[$key] = $value;
+						} else {
+							$_config = $_config[$key];
+						}
 					}
 				}
 				return $_config;

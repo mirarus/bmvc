@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 4.6
+ * @version 4.7
  */
 
 namespace System;
@@ -18,14 +18,27 @@ class Lang
 
 	private static $instance;
 	private static $langs = [];
-	private static $lang = 'en';
+	static $lang = 'en';
 	private static $current_lang = 'en';
 	private static $lang_dir = (APPDIR . '/Languages/');
 
 	function __construct()
 	{
-		if (config('default/lang') != null) {
-			self::$lang = config('default/lang');
+		$_lang = config('default/lang');
+
+		if ($_lang != null) {
+
+			if (is_array($_lang)) {
+
+				$func = array_shift($_lang);
+				$_lang = call_user_func_array($func, $_lang);
+
+				if ($_lang) {
+					self::$lang = $_lang;
+				}
+			} else {
+				self::$lang = $_lang;
+			}
 		}
 
 		self::$langs = self::_get_langs();
