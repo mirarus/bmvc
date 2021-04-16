@@ -4,14 +4,14 @@
  * MError
  *
  * Mirarus BMVC
- * @package BMVC\Core
+ * @package BMVC\Libs
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version 2.4
  */
 
-namespace BMVC\Core;
+namespace BMVC\Libs;
 
 class MError
 {

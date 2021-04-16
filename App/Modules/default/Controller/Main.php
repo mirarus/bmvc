@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Controller;
-use BMVC\Core\{View, Controller, Model, MError, Request};
-use BMVC\Libs\{Hash, Csrf};
+use BMVC\Core\{View, Controller, Model};
+use BMVC\Libs\{MError, Hash, Request, Csrf};
 
 class Main
 {

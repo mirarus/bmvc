@@ -12,7 +12,7 @@
  */
 
 namespace BMVC\Libs;
-use BMVC\Core\{Route, Request, MError};
+use BMVC\Core\Route;
 
 class Lang
 {

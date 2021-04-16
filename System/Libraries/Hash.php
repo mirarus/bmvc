@@ -12,7 +12,6 @@
  */
 
 namespace BMVC\Libs;
-use BMVC\Core\MError;
 
 class Hash
 {

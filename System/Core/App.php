@@ -13,6 +13,7 @@
 
 namespace BMVC\Core;
 
+use BMVC\Libs\MError;
 use Whoops\Run as WhoopsRun;
 use Whoops\Handler\PrettyPageHandler as WhoopsPrettyPageHandler;
 use Monolog\Logger as MonologLogger;

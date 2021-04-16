@@ -27,6 +27,5 @@ $_config['default'] = [
 
 $_config['initialize'] = [
 //	"BMVC\Core\Model",
-	"BMVC\Core\MError",
-	"BMVC\Core\Request"
+	"BMVC\Libs\MError"
 ];

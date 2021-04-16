@@ -8,13 +8,13 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.1
+ * @version 3.2
  */
 
 namespace BMVC\Core;
-use BMVC\Libs\BasicDB;
+use BMVC\Libs\{BasicDB, MError};
 
-class Model
+final class Model
 {
 
 	private static $params = [];

@@ -12,8 +12,9 @@
  */
 
 namespace BMVC\Core;
+use BMVC\Libs\MError;
 
-class View
+final class View
 {
 
 	private static function import($module, $view, $data=[], &$return=null)
