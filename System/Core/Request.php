@@ -25,7 +25,6 @@ class Request
 	const METHOD_OPTIONS = 'OPTIONS';
 	const METHOD_OVERRIDE = '_METHOD';
 
-	private static $instance;
 	private static $formDataMediaTypes = ['application/x-www-form-urlencoded'];
 
 	public $body;
@@ -41,14 +40,6 @@ class Request
 	public function __construct()
 	{
 		$this->getBody('object');
-	}
-
-	public static function instance()
-	{
-		if (self::$instance === null) {
-			self::$instance = new self;
-		}
-		return self::$instance;
 	}
 
 	private function getBody(string $type='object')
@@ -405,18 +396,20 @@ class Request
 
 	public static function body(string $method=null, string $body_type='object')
 	{
-		self::instance()->getBody($body_type);
+		$class = new self;
+
+		$class->getBody($body_type);
 
 		if ($method) {
 			if ($body_type == 'object') {
-				return self::instance()->body->$method;
+				return $class->body->$method;
 			} elseif ($body_type == 'array') {
-				return self::instance()->body[$method];
+				return $class->body[$method];
 			} else {
-				return self::instance()->body[$method];
+				return $class->body[$method];
 			}
 		} else {
-			return self::instance()->body;
+			return $class->body;
 		}
 	}
 
@@ -451,20 +444,5 @@ class Request
 			$object->$key = $value;
 		}
 		return $object;
-	}
-
-	function __call($method, $args)
-	{
-		return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
-	}
-
-	static function __callStatic($method, $args)
-	{
-		return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
-	}
-
-	function __set($key, $value)
-	{
-		$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
 	}
 }

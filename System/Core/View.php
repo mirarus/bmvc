@@ -16,16 +16,6 @@ namespace BMVC\Core;
 class View
 {
 
-	private static $instance;
-
-	static function instance()
-	{
-		if (self::$instance === null) {
-			self::$instance = new self;
-		}
-		return self::$instance;
-	}
-
 	private static function import($module, $view, $data=[], &$return=null)
 	{
 		@$_REQUEST['vd'] = $data;
@@ -140,21 +130,6 @@ class View
 			file_put_contents($file, $content, LOCK_EX);
 		}
 		return $file;
-	}
-
-	function __call($method, $args)
-	{
-		return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
-	}
-
-	static function __callStatic($method, $args)
-	{
-		return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
-	}
-
-	function __set($key, $value)
-	{
-		$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
 	}
 }
 

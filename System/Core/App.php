@@ -21,21 +21,12 @@ use Monolog\Handler\StreamHandler as MonologStreamHandler;
 final class App
 {
 
-	private static $instance;
 	private static $init = false;
 	public static $log;
 
 	public function __construct(array $array = [])
 	{
 		self::Run($array);
-	}
-
-	public static function instance()
-	{
-		if (self::$instance === null) {
-			self::$instance = new self;
-		}
-		return self::$instance;
 	}
 
 	public static function Run(array $array = []): void
@@ -182,21 +173,6 @@ final class App
 				MError::title('Module Error!')::print('Modules Dir Not Found!', null, true);
 			}
 		}
-	}
-
-	public function __call($method, $args)
-	{
-		return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
-	}
-
-	public static function __callStatic($method, $args)
-	{
-		return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
-	}
-
-	public function __set($key, $value)
-	{
-		$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
 	}
 }
 

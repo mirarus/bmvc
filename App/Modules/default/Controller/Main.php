@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-use BMVC\Core\{View, Controller, Model, MError};
+use BMVC\Core\{View, Controller, Model, MError, Request};
 use BMVC\Libs\{Hash, Csrf};
 
 class Main
@@ -29,7 +29,7 @@ class Main
 		#
 		#
 		ob_start();
-		pr($_POST);
+		pr(Request::post());
 
 		if (Csrf::verify()) {
 			echo "Result: Pass";

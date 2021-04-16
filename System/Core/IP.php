@@ -16,18 +16,9 @@ namespace BMVC\Core;
 class IP
 {
 
-	private static $instance;
 	private static $useProxy = false;
 	private static $trustedProxies = array();
 	private static $proxyHeader = 'HTTP_X_FORWARDED_FOR';
-
-	static public function instance()
-	{
-		if (self::$instance === null) {
-			self::$instance = new self;
-		}
-		return self::$instance;
-	}
 
 	static public function get()
 	{
@@ -80,20 +71,5 @@ class IP
 
     	$ip = array_pop($ips);
     	return $ip;
-    }
-
-    function __call($method, $args)
-    {
-    	return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
-    }
-
-    static function __callStatic($method, $args)
-    {
-    	return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
-    }
-
-    function __set($key, $value)
-    {
-    	$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
     }
 }

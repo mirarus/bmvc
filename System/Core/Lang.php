@@ -16,7 +16,6 @@ namespace BMVC\Core;
 class Lang
 {
 
-	private static $instance;
 	private static $langs = [];
 	static $lang = 'en';
 	private static $current_lang = 'en';
@@ -45,14 +44,6 @@ class Lang
 		self::$current_lang = self::get();
 
 		self::routes();
-	}
-
-	static function instance()
-	{
-		if (self::$instance === null) {
-			self::$instance = new self;
-		}
-		return self::$instance;
 	}
 
 	private static function routes()
@@ -315,21 +306,6 @@ class Lang
 	static function ___($text, $replace=null)
 	{
 		return self::_init($text, true, $replace);
-	}
-
-	function __call($method, $args)
-	{
-		return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
-	}
-
-	static function __callStatic($method, $args)
-	{
-		return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
-	}
-
-	function __set($key, $value)
-	{
-		$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
 	}
 }
 

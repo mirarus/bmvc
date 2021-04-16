@@ -16,7 +16,6 @@ namespace BMVC\Core;
 final class Route
 {
 
-	private static $instance;
 	private static $notFound = '';
 	private static $routes = [];
 	private static $groups = [];
@@ -39,14 +38,6 @@ final class Route
 		'{lowercase}' => '([a-z]+)',
 		'{uppercase}' => '([A-Z]+)',
 	];
-
-	static function instance()
-	{
-		if (self::$instance === null) {
-			self::$instance = new self;
-		}
-		return self::$instance;
-	}
 
 	static function Run(&$return = null)
 	{
@@ -285,21 +276,6 @@ final class Route
 		if (!in_array($url, $urls)) {
 			self::get_404();
 		}
-	}
-
-	function __call($method, $args)
-	{
-		return isset($this->{$method}) && is_callable($this->{$method}) ? call_user_func_array($this->{$method}, $args) : null;
-	}
-
-	static function __callStatic($method, $args)
-	{
-		return isset(self::$method) && is_callable(self::$method) ? call_user_func_array(self::$method, $args) : null;
-	}
-
-	function __set($key, $value)
-	{
-		$this->{$key} = $value instanceof \Closure ? $value->bindTo($this) : $value;
 	}
 }
 
