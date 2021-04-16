@@ -20,6 +20,7 @@
     },
     "autoload": {
         "psr-4": {
+            "BMVC\\": "System",
             "BMVC\\Core\\": "System/Core",
             "BMVC\\Libs\\": "System/Libraries",
             "App\\": "App"
