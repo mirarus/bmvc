@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.8
+ * @version 3.9
  */
 
 namespace BMVC\Core;
@@ -58,7 +58,7 @@ final class Controller
 							$cxcontroller = end($cxcontroller);
 						}
 
-						$_cxcontroller = ('App\Controller\\' . $cxcontroller);
+						$_cxcontroller = (App::$namespaces['controller'] . $cxcontroller);
 
 						if (class_exists($_cxcontroller)) {
 							new $_cxcontroller();
@@ -76,7 +76,7 @@ final class Controller
 							$controller = end($controller);
 						}
 
-						$_controller = ('App\Controller\\' . $controller);
+						$_controller = (App::$namespaces['controller'] . $controller);
 
 						if (class_exists($_controller)) {
 							if (is_array(self::$params) && !empty(self::$params)) {
