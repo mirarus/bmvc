@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.9
+ * @version 4.0
  */
 
 namespace BMVC\Core;
@@ -50,6 +50,7 @@ final class App
 		self::initHeader();
 		self::init($array);
 		self::initAutoLoader();
+		self::initload();
 		self::initRoute();
 
 		self::$init = true;
@@ -148,6 +149,13 @@ final class App
 			if ($file == SYSTEMDIR . '/Helpers/index.php') return false;
 			require_once $file;
 		}, glob(SYSTEMDIR . "/Helpers/*.php"));
+	}
+
+	private static function initload(): void
+	{
+		new Lang;
+		new MError;
+		new Model;
 	}
 
 	private static function initRoute()
