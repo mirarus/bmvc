@@ -12,6 +12,7 @@
  */
 
 namespace BMVC\Core;
+use BMVC\Libs\Header;
 
 class Request
 {

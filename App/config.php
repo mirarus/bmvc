@@ -12,7 +12,6 @@ $_config['general'] = [
 ];
 
 $_config['db'] = [
-	'active' => false,
 	'host' => 'localhost',
 	'name' => '',
 	'user' => '',
@@ -24,4 +23,10 @@ $_config['default'] = [
 	'controller' => 'Main',
 	'method' => 'index',
 	'lang' => 'tr'
+];
+
+$_config['initialize'] = [
+//	"BMVC\Core\Model",
+	"BMVC\Core\MError",
+	"BMVC\Core\Request"
 ];

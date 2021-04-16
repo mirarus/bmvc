@@ -4,14 +4,15 @@
  * Lang
  *
  * Mirarus BMVC
- * @package BMVC\Core
+ * @package BMVC\Libs
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 4.8
+ * @version 4.9
  */
 
-namespace BMVC\Core;
+namespace BMVC\Libs;
+use BMVC\Core\{Route, Request, MError};
 
 class Lang
 {

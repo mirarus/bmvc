@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.0
+ * @version 3.1
  */
 
 namespace BMVC\Core;
@@ -26,15 +26,12 @@ class Model
 
 	static function DB()
 	{
-		$active = config('db/active');
 		$host = config('db/host');
 		$name = config('db/name');
 		$user = config('db/user');
 		$pass = config('db/pass');
 
-		if ($active == true) {
-			return new BasicDB($host, $name, $user, $pass);
-		}
+		return new BasicDB($host, $name, $user, $pass);
 	}
 
 	static function import($action, &$return=null)

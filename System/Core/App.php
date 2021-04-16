@@ -41,7 +41,7 @@ final class App
 		self::initHeader();
 		self::init($array);
 		self::initAutoLoader();
-		self::initload();
+		self::initialize();
 		self::initRoute();
 
 		self::$init = true;
@@ -142,11 +142,13 @@ final class App
 		}, glob(SYSTEMDIR . "/Helpers/*.php"));
 	}
 
-	private static function initload(): void
+	private static function initialize(): void
 	{
-		new Lang;
-		new MError;
-		new Model;
+		if (config('initialize') !== null) {
+			foreach (config('initialize') as $init) {
+				new $init;
+			}
+		}
 	}
 
 	private static function initRoute()
