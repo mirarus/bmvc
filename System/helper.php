@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.3
+ * @version 1.4
  */
 
 if (!function_exists('pr')) {
@@ -174,6 +174,16 @@ if (!function_exists('_route')) {
 			if (in_array($method, $methods)) {
 				BMVC\Core\Route::$method($pattern, $callback);
 			}
+		}
+	}
+}
+
+if (!function_exists('_lang')) {
+	function _lang($text, $replace=null, $return=true) {
+		if ($return == true) {
+			return BMVC\Libs\Lang::___($text, $replace);
+		} else {
+			BMVC\Libs\Lang::__($text, $replace);
 		}
 	}
 }
