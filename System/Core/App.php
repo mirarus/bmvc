@@ -8,21 +8,23 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 4.1
+ * @version 4.2
  */
 
 namespace BMVC\Core;
 
 use BMVC\Libs\MError;
-use Whoops\Run as WhoopsRun;
-use Whoops\Handler\PrettyPageHandler as WhoopsPrettyPageHandler;
-use Monolog\Logger as MonologLogger;
-use Monolog\Handler\StreamHandler as MonologStreamHandler;
+use Whoops\Run as WRun;
+use Whoops\Handler\PrettyPageHandler as WPrettyPageHandler;
+use Monolog\Logger as MlLogger;
+use Monolog\Handler\StreamHandler as MlStreamHandler;
+use Monolog\Formatter\LineFormatter as MlLineFormatter;
 
 final class App
 {
 
 	private static $init = false;
+	public static $whoops;
 	public static $log;
 	public static $namespaces = [
 		'controller' => 'App\Controller\\',
@@ -39,9 +41,10 @@ final class App
 		if (self::$init == true) {
 			return;
 		}
-
+		
 		self::initWhoops();
 		self::initMonolog();
+		self::initError();
 		self::initSession();
 		self::initHeader();
 		self::init($array);
@@ -54,16 +57,28 @@ final class App
 
 	private static function initWhoops(): void
 	{
-		$whoops = new WhoopsRun;
-		$whoops->pushHandler(new WhoopsPrettyPageHandler);
+		$whoops = new WRun;
+		$whoops->pushHandler(new WPrettyPageHandler);
 		$whoops->register();
+		self::$whoops = $whoops;
 	}
 	
 	private static function initMonolog(): void
 	{
-		$log = new MonologLogger('BMVC');
-		$log->pushHandler(new MonologStreamHandler(SYSTEMDIR . '/Logs/app.log'));
+		$log = new MlLogger('BMVC');
+		$stream = new MlStreamHandler(SYSTEMDIR . '/Logs/app.log');
+		$formatter = new MlLineFormatter(MlLineFormatter::SIMPLE_FORMAT, MlLineFormatter::SIMPLE_DATE);
+		$formatter->includeStacktraces(true);
+		$stream->setFormatter($formatter);
+		$log->pushHandler($stream);
 		self::$log = $log;
+	}
+
+	private static function initError(): void
+	{
+		self::$whoops->pushHandler(function ($exception, $inspector, $run) {
+			self::$log->error($exception);
+		});
 	}
 	
 	private static function initSession(): void
