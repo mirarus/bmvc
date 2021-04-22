@@ -11,25 +11,13 @@
 	],
 	"require": {
 		"php": ">=7.3",
-		"ext-json": "*",
-		"ext-pdo": "*",
-		"ext-mbstring": "*",
-		"filp/whoops": "^2.12",
-		"jenssegers/blade": "^1.4",
-		"monolog/monolog": "^2.2"
+		"mirarus/bmvc-core": "*"
 	},
 	"autoload": {
 		"psr-4": {
-			"BMVC\\": "System",
-			"BMVC\\Core\\": "System/Core",
-			"BMVC\\Libs\\": "System/Libraries",
 			"App\\": "App",
 			"App\\Controller\\": "App/Http/Controller",
 			"App\\Model\\": "App/Http/Model"
-		},
-		"files": [
-			"System/helper.php",
-			"System/variables.php"
-		]
+		}
 	}
 }

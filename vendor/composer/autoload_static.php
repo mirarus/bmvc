@@ -13,8 +13,8 @@ class ComposerStaticInitd1eceee43d9656cf9a26e1ff7a568d59
         'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
         '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
         'ef65a1626449d89d0811cf9befce46f0' => __DIR__ . '/..' . '/illuminate/events/functions.php',
-        'cf7d01a8e5e74c6ae5e84c9c12f0d63a' => __DIR__ . '/../..' . '/System/helper.php',
-        '5a78d25781f1e8dbccfb162ec8d50522' => __DIR__ . '/../..' . '/System/variables.php',
+        '642129d097d38a5bb1bc9323a6bcdda9' => __DIR__ . '/..' . '/mirarus/bmvc-core/helper.php',
+        '3cd1131e79e0f2c5dccb57dd7db2a8fd' => __DIR__ . '/..' . '/mirarus/bmvc-core/variables.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -136,8 +136,8 @@ class ComposerStaticInitd1eceee43d9656cf9a26e1ff7a568d59
         ),
         'Illuminate\\Support\\' => 
         array (
-            0 => __DIR__ . '/..' . '/illuminate/macroable',
-            1 => __DIR__ . '/..' . '/illuminate/collections',
+            0 => __DIR__ . '/..' . '/illuminate/collections',
+            1 => __DIR__ . '/..' . '/illuminate/macroable',
             2 => __DIR__ . '/..' . '/illuminate/support',
         ),
         'Illuminate\\Pipeline\\' => 
@@ -174,15 +174,15 @@ class ComposerStaticInitd1eceee43d9656cf9a26e1ff7a568d59
         ),
         'BMVC\\Libs\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/System/Libraries',
+            0 => __DIR__ . '/..' . '/mirarus/bmvc-core/Libraries',
         ),
         'BMVC\\Core\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/System/Core',
+            0 => __DIR__ . '/..' . '/mirarus/bmvc-core/Core',
         ),
         'BMVC\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/System',
+            0 => __DIR__ . '/..' . '/mirarus/bmvc-core',
         ),
         'App\\Model\\' => 
         array (
