@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '97a74b19aa5b8d2c46e0e85584999526a982f5e2',
+    'reference' => '4e80f52e9f56e2fa5a0453b26a658057ae5bd1e9',
     'name' => 'mirarus/bmvc',
   ),
   'versions' => 
@@ -28,6 +28,15 @@
       array (
       ),
       'reference' => 'd501fd2658d55491a2295ff600ae5978eaad7403',
+    ),
+    'graham-campbell/result-type' => 
+    array (
+      'pretty_version' => 'v1.0.1',
+      'version' => '1.0.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '7e279d2cd5d7fbb156ce46daada972355cea27bb',
     ),
     'illuminate/bus' => 
     array (
@@ -135,16 +144,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => '97a74b19aa5b8d2c46e0e85584999526a982f5e2',
+      'reference' => '4e80f52e9f56e2fa5a0453b26a658057ae5bd1e9',
     ),
     'mirarus/bmvc-core' => 
     array (
-      'pretty_version' => '0.0.2',
-      'version' => '0.0.2.0',
+      'pretty_version' => '0.0.3',
+      'version' => '0.0.3.0',
       'aliases' => 
       array (
       ),
-      'reference' => '84bfbe3565f9b1291f2bb725bc2730ef5c2c3c38',
+      'reference' => '7666d3daae0d984cb0ddb1717c8b6d8456226195',
     ),
     'monolog/monolog' => 
     array (
@@ -163,6 +172,15 @@
       array (
       ),
       'reference' => '2fd2c4a77d58a4e95234c8a61c5df1f157a91bf4',
+    ),
+    'phpoption/phpoption' => 
+    array (
+      'pretty_version' => '1.7.5',
+      'version' => '1.7.5.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '994ecccd8f3283ecf5ac33254543eb0ac946d525',
     ),
     'psr/container' => 
     array (
@@ -214,6 +232,15 @@
       ),
       'reference' => '0d639a0943822626290d169965804f79400e6a04',
     ),
+    'symfony/polyfill-ctype' => 
+    array (
+      'pretty_version' => 'v1.22.1',
+      'version' => '1.22.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'c6c942b1ac76c82448322025e084cadc56048b4e',
+    ),
     'symfony/polyfill-mbstring' => 
     array (
       'pretty_version' => 'v1.22.1',
@@ -256,6 +283,15 @@
       array (
         0 => '2.3',
       ),
+    ),
+    'vlucas/phpdotenv' => 
+    array (
+      'pretty_version' => 'v5.3.0',
+      'version' => '5.3.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'b3eac5c7ac896e52deab4a99068e3f4ab12d9e56',
     ),
     'voku/portable-ascii' => 
     array (
