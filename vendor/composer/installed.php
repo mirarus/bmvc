@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '69e56b41b7841bc1941cc68d942ff227a7280424',
+    'reference' => '7b876bc9ed91a7b62af23d71abc5d48c1835b3ba',
     'name' => 'mirarus/bmvc',
   ),
   'versions' => 
@@ -144,16 +144,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => '69e56b41b7841bc1941cc68d942ff227a7280424',
+      'reference' => '7b876bc9ed91a7b62af23d71abc5d48c1835b3ba',
     ),
     'mirarus/bmvc-core' => 
     array (
-      'pretty_version' => '0.0.5',
-      'version' => '0.0.5.0',
+      'pretty_version' => '0.0.6',
+      'version' => '0.0.6.0',
       'aliases' => 
       array (
       ),
-      'reference' => '60a173906f2a7b96b1274c2c3141e20e709b6e38',
+      'reference' => '59b746ba37e697bc321796ae3585e738d3b60a1c',
     ),
     'monolog/monolog' => 
     array (
