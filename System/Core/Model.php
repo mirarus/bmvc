@@ -59,12 +59,14 @@ final class Model
 		$model     = null;
 		$namespace = null;
 
-		if (@strstr($action, '@')) {
-			$action = explode('@', $action);
-		} elseif (@strstr($action, '/')) {
-			$action = explode('/', $action);
-		} elseif (@strstr($action, '.')) {
-			$action = explode('.', $action);
+		if (@is_string($action)) {
+			if (@strstr($action, '@')) {
+				$action = explode('@', $action);
+			} elseif (@strstr($action, '/')) {
+				$action = explode('/', $action);
+			} elseif (@strstr($action, '.')) {
+				$action = explode('.', $action);
+			}
 		}
 
 		if ($action > 1) {
@@ -72,7 +74,7 @@ final class Model
 		} else {
 			$model = $action;
 		}
-		$namespace = @implode($action, '\\');
+		$namespace = ($action !== null) ? @implode('\\', $action) : null;
 
 		if (($namespace === null || $namespace !== null) && $model != null) {
 
@@ -116,17 +118,19 @@ final class Model
 		$model     = null;
 		$namespace = null;
 
-		if (@strstr($action, '@')) {
-			$action = explode('@', $action);
-		} elseif (@strstr($action, '/')) {
-			$action = explode('/', $action);
-		} elseif (@strstr($action, '.')) {
-			$action = explode('.', $action);
+		if (@is_string($action)) {
+			if (@strstr($action, '@')) {
+				$action = explode('@', $action);
+			} elseif (@strstr($action, '/')) {
+				$action = explode('/', $action);
+			} elseif (@strstr($action, '.')) {
+				$action = explode('.', $action);
+			}
 		}
 
 		$method    = @array_pop($action);
 		$model     = @array_pop($action);
-		$namespace = @implode($action, '\\');
+		$namespace = ($action !== null) ? @implode('\\', $action) : null;
 
 		if (isset($namespace) && $model != null && $method != null) {
 
