@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.6
+ * @version 1.7
 */
 
 define("BMVC_START", microtime(true));
@@ -29,14 +29,12 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 	die('The Public directory not found.');
 } elseif (!is_dir(APPDIR)) {
 	die('The App directory not found.');
-} elseif (!is_dir(SYSTEMDIR)) {
-	die('The System directory not found.');
-} elseif (!is_file(SYSTEMDIR . '/init.php')) {
+} elseif (!is_file(ROOTDIR . '/init.php')) {
 	die('init.php file not found!');
 } elseif (!version_compare(PHP_VERSION, '7.3.0', '>=')) {
 	die('This software requires a minimum php 7.3.0');
 } elseif (!file_exists(ROOTDIR . '/vendor/autoload.php')) {
 	die('This software requires composer');
 } else {
-	require_once SYSTEMDIR . '/init.php';
+	require_once ROOTDIR . '/init.php';
 }
