@@ -104,6 +104,7 @@ final class Controller
 
 		$method     = @array_pop($action);
 		$controller = @array_pop($action);
+		pr($action);
 		$namespace  = @implode($action, '\\');
 
 		if (isset($namespace) && $controller != null && $method != null) {
