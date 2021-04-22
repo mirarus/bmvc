@@ -108,12 +108,7 @@ final class Controller
 
 		$method     = @array_pop($action);
 		$controller = @array_pop($action);
-<<<<<<< HEAD
-		pr($action);
-		$namespace  = @implode($action, '\\');
-=======
 		$namespace  = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
->>>>>>> composer
 
 		if (isset($namespace) && $controller != null && $method != null) {
 
