@@ -78,7 +78,7 @@ final class Model
 
 		if (($namespace === null || $namespace !== null) && $model != null) {
 
-			$_nsm_ = ($namespace != null) ? implode([$namespace, '_model_'], '/') : '_model_';
+			$_nsm_ = ($namespace != null) ? implode('/', [$namespace, '_model_']) : '_model_';
 			
 			if (file_exists(self::$dir . $_nsm_ . '.php')) {
 				$_model_ = (App::$namespaces['model'] . str_replace(['/', '//'], '\\', $_nsm_));
@@ -86,7 +86,7 @@ final class Model
 			}
 
 			$model  = ucfirst($model);
-			$_nsm   = ($namespace != null) ? implode([$namespace, $model], '/') : $model;
+			$_nsm   = ($namespace != null) ? implode('/', [$namespace, $model]) : $model;
 			$_model = (App::$namespaces['model'] . str_replace(['/', '//'], '\\', $_nsm));
 
 			if (is_array(self::$params) && !empty(self::$params)) {
@@ -144,7 +144,7 @@ final class Model
 				}
 			} else {
 				$model = ucfirst($model);
-				$_nsm  = ($namespace != null) ? implode([$namespace, $model], '/') : $model;
+				$_nsm  = ($namespace != null) ? implode('/', [$namespace, $model]) : $model;
 				throw new Exception('Model Method Not Found! | Model: ' . $_nsm . ' - Method: ' . $method);
 			}
 		}

@@ -56,7 +56,7 @@ final class Controller
 
 		if (($namespace === null || $namespace !== null) && $controller != null) {
 
-			$_nsc_ = ($namespace != null) ? implode([$namespace, '_controller_'], '/') : '_controller_';
+			$_nsc_ = ($namespace != null) ? implode('/', [$namespace, '_controller_']) : '_controller_';
 			
 			if (file_exists(self::$dir . $_nsc_ . '.php')) {
 				$_controller_ = (App::$namespaces['controller'] . str_replace(['/', '//'], '\\', $_nsc_));
@@ -64,7 +64,7 @@ final class Controller
 			}
 
 			$controller  = ucfirst($controller);
-			$_nsc				 = ($namespace != null) ? implode([$namespace, $controller], '/') : $controller;
+			$_nsc				 = ($namespace != null) ? implode('/', [$namespace, $controller]) : $controller;
 			$_controller = (App::$namespaces['controller'] . str_replace(['/', '//'], '\\', $_nsc));
 
 			if (is_array(self::$params) && !empty(self::$params)) {
@@ -122,7 +122,7 @@ final class Controller
 				}
 			} else {
 				$controller = ucfirst($controller);
-				$_nsc = ($namespace != null) ? implode([$namespace, $controller], '/') : $controller;
+				$_nsc = ($namespace != null) ? implode('/', [$namespace, $controller]) : $controller;
 				throw new Exception('Controller Method Not Found! | Controller: ' . $_nsc . ' - Method: ' . $method);
 			}
 		}
