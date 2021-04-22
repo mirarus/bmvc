@@ -11,7 +11,7 @@
 	],
 	"require": {
 		"php": ">=7.3",
-		"mirarus/bmvc-core": "^0.0.6"
+		"mirarus/bmvc-core": "^0.0.8"
 	},
 	"autoload": {
 		"psr-4": {
