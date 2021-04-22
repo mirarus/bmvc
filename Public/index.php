@@ -8,31 +8,23 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.7
+ * @version 1.8
 */
 
 define("BMVC_START", microtime(true));
 
-$_ROOTDIR = realpath(getcwd());
-$_ROOTDIR = @str_replace(["Public"], null, $_ROOTDIR);
-$_ROOTDIR = @substr($_ROOTDIR, -1) == '/' ? @substr($_ROOTDIR, 0, -1) : $_ROOTDIR;
-$_ROOTDIR = @str_replace(['\\', '//'], '/', $_ROOTDIR);
-define("ROOTDIR", $_ROOTDIR);
+define("ROOTDIR", @str_replace("Public", null, __DIR__));
+define("PUBLICDIR", ROOTDIR . "Public");
+define("APPDIR", ROOTDIR . "App");
 
-define("PUBLICDIR", ROOTDIR . "/Public");
-define("APPDIR", ROOTDIR . "/App");
-define("SYSTEMDIR", ROOTDIR . "/System");
-
-if (!is_file(ROOTDIR . '/.htaccess')) {
+if (!is_file(ROOTDIR . '.htaccess')) {
 	die('The .htaccess file does not exist.');
-} elseif (!is_dir(PUBLICDIR)) {
-	die('The Public directory not found.');
 } elseif (!is_dir(APPDIR)) {
 	die('The App directory not found.');
-} elseif (!is_file(ROOTDIR . '/init.php')) {
+} elseif (!is_file(ROOTDIR . 'init.php')) {
 	die('init.php file not found!');
-} elseif (!file_exists(ROOTDIR . '/vendor/autoload.php')) {
+} elseif (!file_exists(ROOTDIR . 'vendor/autoload.php')) {
 	die('This software requires composer');
 } else {
-	require_once ROOTDIR . '/init.php';
+	require_once ROOTDIR . 'init.php';
 }
