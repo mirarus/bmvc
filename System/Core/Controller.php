@@ -37,12 +37,14 @@ final class Controller
 		$controller = null;
 		$namespace  = null;
 
-		if (@strstr($action, '@')) {
-			$action = explode('@', $action);
-		} elseif (@strstr($action, '/')) {
-			$action = explode('/', $action);
-		} elseif (@strstr($action, '.')) {
-			$action = explode('.', $action);
+		if (@is_string($action)) {
+			if (@strstr($action, '@')) {
+				$action = explode('@', $action);
+			} elseif (@strstr($action, '/')) {
+				$action = explode('/', $action);
+			} elseif (@strstr($action, '.')) {
+				$action = explode('.', $action);
+			}
 		}
 
 		if ($action > 1) {
@@ -64,7 +66,7 @@ final class Controller
 			$controller  = ucfirst($controller);
 			$_nsc				 = ($namespace != null) ? implode([$namespace, $controller], '/') : $controller;
 			$_controller = (App::$namespaces['controller'] . str_replace(['/', '//'], '\\', $_nsc));
-	
+
 			if (is_array(self::$params) && !empty(self::$params)) {
 				return $return = new $_controller(self::$params);
 			} else {
@@ -94,12 +96,14 @@ final class Controller
 		$controller = null;
 		$namespace  = null;
 
-		if (@strstr($action, '@')) {
-			$action = explode('@', $action);
-		} elseif (@strstr($action, '/')) {
-			$action = explode('/', $action);
-		} elseif (@strstr($action, '.')) {
-			$action = explode('.', $action);
+		if (@is_string($action)) {
+			if (@strstr($action, '@')) {
+				$action = explode('@', $action);
+			} elseif (@strstr($action, '/')) {
+				$action = explode('/', $action);
+			} elseif (@strstr($action, '.')) {
+				$action = explode('.', $action);
+			}
 		}
 
 		$method     = @array_pop($action);
