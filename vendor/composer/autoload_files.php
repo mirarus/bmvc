@@ -13,5 +13,4 @@ return array(
     '72579e7bd17821bb1321b87411366eae' => $vendorDir . '/illuminate/support/helpers.php',
     'ef65a1626449d89d0811cf9befce46f0' => $vendorDir . '/illuminate/events/functions.php',
     '642129d097d38a5bb1bc9323a6bcdda9' => $vendorDir . '/mirarus/bmvc-core/helper.php',
-    '3cd1131e79e0f2c5dccb57dd7db2a8fd' => $vendorDir . '/mirarus/bmvc-core/variables.php',
 );

@@ -808,17 +808,17 @@
         },
         {
             "name": "mirarus/bmvc-core",
-            "version": "0.0.1",
-            "version_normalized": "0.0.1.0",
+            "version": "0.0.2",
+            "version_normalized": "0.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mirarus/bmvc-core.git",
-                "reference": "ad84b75536956a21045d34131cd869190a79fc91"
+                "reference": "84bfbe3565f9b1291f2bb725bc2730ef5c2c3c38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mirarus/bmvc-core/zipball/ad84b75536956a21045d34131cd869190a79fc91",
-                "reference": "ad84b75536956a21045d34131cd869190a79fc91",
+                "url": "https://api.github.com/repos/mirarus/bmvc-core/zipball/84bfbe3565f9b1291f2bb725bc2730ef5c2c3c38",
+                "reference": "84bfbe3565f9b1291f2bb725bc2730ef5c2c3c38",
                 "shasum": ""
             },
             "require": {
@@ -830,7 +830,7 @@
                 "monolog/monolog": "^2.2",
                 "php": ">=7.3"
             },
-            "time": "2021-04-22T13:02:51+00:00",
+            "time": "2021-04-22T14:22:28+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -840,8 +840,7 @@
                     "BMVC\\Libs\\": "Libraries"
                 },
                 "files": [
-                    "helper.php",
-                    "variables.php"
+                    "helper.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -857,7 +856,7 @@
             "description": "Mirarus BMVC Core (Basic MVC Core)",
             "support": {
                 "issues": "https://github.com/mirarus/bmvc-core/issues",
-                "source": "https://github.com/mirarus/bmvc-core/tree/0.0.1"
+                "source": "https://github.com/mirarus/bmvc-core/tree/0.0.2"
             },
             "install-path": "../mirarus/bmvc-core"
         },
