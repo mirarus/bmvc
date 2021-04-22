@@ -52,7 +52,7 @@ final class Controller
 		} else {
 			$controller = $action;
 		}
-		$namespace = @implode($action, '\\');
+		$namespace = ($action !== null) ? @implode('\\', $action) : null;
 
 		if (($namespace === null || $namespace !== null) && $controller != null) {
 
