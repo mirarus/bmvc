@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '8aafe39a4860b3cf513dbb4a185ab8bc3c06910e',
+    'reference' => '69e56b41b7841bc1941cc68d942ff227a7280424',
     'name' => 'mirarus/bmvc',
   ),
   'versions' => 
@@ -168,16 +168,16 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '8aafe39a4860b3cf513dbb4a185ab8bc3c06910e',
+      'reference' => '69e56b41b7841bc1941cc68d942ff227a7280424',
     ),
     'mirarus/bmvc-core' => 
     array (
-      'pretty_version' => '0.0.4',
-      'version' => '0.0.4.0',
+      'pretty_version' => '0.0.5',
+      'version' => '0.0.5.0',
       'aliases' => 
       array (
       ),
-      'reference' => '88733fb4cd1bc6bbe92b39f0346e30701df89dee',
+      'reference' => '60a173906f2a7b96b1274c2c3141e20e709b6e38',
     ),
     'monolog/monolog' => 
     array (
