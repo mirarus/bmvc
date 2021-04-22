@@ -877,17 +877,17 @@
         },
         {
             "name": "mirarus/bmvc-core",
-            "version": "0.0.3",
-            "version_normalized": "0.0.3.0",
+            "version": "0.0.4",
+            "version_normalized": "0.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mirarus/bmvc-core.git",
-                "reference": "7666d3daae0d984cb0ddb1717c8b6d8456226195"
+                "reference": "88733fb4cd1bc6bbe92b39f0346e30701df89dee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mirarus/bmvc-core/zipball/7666d3daae0d984cb0ddb1717c8b6d8456226195",
-                "reference": "7666d3daae0d984cb0ddb1717c8b6d8456226195",
+                "url": "https://api.github.com/repos/mirarus/bmvc-core/zipball/88733fb4cd1bc6bbe92b39f0346e30701df89dee",
+                "reference": "88733fb4cd1bc6bbe92b39f0346e30701df89dee",
                 "shasum": ""
             },
             "require": {
@@ -900,7 +900,7 @@
                 "php": ">=7.3",
                 "vlucas/phpdotenv": "^5.3"
             },
-            "time": "2021-04-22T15:09:07+00:00",
+            "time": "2021-04-22T16:33:12+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -926,7 +926,7 @@
             "description": "Mirarus BMVC Core (Basic MVC Core)",
             "support": {
                 "issues": "https://github.com/mirarus/bmvc-core/issues",
-                "source": "https://github.com/mirarus/bmvc-core/tree/0.0.3"
+                "source": "https://github.com/mirarus/bmvc-core/tree/0.0.4"
             },
             "install-path": "../mirarus/bmvc-core"
         },

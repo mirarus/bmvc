@@ -1,25 +1,16 @@
 <?php
 
-$_config['general'] = [
-	'timezone' => 'Europe/Istanbul',
-	'environment' => 'development', // production | development
-	'log' => true,
-	'view' => [
-		'cache' => false,
-		'cacheExpire' => 120 // Second
-	],
-	'lang' => 'en'
-];
+foreach (glob(__DIR__ . "/Helpers/*.php") as $file) {
+	if ($file == __DIR__ . "/Helpers/index.php") return;
+	$_helpers[] = $file;
+}
 
-$_config['db'] = [
-	'host' => 'localhost',
-	'name' => '',
-	'user' => '',
-	'pass' => ''
-];
+$_config['files'] = array_merge($_helpers, [
+	__DIR__ . "/routes.php"
+]);
 
 $_config['init'] = [
-//BMVC\Core\Model::class,
+//	BMVC\Core\Model::class,
 	BMVC\Libs\MError::class,
-	BMVC\Libs\Lang::class,
+	BMVC\Libs\Lang::class
 ];

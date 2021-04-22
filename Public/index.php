@@ -14,9 +14,9 @@
 define("BMVC_START", microtime(true));
 
 $_ROOTDIR = realpath(getcwd());
-$_ROOTDIR = @strtr($_ROOTDIR, ["Public" => null, "public" => null]);
+$_ROOTDIR = @str_replace(["Public"], null, $_ROOTDIR);
 $_ROOTDIR = @substr($_ROOTDIR, -1) == '/' ? @substr($_ROOTDIR, 0, -1) : $_ROOTDIR;
-$_ROOTDIR = strtr($_ROOTDIR, ['\\' => '/', '//' => '/']);
+$_ROOTDIR = @str_replace(['\\', '//'], '/', $_ROOTDIR);
 define("ROOTDIR", $_ROOTDIR);
 
 define("PUBLICDIR", ROOTDIR . "/Public");
@@ -31,8 +31,6 @@ if (!is_file(ROOTDIR . '/.htaccess')) {
 	die('The App directory not found.');
 } elseif (!is_file(ROOTDIR . '/init.php')) {
 	die('init.php file not found!');
-} elseif (!version_compare(PHP_VERSION, '7.3.0', '>=')) {
-	die('This software requires a minimum php 7.3.0');
 } elseif (!file_exists(ROOTDIR . '/vendor/autoload.php')) {
 	die('This software requires composer');
 } else {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dfa62dbb41e6d0e0e24a3c6ab3fa2b1e",
+    "content-hash": "0c1743bdd49262e0cba24a001118730d",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -841,16 +841,16 @@
         },
         {
             "name": "mirarus/bmvc-core",
-            "version": "0.0.3",
+            "version": "0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mirarus/bmvc-core.git",
-                "reference": "7666d3daae0d984cb0ddb1717c8b6d8456226195"
+                "reference": "88733fb4cd1bc6bbe92b39f0346e30701df89dee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mirarus/bmvc-core/zipball/7666d3daae0d984cb0ddb1717c8b6d8456226195",
-                "reference": "7666d3daae0d984cb0ddb1717c8b6d8456226195",
+                "url": "https://api.github.com/repos/mirarus/bmvc-core/zipball/88733fb4cd1bc6bbe92b39f0346e30701df89dee",
+                "reference": "88733fb4cd1bc6bbe92b39f0346e30701df89dee",
                 "shasum": ""
             },
             "require": {
@@ -887,9 +887,9 @@
             "description": "Mirarus BMVC Core (Basic MVC Core)",
             "support": {
                 "issues": "https://github.com/mirarus/bmvc-core/issues",
-                "source": "https://github.com/mirarus/bmvc-core/tree/0.0.3"
+                "source": "https://github.com/mirarus/bmvc-core/tree/0.0.4"
             },
-            "time": "2021-04-22T15:09:07+00:00"
+            "time": "2021-04-22T16:33:12+00:00"
         },
         {
             "name": "monolog/monolog",
