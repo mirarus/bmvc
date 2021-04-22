@@ -70,7 +70,7 @@ final class Model
 		}
 
 		if ($action > 1) {
-			$model = @array_pop($action);
+			$model = !is_string($action) ? @array_pop($action) : $action;
 		} else {
 			$model = $action;
 		}
