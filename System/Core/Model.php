@@ -74,7 +74,7 @@ final class Model
 		} else {
 			$model = $action;
 		}
-		$namespace = ($action !== null) ? @implode('\\', $action) : null;
+		$namespace = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
 
 		if (($namespace === null || $namespace !== null) && $model != null) {
 
