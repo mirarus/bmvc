@@ -8,140 +8,119 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.9
+ * @version 4.0
  */
 
 namespace BMVC\Core;
-use BMVC\Libs\MError;
+
+use Exception;
 
 final class Controller
 {	
 
+	/**
+	 * @var string
+	 */
+	private static $dir = APPDIR . '/Http/Controller/';
+
+	/**
+	 * @var array
+	 */
 	private static $params = [];
 
-	static function view($view, $data=[], $layout=false)
+	/**
+	 * @param mixed       $action
+	 * @param object|null &$return
+	 */
+	public static function import($action, object &$return=null)
 	{
-		return View::load($view, $data, $layout);
-	}
-
-	static function import($action, &$return=null)
-	{
-		$module = null;
 		$controller = null;
+		$namespace  = null;
 
-		if (is_array($action)) {
-			list($module, $controller) = $action;
-		} elseif (strstr($action, '@')) {
-			list($module, $controller) = explode('@', $action);
-		} elseif (strstr($action, '/')) {
-			list($module, $controller) = explode('/', $action);
-		} else {
-			$module = config('default/module');
-			$controller = $action;
+		if (@strstr($action, '@')) {
+			$action = explode('@', $action);
+		} elseif (@strstr($action, '/')) {
+			$action = explode('/', $action);
+		} elseif (@strstr($action, '.')) {
+			$action = explode('.', $action);
 		}
 
-		if ($module != null && $controller != null) {
+		if ($action > 1) {
+			$controller = @array_pop($action);
+		} else {
+			$controller = $action;
+		}
+		$namespace = @implode($action, '\\');
 
-			$controller = ucfirst($controller);
+		if (($namespace === null || $namespace !== null) && $controller != null) {
 
-			if (_dir(APPDIR . '/Modules/' . $module)) {
-				if (_dir(APPDIR . '/Modules/' . $module . '/Controller')) {
+			$_nsc_ = ($namespace != null) ? implode([$namespace, '_controller_'], '/') : '_controller_';
+			
+			if (file_exists(self::$dir . $_nsc_ . '.php')) {
+				$_controller_ = (App::$namespaces['controller'] . str_replace(['/', '//'], '\\', $_nsc_));
+				new $_controller_();
+			}
 
-					if (file_exists($cxfile = APPDIR . '/Modules/' . $module . '/Controller/_' . $module . '_.php')) {
-
-						require_once $cxfile;
-
-						$cxcontroller = '_' . $module . '_';
-
-						if (strpos($cxcontroller, "/") || strpos($cxcontroller, "\\")) {
-							$cxcontroller = explode('/', $cxcontroller);
-							$cxcontroller = end($cxcontroller);
-						}
-
-						$_cxcontroller = (App::$namespaces['controller'] . $cxcontroller);
-
-						if (class_exists($_cxcontroller)) {
-							new $_cxcontroller();
-						} else {
-							MError::title('Controller Error!')::print('Class Not Defined in Controller File!', 'Controller Name: ' . $module . '/' . $cxcontroller);
-						}
-					}
-
-					if (file_exists($file = APPDIR . '/Modules/' . $module . '/Controller/' . $controller . '.php')) {
-						
-						require_once $file;
-
-						if (strpos($controller, "/") || strpos($controller, "\\")) {
-							$controller = explode('/', $controller);
-							$controller = end($controller);
-						}
-
-						$_controller = (App::$namespaces['controller'] . $controller);
-
-						if (class_exists($_controller)) {
-							if (is_array(self::$params) && !empty(self::$params)) {
-								return $return = new $_controller(self::$params);
-							} else {
-								return $return = new $_controller();
-							}
-						} else {
-							MError::title('Controller Error!')::print('Class Not Defined in Controller File!', 'Controller Name: ' . $module . '/' . $controller);
-						}
-					} else {
-						MError::title('Controller Error!')::print('Controller Not Found!', 'Controller Name: ' . $module . '/' . $controller);
-					}
-				} else {
-					MError::title('Controller Error!')::print('Controller Dir Not Found!');
-				}
+			$controller  = ucfirst($controller);
+			$_nsc				 = ($namespace != null) ? implode([$namespace, $controller], '/') : $controller;
+			$_controller = (App::$namespaces['controller'] . str_replace(['/', '//'], '\\', $_nsc));
+	
+			if (is_array(self::$params) && !empty(self::$params)) {
+				return $return = new $_controller(self::$params);
 			} else {
-				MError::title('Controller Error!')::print('Module Not Found!', 'Module Name: ' . $module);
+				return $return = new $_controller();
 			}
 		}
 	}
 
-	static function par($params=[])
+	/**
+	 * @param  array $params
+	 * @return Controller
+	 */
+	public static function par(array $params=[]): Controller
 	{
 		self::$params = $params;
 		return new self;
 	}
 
-	static function call($action, $params=null, &$return=null)
+	/**
+	 * @param mixed       $action
+	 * @param array       $params
+	 * @param object|null &$return
+	 */
+	public static function call($action, array $params=[], object &$return=null)
 	{
-		$module = null;
+		$method     = null;
 		$controller = null;
-		$method = null;
+		$namespace  = null;
 
-		if (is_array($action)) {
-			list($module, $controller, $method) = $action;
-		} elseif (strstr($action, '@')) {
-			if (count(explode('@', $action)) == 3) {
-				list($module, $controller, $method) = explode('@', $action);
-			}
-		} elseif (strstr($action, '/')) {
-			if (count(explode('/', $action)) == 3) {
-				list($module, $controller, $method) = explode('/', $action);
-			}
+		if (@strstr($action, '@')) {
+			$action = explode('@', $action);
+		} elseif (@strstr($action, '/')) {
+			$action = explode('/', $action);
+		} elseif (@strstr($action, '.')) {
+			$action = explode('.', $action);
 		}
 
-		if ($module != null && $controller != null && $method != null) {
+		$method     = @array_pop($action);
+		$controller = @array_pop($action);
+		$namespace  = @implode($action, '\\');
 
-			@$class = self::import([$module, $controller]);
+		if (isset($namespace) && $controller != null && $method != null) {
+
+			$class = self::import([$namespace, $controller]);
 			
-			if (isset($class)) {
-
-				if (method_exists(@$class, $method)) {
-					if ($params == null) {
-						return $return = call_user_func([$class, $method]);
-					} else {
-						return $return = call_user_func_array([$class, $method], array_values($params));
-					}
+			if (method_exists($class, $method)) {
+				if ($params == null) {
+					return $return = call_user_func([$class, $method]);
 				} else {
-					MError::title('Controller Error!')::print('Controller Method Not Found!', 'Controller Name: ' . $module . '/' . $controller . '<br>Method Name: ' . $method);
+					return $return = call_user_func_array([$class, $method], array_values($params));
 				}
+			} else {
+				$controller = ucfirst($controller);
+				$_nsc = ($namespace != null) ? implode([$namespace, $controller], '/') : $controller;
+				throw new Exception('Controller Method Not Found! | Controller: ' . $_nsc . ' - Method: ' . $method);
 			}
 		}
 	}
 }
-
-# Initialize - AutoInitialize
-# new Controller;

@@ -8,94 +8,107 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.7
+ * @version 1.8
  */
 
 namespace BMVC\Libs;
 
+use Exception;
+use BMVC\Libs\Request;
+
 class Log
 {
 
-	static function emergency($message)
+	/**
+	 * @param mixed $message
+	 */
+	public static function emergency($message): void
 	{
-		self::write('emergency', $message);
+		self::write('EMERGENCY', $message);
 	}
 
-	static function alert($message)
+	/**
+	 * @param mixed $message
+	 */
+	public static function alert($message): void
 	{
-		self::write('alert', $message);
+		self::write('ALERT', $message);
 	}
 
-	static function critical($message)
+	/**
+	 * @param mixed $message
+	 */
+	public static function critical($message): void
 	{
-		self::write('critical', $message);
+		self::write('CRITICAL', $message);
 	}
 
-	static function error($message)
+	/**
+	 * @param mixed $message
+	 */
+	public static function error($message): void
 	{
-		self::write('error', $message);
+		self::write('ERROR', $message);
 	}
 
-	static function warning($message)
+	/**
+	 * @param mixed $message
+	 */
+	public static function warning($message): void
 	{
-		self::write('warning', $message);
+		self::write('WARNING', $message);
 	}
 
-	static function notice($message)
+	/**
+	 * @param mixed $message
+	 */
+	public static function notice($message): void
 	{
-		self::write('notice', $message);
+		self::write('NOTICE', $message);
 	}
 
-	static function info($message)
+	/**
+	 * @param mixed $message
+	 */
+	public static function info($message): void
 	{
-		self::write('info', $message);
+		self::write('INFO', $message);
 	}
 
-	static function debug($message)
+	/**
+	 * @param mixed $message
+	 */
+	public static function debug($message): void
 	{
-		self::write('debug', $message);
+		self::write('DEBUG', $message);
 	}
 
-	private static function write($level, $message)
+	/**
+	 * @param string $level
+	 * @param mixed $message
+	 */
+	private static function write(string $level, $message): void
 	{
 		if (is_array($message)) {
-			$message = serialize($message);
+			$message = @implode($message, ', ');
 		}
-		self::save('[' . date('d.m.Y H:i:s') . '] - [' . $level . '] - [' . self::get_request_method() . '] -> ' . $message);
+		self::save('[' . date('Y-m-d\TH:i:sP') . '] ' . $level . '.' . Request::getRequestMethod() . ': ' . $message);
 	}
 
-	private static function save($text)
+	/**
+	 * @param string $text
+	 */
+	private static function save(string $text): void
 	{
-		$file = 'Log_' . date('d.m.Y') . '.log';
+		if (!_dir(SYSTEMDIR . '/Logs')) {
+			mkdir(SYSTEMDIR . '/Logs');
+		}
+
+		$file = 'bmvc.log';
 		$file = fopen(SYSTEMDIR . '/Logs/' . $file, 'a');
 		if (fwrite($file, $text . "\r\n") === false) {
-			MError::title('Log Error!')::print('Failed to create log file.', 'Check the write permissions.');
+			throw new Exception('Log Error! | Failed to create log file. - Check the write permissions.');
 		}
 		fclose($file);
 	}
-
-	private static function get_request_method()
-	{
-		$method = @$_SERVER['REQUEST_METHOD'];
-		if ($method == "HEAD") {
-			ob_start();
-			$method = "GET";
-		} elseif ($method == "POST") {
-			if (function_exists('getallheaders'))
-				getallheaders();
-			$headers = [];
-			foreach ($_SERVER as $name => $value) {
-				if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
-					$headers[@strtr(ucwords(strtolower(@strtr(substr($name, 5), ['_' => ' ']))), [' ' => '-', 'Http' => 'HTTP'])] = $value;
-				}
-			}
-			if (isset($headers['X-HTTP-Method-Override']) && in_array($headers['X-HTTP-Method-Override'], ["PUT", "DELETE", "PATCH"])) {
-				$method = $headers['X-HTTP-Method-Override'];
-			}
-		}
-		return $method;
-	}
 }
-
-# Initialize - AutoInitialize
-# new Log;

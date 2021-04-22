@@ -8,15 +8,22 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.4
+ * @version 1.5
  */
 
 namespace BMVC\Libs;
 
+use BMVC\Libs\Request;
+
 class Session
 {
 
-	static function set($storage, $content=null)
+	/**
+	 * @param mixed $storage
+	 * @param mixed $content
+	 * @return array
+	 */
+	public static function set($storage, $content=null): array
 	{
 		if (is_array($storage)) {
 			foreach ($storage as $key => $value) {
@@ -27,7 +34,12 @@ class Session
 		}
 	}
 
-	static function get($storage=null, $child=false)
+	/**
+	 * @param  string|null $storage
+	 * @param  string|null $child
+	 * @return mixed
+	 */
+	public static function get(string $storage=null, string $child=null)
 	{
 		if (is_null($storage)) {
 			return $_SESSION;
@@ -36,9 +48,14 @@ class Session
 		return self::has($storage, $child);
 	}
 
-	static function has($storage, $child=false)
+	/**
+	 * @param  string      $storage
+	 * @param  string|null $child
+	 * @return mixed
+	 */
+	public static function has(string $storage, string $child=null)
 	{
-		if ($child == false) {
+		if ($child === null) {
 			if (isset($_SESSION[$storage])) {
 				return $_SESSION[$storage];
 			}
@@ -49,12 +66,17 @@ class Session
 		}
 	}
 
-	static function delete($storage=null, $child=false)
+	/**
+	 * @param  string|null $storage
+	 * @param  string|null $child
+	 * @return mixed
+	 */
+	public static function delete(string $storage=null, string $child=null)
 	{
 		if (is_null($storage)) {
 			session_unset();
 		} else {
-			if ($child == false) {
+			if ($child === null) {
 				if (isset($_SESSION[$storage])) {
 					unset($_SESSION[$storage]);
 				}
@@ -66,19 +88,16 @@ class Session
 		}
 	}
 
-	static function destroy()
+	public static function destroy()
 	{
 		session_destroy();
 	}
 
 	private static function generateHash()
 	{
-		if (array_key_exists('REMOTE_ADDR', $_SERVER) && array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
-			return md5(sha1(md5($_SERVER['REMOTE_ADDR'] . 'u2LMq1h4oUV0ohL9svqedoB5LebiIE4z' . $_SERVER['HTTP_USER_AGENT'])));
+		if (Request::getIp() && Request::getUserAgent()) {
+			return md5(sha1(md5(Request::getIp() . 'u2LMq1h4oUV0ohL9svqedoB5LebiIE4z' . Request::getUserAgent())));
 		}
 		return md5(sha1(md5('u2LMq1h4oUV0ohL9svqedoB5LebiIE4z')));
 	}
 }
-
-# Initialize - AutoInitialize
-# new Session;

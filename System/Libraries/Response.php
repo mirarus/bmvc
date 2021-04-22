@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.2
+ * @version 1.3
  */
 
 namespace BMVC\Libs;
@@ -16,6 +16,9 @@ namespace BMVC\Libs;
 class Response
 {
 	
+	/**
+	 * @var array
+	 */
 	private static $statusCodes = [
 		100 => 'Continue',
 		101 => 'Switching Protocols',
@@ -60,23 +63,36 @@ class Response
 		505 => 'HTTP Version Not Supported'
 	];
 
-	static function setHeader($code)
+	/**
+	 * @param int $code
+	 */
+	public static function setHeader(int $code): void
 	{
 		header("HTTP/1.1 " . $code . " " . self::setStatusCode($code));
 		header("Content-Type: application/json; charset=utf-8");
 	}
 	
-	static function setStatusCode($code)
+	/**
+	 * @param int $code
+	 */
+	public static function setStatusCode(int $code): void
 	{
-		return http_response_code($code);
+		http_response_code($code);
 	}
 
-	static function getStatusCode()
+	/**
+	 * @return int
+	 */
+	public static function getStatusCode(): int
 	{
 		return http_response_code();
 	}
 
-	static function getStatusMessage($code=null)
+	/**
+	 * @param  int|null $code
+	 * @return string
+	 */
+	public static function getStatusMessage(int $code=null): string
 	{
 		if (is_null($code)) {
 			return self::$statusCodes[self::getStatusCode()];
@@ -84,9 +100,13 @@ class Response
 		return self::$statusCodes[$code];
 	}
 
-	static function json($data=null, $code=200)
+	/**
+	 * @param  mixed       $data
+	 * @param  int|integer $code
+	 * @return mixed
+	 */
+	public static function json($data=null, int $code=200)
 	{
-		header_remove();
 		self::setStatusCode($code);
 		header("Cache-Control: no-transform,public,max-age=300,s-maxage=900");
 		header('Content-type: application/json');

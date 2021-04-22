@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 4.2
+ * @version 4.5
  */
 
 namespace BMVC\Core;
@@ -23,9 +23,17 @@ use Monolog\Formatter\LineFormatter as MlLineFormatter;
 final class App
 {
 
+	/**
+	 * @var boolean
+	 */
 	private static $init = false;
+	
 	public static $whoops;
 	public static $log;
+	
+	/**
+	 * @var array
+	 */
 	public static $namespaces = [
 		'controller' => 'App\Controller\\',
 		'model'      => 'App\Model\\'
@@ -76,9 +84,11 @@ final class App
 
 	private static function initError(): void
 	{
-		self::$whoops->pushHandler(function ($exception, $inspector, $run) {
-			self::$log->error($exception);
-		});
+		if (config('general/log') == true) {		
+			self::$whoops->pushHandler(function ($exception, $inspector, $run) {
+				self::$log->error($exception);
+			});
+		}
 	}
 	
 	private static function initSession(): void
@@ -96,6 +106,7 @@ final class App
 
 	private static function initHeader(): void
 	{
+		@header_remove();
 		@header("X-Frame-Options: sameorigin");
 		@header("Strict-Transport-Security: max-age=15552000; preload");
 		@header("X-Powered-By: PHP/BMVC");
@@ -103,12 +114,10 @@ final class App
 
 	private static function init(array $array = []): void
 	{
-		if (isset($array['routes'])) {
-			require_once $array['routes'];
-		}
-
-		if (isset($array['config'])) {
-			require_once $array['config'];
+		if (isset($array['files'])) {
+			foreach ($array['files'] as $file) {
+				require_once $file;
+			}
 		}
 
 		if (function_exists('mb_internal_encoding')) {
@@ -119,8 +128,18 @@ final class App
 			die("Cli Not Available, Browser Only.");
 		}
 
+		if (!defined('URL')) {
+			define("URL", base_url());
+		}
+
+		if (!defined('TIMEZONE')) {
+			define("TIMEZONE", "Europe/Istanbul");
+		}
 		@date_default_timezone_set(TIMEZONE);
 
+		if (!defined('ENVIRONMENT')) {
+			define("ENVIRONMENT", "development");
+		}
 		switch (ENVIRONMENT) {
 			case 'development':
 			@error_reporting(-1);
@@ -164,8 +183,8 @@ final class App
 
 	private static function initialize(): void
 	{
-		if (config('initialize') !== null) {
-			foreach (config('initialize') as $init) {
+		if (is_array(config('init')) && config('init') !== null) {
+			foreach (config('init') as $init) {
 				new $init;
 			}
 		}
@@ -182,18 +201,7 @@ final class App
 		if (is_callable($action)) {
 			return call_user_func_array($action, array_values($params));
 		} else {
-			if (!isset($_url) && empty($_url)) {
-				$action = [
-					config('default/module'), 
-					config('default/controller'), 
-					config('default/method')
-				];
-			}
-			if (is_dir(APPDIR . '/Modules/') && opendir(APPDIR . '/Modules/')) {
-				@Controller::call(@$action, @$params);
-			} else {
-				MError::title('Module Error!')::print('Modules Dir Not Found!', null, true);
-			}
+			Controller::call(@$action, @$params);
 		}
 	}
 }

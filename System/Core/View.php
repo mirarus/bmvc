@@ -8,112 +8,137 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.5
+ * @version 3.6
  */
 
 namespace BMVC\Core;
-use BMVC\Libs\MError;
+
+use Exception;
 
 final class View
 {
 
-	private static function import($module, $view, $data=[], &$return=null)
+	/**
+	 * @var string
+	 */
+	private static $dir = APPDIR . '/Http/View/';
+
+	/**
+	 * @param mixed       $action
+	 * @param array       $data
+	 * @param string      $engine
+	 * @param object|null &$return
+	 */
+	private static function import($action, array $data=[], string $engine='php', object &$return=null)
 	{
+		$data ? extract($data) : null;
 		@$_REQUEST['vd'] = $data;
-		$dir = (APPDIR . '/Modules/' . $module);
-		$viewDir = ($dir . '/View');
-		$cacheDir = ($dir . '/Cache');
 
-		if (config('general/view/blade') == false) {
+		if (!in_array($engine, ['php', 'blade'])) {
+			$engine = 'php';
+		}
 
-			$data ? extract($data) : null;
+		if (@strstr($action, '@')) {
+			$action = explode('@', $action);
+		} elseif (@strstr($action, '/')) {
+			$action = explode('/', $action);
+		} elseif (@strstr($action, '.')) {
+			$action = explode('.', $action);
+		}
 
-			if (file_exists($file = $viewDir . '/' . $view . '.php')) {
+		if ($action > 1) {
+			$view = @array_pop($action);
+		} else {
+			$view = $action;
+		}
+		$namespace = @implode($action, '\\');
 
-				if (config('general/view/cache') == true) {
-					
-					$cacheFile = self::cache($view, $file, $cacheDir);
+		if (($namespace === null || $namespace !== null) && $view != null) {
 
-					ob_start();
-					require_once $cacheFile;
-					$ob_content = ob_get_contents();
-					ob_end_clean();
-					return $return = $ob_content;
-				} else {
+			$_nsv     = ($namespace != null) ? implode([$namespace, $view], '/') : $view;
+			$cacheDir = self::$dir . $namespace . '/Cache';
+
+			if (!_dir($cacheDir)) {
+				mkdir($cacheDir);
+			}
+
+			if ($engine == 'php') {
+
+				if (file_exists($file = self::$dir . $_nsv . '.php')) {
+
+					if (config('general/view/cache') == true) {
+						$file = self::cache($_nsv, $file, $cacheDir);
+					}
 
 					ob_start();
 					require_once $file;
 					$ob_content = ob_get_contents();
 					ob_end_clean();
 					return $return = $ob_content;
+				} else {
+					throw new Exception('View File Found! | File: ' . $_nsv . '.php');
 				}
-			} else {
-				MError::title('View Error!')::stop(true)::print('View File Found!', 'View Name: ' . $module . '/' . $view);
-			}
-		} else {
+			} elseif ($engine == 'blade') {
 
-			if (file_exists($file = $dir . '/View/' . $view . '.blade.php')) {
-
-				$blade = new \Jenssegers\Blade\Blade($viewDir, $cacheDir);
-				return $blade->make($view, $data)->render();
-			} else {
-				MError::title('Blade View Error!')::stop(true)::print('Blade View File Found!', 'Blade View Name: ' . $module . '/' . $view);
+				if (file_exists($file = self::$dir . $_nsv . '.blade.php')) {
+					$blade = new \Jenssegers\Blade\Blade(self::$dir . $namespace, $cacheDir);
+					return $blade->make($view, $data)->render();
+				} else {
+					throw new Exception('Blade View File Found! | File: ' . $_nsv . '.blade.php');
+				}
 			}
 		}
 	}
 
-	static function load($action, $data=[], $layout=false, &$return=null)
+	/**
+	 * @param mixed        $action
+	 * @param array        $data
+	 * @param bool|boolean $layout
+	 * @param string       $engine
+	 * @param object|null  &$return
+	 */
+	public static function load($action, array $data=[], bool $layout=false, string $engine='php', object &$return=null)
 	{
-		$module = null;
-		$view = null;
+		$view      = null;
+		$namespace = null;
 
-		if (is_array($action)) {
-			$module = array_shift($action);
-			$view = implode('/', $action);
-		} elseif (strstr($action, '@')) {
+		if (@strstr($action, '@')) {
 			$action = explode('@', $action);
-			$module = array_shift($action);
-			$view = implode('/', $action);
-		} elseif (strstr($action, '/')) {
+		} elseif (@strstr($action, '/')) {
 			$action = explode('/', $action);
-			$module = array_shift($action);
-			$view = implode('/', $action);
+		} elseif (@strstr($action, '.')) {
+			$action = explode('.', $action);
+		}
+
+		if ($action > 1) {
+			$view = @array_pop($action);
 		} else {
-			$module = config('default/module');
 			$view = $action;
 		}
+		$namespace = @implode($action, '\\');
 
-		if ($module != null && $view != null) {
+		if (($namespace === null || $namespace !== null) && $view != null) {
 
-			if (_dir(APPDIR . '/Modules/' . $module)) {
-				if (_dir(APPDIR . '/Modules/' . $module . '/View')) {
+			if ($layout == true) {
 
-					if ($layout == true) {
-
-						if (_dir(APPDIR . '/Modules/' . $module . '/Layout')) {
-							if (file_exists($file = APPDIR . '/Modules/' . $module . '/Layout/Main.php')) {
-
-								$content = $view != null ? self::import($module, $view, $data, $return) : null;
-								require_once $file;
-							} else {
-								MError::title('View Error!')::stop(true)::print('Layout File Found!', 'Layout Name: Main');
-							}
-						} else {
-							MError::title('View Error!')::stop(true)::print('Layout Dir Not Found!');
-						}
-					} else {
-						echo self::import($module, $view, $data, $return);
-					}
+				if (file_exists($file = self::$dir . $namespace . '/Layout/Main.php')) {
+					$content = $view != null ? self::import([$namespace, $view], $data, $engine, $return) : null;
+					require_once $file;
 				} else {
-					MError::title('View Error!')::stop(true)::print('View Dir Not Found!');
+					throw new Exception('Layout File Found! | File: ' . $namespace . '/Layout/Main.php');
 				}
 			} else {
-				MError::title('View Error!')::stop(true)::print('Module Not Found!', 'Module Name: ' . $module);
+				echo self::import([$namespace, $view], $data, $engine, $return);
 			}
 		}
 	}
 
-	static private function cache($fileName, $fileContent, $cacheDir)
+	/**
+	 * @param string $fileName
+	 * @param string $fileContent
+	 * @param string $cacheDir
+	 */
+	private static function cache(string $fileName, string $fileContent, string $cacheDir)
 	{
 		$file = ($cacheDir . '/' . md5($fileName) . '.php');
 
@@ -122,7 +147,7 @@ final class View
 		} else {
 			$cacheExpire = 120;
 		}
-		
+
 		if (!file_exists($file) || (filemtime($file) < (time() - $cacheExpire))) {
 
 			$content = file_get_contents($fileContent);
@@ -133,6 +158,3 @@ final class View
 		return $file;
 	}
 }
-
-# Initialize - AutoInitialize
-# new View;

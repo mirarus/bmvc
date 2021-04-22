@@ -6,9 +6,9 @@ $_config['general'] = [
 	'log' => true,
 	'view' => [
 		'cache' => false,
-		'cacheExpire' => 120, // Second
-		'blade' => false // Blade theme engine support -- FileName.blade.php if true is selected
-	]
+		'cacheExpire' => 120 // Second
+	],
+	'lang' => 'en'
 ];
 
 $_config['db'] = [
@@ -18,14 +18,8 @@ $_config['db'] = [
 	'pass' => ''
 ];
 
-$_config['default'] = [
-	'module' => 'default',
-	'controller' => 'Main',
-	'method' => 'index',
-	'lang' => 'tr'
-];
-
-$_config['initialize'] = [
+$_config['init'] = [
 //	"BMVC\Core\Model",
-	"BMVC\Libs\MError"
+	"BMVC\Libs\MError",
+	"BMVC\Libs\Lang",
 ];

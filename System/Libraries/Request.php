@@ -8,14 +8,18 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.4
+ * @version 1.5
  */
 
 namespace BMVC\Libs;
 
+use stdClass;
+use BMVC\Libs\Header;
+use BMVC\Libs\Filter;
+
 class Request
 {
-
+	
 	const METHOD_HEAD = 'HEAD';
 	const METHOD_GET = 'GET';
 	const METHOD_POST = 'POST';
@@ -25,16 +29,54 @@ class Request
 	const METHOD_OPTIONS = 'OPTIONS';
 	const METHOD_OVERRIDE = '_METHOD';
 
+	/**
+	 * @var array
+	 */
 	private static $formDataMediaTypes = ['application/x-www-form-urlencoded'];
 
+	/**
+	 * @var mixed
+	 */
 	public $body;
+
+	/**
+	 * @var mixed
+	 */
 	public $server;
+
+	/**
+	 * @var mixed
+	 */
 	public $request;
+
+	/**
+	 * @var mixed
+	 */
 	public $env;
+
+	/**
+	 * @var mixed
+	 */
 	public $session;
+	
+	/**
+	 * @var mixed
+	 */
 	public $cookie;
+
+	/**
+	 * @var mixed
+	 */
 	public $files;
+
+	/**
+	 * @var mixed
+	 */
 	public $post;
+	
+	/**
+	 * @var mixed
+	 */
 	public $get;
 
 	public function __construct()
@@ -42,7 +84,10 @@ class Request
 		$this->getBody('object');
 	}
 
-	private function getBody(string $type='object')
+	/**
+	 * @param string $type
+	 */
+	private function getBody(string $type='object'): void
 	{
 		$_body = [
 			'server'  => self::server(),
@@ -91,7 +136,10 @@ class Request
 		}
 	}
 
-	public static function _server($key=null)
+	/**
+	 * @param string|null $key
+	 */
+	public static function _server(string $key=null)
 	{
 		if ($key) {
 			return isset($_SERVER[$key]) ? $_SERVER[$key] : null;
@@ -99,7 +147,11 @@ class Request
 		return $_SERVER;
 	}
 
-	public static function header($key=null, $default=null)
+	/**
+	 * @param string|null $key
+	 * @param mixed       $default
+	 */
+	public static function header(string $key=null, $default=null)
 	{
 		$_header = Header::extract(self::_server());
 		
@@ -112,47 +164,74 @@ class Request
 		return $_header;
 	}
 
-	public static function getMethod()
+	/**
+	 * @return string
+	 */
+	public static function getMethod(): string
 	{
 		return self::_server('REQUEST_METHOD');
 	}
 
-	public static function isGet()
+	/**
+	 * @return boolean
+	 */
+	public static function isGet(): bool
 	{
 		return self::getMethod() === self::METHOD_GET;
 	}
 
-	public static function isPost()
+	/**
+	 * @return boolean
+	 */
+	public static function isPost(): bool
 	{
 		return self::getMethod() === self::METHOD_POST;
 	}
 
-	public static function isPut()
+	/**
+	 * @return boolean
+	 */
+	public static function isPut(): bool
 	{
 		return self::getMethod() === self::METHOD_PUT;
 	}
 
-	public static function isPatch()
+	/**
+	 * @return boolean
+	 */
+	public static function isPatch(): bool
 	{
 		return self::getMethod() === self::METHOD_PATCH;
 	}
 
-	public static function isDelete()
+	/**
+	 * @return boolean
+	 */
+	public static function isDelete(): bool
 	{
 		return self::getMethod() === self::METHOD_DELETE;
 	}
 
-	public static function isHead()
+	/**
+	 * @return boolean
+	 */
+	public static function isHead(): bool
 	{
 		return self::getMethod() === self::METHOD_HEAD;
 	}
 
-	public static function isOptions()
+	/**
+	 * @return boolean
+	 */
+	public static function isOptions(): bool
 	{
 		return self::getMethod() === self::METHOD_OPTIONS;
 	}
 
-	public static function isAjax()
+	/**
+	 * @return boolean
+	 */
+	public static function isAjax(): bool
 	{
 		if (self::header('X_REQUESTED_WITH') !== null && self::header('X_REQUESTED_WITH') === 'XMLHttpRequest') {
 			return true;
@@ -160,15 +239,25 @@ class Request
 		return false;
 	}
 
-	public static function isFormData()
+	/**
+	 * @return boolean
+	 */
+	public static function isFormData(): bool
 	{
 		return (self::getMethod() === self::METHOD_POST && is_null(self::getContentType())) || in_array(self::getMediaType(), self::$formDataMediaTypes);
 	}
-	public static function getContentType()
+
+	/**
+	 * @return string
+	 */
+	public static function getContentType(): string
 	{
 		return self::header('CONTENT_TYPE');
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public static function getMediaType()
 	{
 		$contentType = self::getContentType();
@@ -179,10 +268,13 @@ class Request
 		return null;
 	}
 
-	public static function getMediaTypeParams()
+	/**
+	 * @return array
+	 */
+	public static function getMediaTypeParams(): array
 	{
 		$contentType = self::getContentType();
-		$contentTypeParams = array();
+		$contentTypeParams = [];
 		if ($contentType) {
 			$contentTypeParts = preg_split('/\s*[;,]\s*/', $contentType);
 			$contentTypePartsLength = count($contentTypeParts);
@@ -194,6 +286,9 @@ class Request
 		return $contentTypeParams;
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public static function getContentCharset()
 	{
 		$mediaTypeParams = self::getMediaTypeParams();
@@ -203,12 +298,18 @@ class Request
 		return null;
 	}
 
-	public static function getContentLength()
+	/**
+	 * @return int
+	 */
+	public static function getContentLength(): int
 	{
 		return self::header('CONTENT_LENGTH', 0);
 	}
 
-	public static function getHost()
+	/**
+	 * @return string
+	 */
+	public static function getHost(): string
 	{
 		if (self::_server('HTTP_HOST') !== null) {
 			if (strpos(self::_server('HTTP_HOST'), ':') !== false) {
@@ -220,42 +321,66 @@ class Request
 		return self::_server('SERVER_NAME');
 	}
 
-	public static function getPort()
+	/**
+	 * @return int
+	 */
+	public static function getPort(): int
 	{
 		return (int) self::_server('SERVER_PORT');
 	}
 
-	public static function getHostWithPort()
+	/**
+	 * @return string
+	 */
+	public static function getHostWithPort(): string
 	{
 		return sprintf('%s:%s', self::getHost(), self::getPort());
 	}
 
-	public static function getScheme()
+	/**
+	 * @return string
+	 */
+	public static function getScheme(): string
 	{
 		return stripos(self::_server('SERVER_PROTOCOL'), 'https') === true ? 'https' : 'http';
 	}
 
-	public static function getScriptName()
+	/**
+	 * @return string
+	 */
+	public static function getScriptName(): string
 	{
 		return self::_server('SCRIPT_NAME');
 	}
 
-	public static function getPathInfo()
+	/**
+	 * @return string
+	 */
+	public static function getPathInfo(): string
 	{
 		return self::_server('PATH_INFO');
 	}
 
-	public static function getPath()
+	/**
+	 * @return string
+	 */
+	public static function getPath(): string
 	{
 		return self::getScriptName() . self::getPathInfo();
 	}
 
-	public static function getResourceUri()
+	/**
+	 * @return string
+	 */
+	public static function getResourceUri(): string
 	{
 		return self::getPathInfo();
 	}
 
-	public static function getUrl()
+	/**
+	 * @return string
+	 */
+	public static function getUrl(): string
 	{
 		$url = self::getScheme() . '://' . self::getHost();
 		if ((self::getScheme() === 'https' && self::getPort() !== 443) || (self::getScheme() === 'http' && self::getPort() !== 80)) {
@@ -264,27 +389,42 @@ class Request
 		return $url;
 	}
 
-	public static function getIp()
+	/**
+	 * @return string
+	 */
+	public static function getIp(): string
 	{
 		return IP::get();
 	}
 	
-	public static function getReferrer()
+	/**
+	 * @return string
+	 */
+	public static function getReferrer(): string
 	{
 		return self::header('HTTP_REFERER');
 	}
 
-	public static function getReferer()
+	/**
+	 * @return string
+	 */
+	public static function getReferer(): string
 	{
 		return self::getReferrer();
 	}
 
-	public static function getUserAgent()
+	/**
+	 * @return string
+	 */
+	public static function getUserAgent(): string
 	{
 		return self::header('HTTP_USER_AGENT');
 	}
 
-	public static function getRequestMethod()
+	/**
+	 * @return string
+	 */
+	public static function getRequestMethod(): string
 	{
 		$method = self::getMethod();
 		if ($method === self::METHOD_HEAD) {
@@ -306,7 +446,11 @@ class Request
 		return $method;
 	}
 
-	public static function checkDomain($domain)
+	/**
+	 * @param  string $domain
+	 * @return bool
+	 */
+	public static function checkDomain(string $domain): bool
 	{
 		if (isset($domain) && !empty($domain)) {
 			if ($domain !== trim(str_replace('www.', '', self::_server('SERVER_NAME')), '/'))
@@ -316,7 +460,11 @@ class Request
 		return true;
 	}
 
-	public static function checkIp($ip)
+	/**
+	 * @param  mixed $ip
+	 * @return bool
+	 */
+	public static function checkIp($ip): bool
 	{
 		if (isset($ip) && !empty($ip)) {
 			if (is_array($ip)) {
@@ -333,47 +481,95 @@ class Request
 		return true;
 	}
 
-	public static function server($data=null, $db_filter=true, $xss_filter=true)
+	/**
+	 * @param  string|null  $data
+	 * @param  bool|boolean $db_filter
+	 * @param  bool|boolean $xss_filter
+	 * @return mixed
+	 */
+	public static function server(string $data=null, bool $db_filter=true, bool $xss_filter=true)
 	{
 		return self::rea(self::_server(), $data, $db_filter, $xss_filter);
 	}
 
-	public static function request($data=null, $db_filter=true, $xss_filter=true)
+	/**
+	 * @param  string|null  $data
+	 * @param  bool|boolean $db_filter
+	 * @param  bool|boolean $xss_filter
+	 * @return mixed
+	 */
+	public static function request(string $data=null, bool $db_filter=true, bool $xss_filter=true)
 	{
 		return self::rea($_REQUEST, $data, $db_filter, $xss_filter);
 	}
 
-	public static function env($data=null)
+	/**
+	 * @param  string|null $data
+	 * @return mixed
+	 */
+	public static function env(string $data=null)
 	{
 		return self::rea($_ENV, $data, false, false);
 	}
 
-	public static function session($data=null)
+	/**
+	 * @param  string|null $data
+	 * @return mixed
+	 */
+	public static function session(string $data=null)
 	{
 		return self::rea($_SESSION, $data, false, false);
 	}
 
-	public static function cookie($data=null)
+	/**
+	 * @param  string|null $data
+	 * @return mixed
+	 */
+	public static function cookie(string $data=null)
 	{
 		return self::rea($_COOKIE, $data, false, false);
 	}
 
-	public static function files($data=null, $xss_filter=true)
+	/**
+	 * @param  string|null  $data
+	 * @param  bool|boolean $xss_filter
+	 * @return mixed
+	 */
+	public static function files(string $data=null, bool $xss_filter=true)
 	{
 		return self::rea($_FILES, $data, false, $xss_filter);
 	}
 
-	public static function post($data=null, $db_filter=true, $xss_filter=true)
+	/**
+	 * @param  string|null  $data
+	 * @param  bool|boolean $db_filter
+	 * @param  bool|boolean $xss_filter
+	 * @return mixed
+	 */
+	public static function post(string $data=null, bool $db_filter=true, bool $xss_filter=true)
 	{
 		return self::rea($_POST, $data, $db_filter, $xss_filter);
 	}
 
-	public static function get($data=null, $db_filter=true, $xss_filter=true)
+	/**
+	 * @param  string|null  $data
+	 * @param  bool|boolean $db_filter
+	 * @param  bool|boolean $xss_filter
+	 * @return mixed
+	 */
+	public static function get(string $data=null, bool $db_filter=true, bool $xss_filter=true)
 	{
 		return self::rea($_GET, $data, $db_filter, $xss_filter);
 	}
 
-	public static function filter($data=null, $type='post', $db_filter=true, $xss_filter=true)
+	/**
+	 * @param  string|null  $data
+	 * @param  string       $type
+	 * @param  bool|boolean $db_filter
+	 * @param  bool|boolean $xss_filter
+	 * @return mixed
+	 */
+	public static function filter(string $data=null, string $type='post', bool $db_filter=true, bool $xss_filter=true)
 	{
 		if ($type == 'server') {
 			return self::server($data, $db_filter, $xss_filter);
@@ -394,7 +590,12 @@ class Request
 		}
 	}
 
-	public static function body(string $method=null, string $body_type='object')
+	/**
+	 * @param  string|null $method
+	 * @param  string      $body_type
+	 * @return object
+	 */
+	public static function body(string $method=null, string $body_type='object'): object
 	{
 		$class = new self;
 
@@ -413,16 +614,23 @@ class Request
 		}
 	}
 
-	private static function rea($method, $data=null, $db_filter=true, $xss_filter=true)
+	/**
+	 * @param  mixed        $method
+	 * @param  string|null  $data
+	 * @param  bool|boolean $db_filter
+	 * @param  bool|boolean $xss_filter
+	 * @return mixed
+	 */
+	private static function rea($method, string $data=null, bool $db_filter=true, bool $xss_filter=true)
 	{
 		if ($xss_filter == true) {
-			$method = @Filter::filterXSS($method);
+			$method = Filter::filterXSS($method);
 		}
 
 		if (isset($data) && !empty($data)) {
 			if ($db_filter == true) {
 				if (isset($method[$data])) {
-					return @Filter::filterDB($method[$data]);
+					return Filter::filterDB($method[$data]);
 				}
 			} else {
 				if (isset($method[$data])) {
@@ -434,9 +642,13 @@ class Request
 		}
 	}
 
-	private static function arrayToObject(array $array) : object
+	/**
+	 * @param  array  $array
+	 * @return object
+	 */
+	private static function arrayToObject(array $array): object
 	{
-		$object = new \stdClass();
+		$object = new stdClass();
 		foreach ($array as $key => $value) {
 			if (is_array($value)) {
 				$value = self::arrayToObject($value);

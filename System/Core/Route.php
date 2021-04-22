@@ -8,22 +8,56 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.8
+ * @version 2.1
  */
 
 namespace BMVC\Core;
+
+use Exception;
+use Closure;
 use BMVC\Libs\{Request, MError};
 
 final class Route
 {
 
+	/**
+	 * @var string
+	 */
 	private static $notFound = '';
+
+	/**
+	 * @var array
+	 */
 	private static $routes = [];
+
+	/**
+	 * @var array
+	 */
 	private static $groups = [];
+
+	/**
+	 * @var string
+	 */
 	private static $prefix = '/';
+
+	/**
+	 * @var string
+	 */
 	private static $ip;
+
+	/**
+	 * @var integer
+	 */
 	private static $groupped = 0;
+
+	/**
+	 * @var string
+	 */
 	private static $mainRoute = '/';
+
+	/**
+	 * @var array
+	 */
 	private static $patterns  = [
 		':all'        => '(.*)',
 		':num'        => '([0-9]+)',
@@ -40,7 +74,10 @@ final class Route
 		'{uppercase}' => '([A-Z]+)',
 	];
 
-	static function Run(&$return = null)
+	/**
+	 * @param &$return
+	 */
+	public static function Run(&$return=null)
 	{
 		$routes = Route::getRoutes();
 
@@ -80,13 +117,16 @@ final class Route
 				self::get_404();
 			}
 		} else {
-			MError::title('Route Error!')::print('Route Not Found!', null, true);
-			http_response_code(404);
-			exit();
+			throw new Exception('Route Not Found!');
 		}
 	}
 
-	private static function Route($method, $pattern, $callback)
+	/**
+	 * @param string      $method
+	 * @param string|null $pattern
+	 * @param mixed       $callback
+	 */
+	private static function Route(string $method, string $pattern=null, $callback): void
 	{
 		$closure = null;
 		if ($pattern == '/') {
@@ -118,7 +158,10 @@ final class Route
 		self::$routes[] = $route_;
 	}
 
-	static function group($callback)
+	/**
+	 * @param Closure $callback
+	 */
+	public static function group(Closure $callback): void
 	{
 		self::$groupped++;
 		self::$groups[] = [
@@ -138,70 +181,125 @@ final class Route
 		self::$prefix = @self::$groups[self::$groupped-1]['baseRoute'];
 	}
 
-	static function prefix($prefix)
+	/**
+	 * @param  string|null $prefix
+	 * @return Route
+	 */
+	public static function prefix(string $prefix=null): Route
 	{
 		self::$prefix = self::$mainRoute . $prefix;
 		return new self;
 	}
 
-	static function ip($ip)
+	/**
+	 * @param  string $ip
+	 * @return Route
+	 */
+	public static function ip(string $ip): Route
 	{
 		self::$ip = $ip;
 		return new self;
 	}
 
-	static function get($pattern, $callback)
+	/**
+	 * @param  string|null $pattern
+	 * @param  mixed       $callback
+	 * @return Route
+	 */
+	public static function get(string $pattern=null, $callback): Route
 	{
 		self::Route('GET', self::$mainRoute . $pattern, $callback);
 		return new self;
 	}
 
-	static function post($pattern, $callback)
+	/**
+	 * @param  string|null $pattern
+	 * @param  mixed       $callback
+	 * @return Route
+	 */
+	public static function post(string $pattern=null, $callback): Route
 	{
 		self::Route('POST', self::$mainRoute . $pattern, $callback);
 		return new self;
 	}
 
-	static function patch($pattern, $callback)
+	/**
+	 * @param  string|null $pattern
+	 * @param  mixed       $callback
+	 * @return Route
+	 */
+	public static function patch(string $pattern=null, $callback): Route
 	{
 		self::Route('PATCH', self::$mainRoute . $pattern, $callback);
 		return new self;
 	}
 
-	static function delete($pattern, $callback)
+	/**
+	 * @param  string|null $pattern
+	 * @param  mixed       $callback
+	 * @return Route
+	 */
+	public static function delete(string $pattern=null, $callback): Route
 	{
 		self::Route('DELETE', self::$mainRoute . $pattern, $callback);
 		return new self;
 	}
 
-	static function put($pattern, $callback)
+	/**
+	 * @param  string|null $pattern
+	 * @param  mixed       $callback
+	 * @return Route
+	 */
+	public static function put(string $pattern=null, $callback): Route
 	{
 		self::Route('PUT', self::$mainRoute . $pattern, $callback);
 		return new self;
 	}
 
-	static function options($pattern, $callback)
+	/**
+	 * @param  string|null $pattern
+	 * @param  mixed       $callback
+	 * @return Route
+	 */
+	public static function options(string $pattern=null, $callback): Route
 	{
 		self::Route('OPTIONS', self::$mainRoute . $pattern, $callback);
 		return new self;
 	}
 
-	static function match($methods, $pattern, $callback)
+	/**
+	 * @param  array       $methods
+	 * @param  string|null $pattern
+	 * @param  mixed       $callback
+	 * @return Route
+	 */
+	public static function match(array $methods, string $pattern=null, $callback): Route
 	{
 		foreach ($methods as $method) {
 			self::Route(strtoupper($method), self::$mainRoute . $pattern, $callback);
 		}
+		return new self;
 	}
 
-	static function any($pattern, $callback)
+	/**
+	 * @param  string|null $pattern
+	 * @param  mixed       $callback
+	 * @return Route
+	 */
+	public static function any(string $pattern=null, $callback): Route
 	{
 		$methods = ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS'];
 		foreach ($methods as $method) {
 			self::Route($method, self::$mainRoute . $pattern, $callback);
 		}
+		return new self;
 	}
 
-	function where($expressions)
+	/**
+	 * @param  mixed $expressions
+	 * @return Route
+	 */
+	public static function where($expressions): Route
 	{
 		$routeKey = array_search(end(self::$routes), self::$routes);
 		$pattern = self::_parseUri(self::$routes[$routeKey]['pattern'], $expressions);
@@ -211,14 +309,24 @@ final class Route
 		return new self;
 	}
 
-	static function name($name, $params=[])
+	/**
+	 * @param  string $name
+	 * @param  array  $params
+	 * @return Route
+	 */
+	public static function name(string $name, array $params=[]): Route
 	{
 		$routeKey = array_search(end(self::$routes), self::$routes);
 		self::$routes[$routeKey]['name'] = $name;
 		return new self;
 	}
 
-	static function getUrl($name, $params=[])
+	/**
+	 * @param  string $name
+	 * @param  array  $params
+	 * @return string
+	 */
+	public static function getUrl(string $name, array $params=[]): string
 	{
 		foreach (self::$routes as $route) {
 			if (array_key_exists('name', $route) && $route['name'] == $name) {
@@ -231,12 +339,20 @@ final class Route
 		return $pattern;
 	}
 
-	static function getRoutes()
+	/**
+	 * @return array
+	 */
+	public static function getRoutes(): array
 	{
 		return self::$routes;
 	}
 
-	private static function _parseUri($uri, $expressions=[])
+	/**
+	 * @param  string $uri
+	 * @param  array  $expressions
+	 * @return array
+	 */
+	private static function _parseUri(string $uri, array $expressions=[]): array
 	{
 		$pattern = explode('/', ltrim($uri, '/'));
 		foreach ($pattern as $key => $val) {
@@ -251,20 +367,27 @@ final class Route
 		return $pattern;
 	}
 
-	static function set_404($callback)
+	/**
+	 * @param mixed $callback
+	 * @return Route
+	 */
+	public static function set_404($callback): Route
 	{
 		self::$notFound = $callback;
 		return new self;
 	}
 
-	static function get_404()
+	/**
+	 * @return mixed
+	 */
+	public static function get_404()
 	{
 		http_response_code(404);
 		if (self::$notFound) {
 			if (is_callable(self::$notFound)) {
 				call_user_func(self::$notFound);
 			} else {
-				@Controller::call(self::$notFound, null);
+				Controller::call(self::$notFound);
 			}
 		} else {
 			MError::title('Page Error!')::print('404 Page Not Found!', (@Request::get('url') ? 'Page: ' . Request::get('url') : null) , false);
@@ -272,13 +395,15 @@ final class Route
 		exit();
 	}
 
-	static function url_check(array $urls=[], string $url)
+	/**
+	 * @param  array  $urls
+	 * @param  string $url
+	 * @return mixed
+	 */
+	public static function url_check(array $urls=[], string $url)
 	{
 		if (!in_array($url, $urls)) {
 			self::get_404();
 		}
 	}
 }
-
-# Initialize - AutoInitialize
-# new Route;

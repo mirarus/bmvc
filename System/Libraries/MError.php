@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 2.4
+ * @version 2.5
  */
 
 namespace BMVC\Libs;
@@ -16,11 +16,34 @@ namespace BMVC\Libs;
 class MError
 {
 
+	/**
+	 * @var object
+	 */
 	private static $getInstance;
-	protected static $html;
+
+	/**
+	 * @var boolean
+	 */
+	protected static $html=false;
+
+	/**
+	 * @var string
+	 */
 	protected static $title;
-	protected static $stop;
+
+	/**
+	 * @var boolean
+	 */
+	protected static $stop=false;
+
+	/**
+	 * @var string
+	 */
 	protected static $color;
+
+	/**
+	 * @var array
+	 */
 	protected static $colors = [
 		'danger' => '244 67 54',
 		'warning' => '255 235 59',
@@ -29,12 +52,15 @@ class MError
 		'primary' => '33 150 243'
 	];
 
-	function __construct()
+	public function __construct()
 	{
 		self::reset();
 	}
 
-	static function getInstance(): self
+	/**
+	 * @return MErrorA
+	 */
+	public static function getInstance(): MErrorA
 	{
 		if (!self::$getInstance) {
 			self::$getInstance = new MErrorA;
@@ -49,7 +75,16 @@ class MError
 		self::$color = self::$colors['primary'];
 	}
 
-	private static function template($text, $message, $html=false, $title=null, $color=null, $stop=false, $response_code=200): void
+	/**
+	 * @param  mixed        $text
+	 * @param  mixed        $message
+	 * @param  bool|boolean $html
+	 * @param  mixed        $title
+	 * @param  string|null  $color
+	 * @param  bool|boolean $stop
+	 * @param  int|integer  $response_code
+	 */
+	private static function template($text, $message, bool $html=false, $title=null, string $color=null, bool $stop=false, int $response_code=200): void
 	{		
 		http_response_code($response_code);
 		if (function_exists('mb_internal_encoding')) {
@@ -64,7 +99,16 @@ class MError
 		if ($stop == true) exit();
 	}
 
-	static function print($text, $message=null, $html=false, $title=null, $color=null, $stop=false, $response_code=200): void
+	/**
+	 * @param  mixed        $text
+	 * @param  mixed        $message
+	 * @param  bool|boolean $html
+	 * @param  mixed|null   $title
+	 * @param  string|null  $color
+	 * @param  bool|boolean $stop
+	 * @param  int|integer  $response_code
+	 */
+	public static function print($text, $message=null, bool $html=false, $title=null, string $color=null, bool $stop=false, int $response_code=200): void
 	{
 		if (self::$color == null) {
 			self::$color = self::$colors['primary'];
@@ -85,27 +129,47 @@ class MError
 		self::reset();
 	}
 
-	static function set(array $array): self
+	/**
+	 * @param  array $array
+	 * @return MError
+	 */
+	public static function set(array $array): MError
 	{
 		return self::getInstance()->setData($array);
 	}
 
-	static function color(string $color): self
+	/**
+	 * @param  string $color
+	 * @return MError
+	 */
+	public static function color(string $color): MError
 	{
 		return self::getInstance()->setColor($color);
 	}
 
-	static function html(bool $bool): self
+	/**
+	 * @param  bool|boolean $bool
+	 * @return MError
+	 */
+	public static function html(bool $bool=false): MError
 	{
 		return self::getInstance()->setHtml($bool);
 	}
 
-	static function title(string $title): self
+	/**
+	 * @param  string $title
+	 * @return MError
+	 */
+	public static function title(string $title): MError
 	{
 		return self::getInstance()->setTitle($title);
 	}
 
-	static function stop(string $stop): self
+	/**
+	 * @param  bool|boolean $stop
+	 * @return MError
+	 */
+	public static function stop(bool $stop=true): MError
 	{
 		return self::getInstance()->setStop($stop);
 	}
@@ -114,12 +178,11 @@ class MError
 class MErrorA extends MError
 {
 
-	function __construct()
-	{
-		parent::__construct();
-	}
-
-	public function setData(array $array): self
+	/**
+	 * @param array $array
+	 * @return MErrorA
+	 */
+	public function setData(array $array): MErrorA
 	{
 		array_map(function ($key, $value) {
 			if ($key == 'color') {
@@ -135,30 +198,43 @@ class MErrorA extends MError
 		return $this;
 	}
 
-	public function setColor(string $color): self
+	/**
+	 * @param string $color
+	 * @return MErrorA
+	 */
+	public function setColor(string $color): MErrorA
 	{
 		self::$color = self::$colors[$color] ? self::$colors[$color] : self::$colors['primary'];
 		return $this;
 	}
 
-	public function setHtml(bool $bool): self
+	/**
+	 * @param bool|boolean $bool
+	 * @return MErrorA
+	 */
+	public function setHtml(bool $bool=false): MErrorA
 	{
 		self::$html = $bool;
 		return $this;
 	}
 
-	public function setTitle(string $title): self
+	/**
+	 * @param string $title
+	 * @return MErrorA
+	 */
+	public function setTitle(string $title): MErrorA
 	{
 		self::$title = $title;
 		return $this;
 	}
 
-	public function setStop(string $stop): self
+	/**
+	 * @param bool|boolean $stop
+	 * @return MErrorA
+	 */
+	public function setStop(bool $stop=true): MErrorA
 	{
 		self::$stop = $stop;
 		return $this;
 	}
 }
-
-# Initialize - AutoInitialize
-# new MError;

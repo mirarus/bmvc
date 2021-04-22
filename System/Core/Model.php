@@ -8,23 +8,39 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.3
+ * @version 3.4
  */
 
 namespace BMVC\Core;
-use BMVC\Libs\{BasicDB, MError};
+
+use Exception;
+use BMVC\Libs\BasicDB;
 
 final class Model
 {
 
+	/**
+	 * @var string
+	 */
+	private static $dir = APPDIR . '/Http/Model/';
+
+	/**
+	 * @var array
+	 */
 	private static $params = [];
 
-	function __construct()
+	/**
+	 * @return Model
+	 */
+	public function __construct()
 	{
 		self::DB();
 	}
 
-	static function DB()
+	/**
+	 * @return BasicDB
+	 */
+	public static function DB(): BasicDB
 	{
 		$host = config('db/host');
 		$name = config('db/name');
@@ -34,87 +50,99 @@ final class Model
 		return new BasicDB($host, $name, $user, $pass);
 	}
 
-	static function import($action, &$return=null)
+	/**
+	 * @param mixed       $action
+	 * @param object|null &$return
+	 */
+	public static function import($action, object &$return=null)
 	{
-		$module = null;
-		$model = null;
+		$model     = null;
+		$namespace = null;
 
-		if (is_array($action)) {
-			list($module, $model) = $action;
-		} elseif (strstr($action, '@')) {
-			list($module, $model) = explode('@', $action);
-		} elseif (strstr($action, '/')) {
-			list($module, $model) = explode('/', $action);
-		} else {
-			$module = config('default/module');
-			$model = $action;
+		if (@strstr($action, '@')) {
+			$action = explode('@', $action);
+		} elseif (@strstr($action, '/')) {
+			$action = explode('/', $action);
+		} elseif (@strstr($action, '.')) {
+			$action = explode('.', $action);
 		}
 
-		if ($module != null && $model != null) {
+		if ($action > 1) {
+			$model = @array_pop($action);
+		} else {
+			$model = $action;
+		}
+		$namespace = @implode($action, '\\');
 
-			$model = ucfirst($model);
+		if (($namespace === null || $namespace !== null) && $model != null) {
 
-			if (_dir(APPDIR . '/Modules/' . $module)) {
-				if (_dir(APPDIR . '/Modules/' . $module . '/Model')) {
+			$_nsm_ = ($namespace != null) ? implode([$namespace, '_model_'], '/') : '_model_';
+			
+			if (file_exists(self::$dir . $_nsm_ . '.php')) {
+				$_model_ = (App::$namespaces['model'] . str_replace(['/', '//'], '\\', $_nsm_));
+				new $_model_();
+			}
 
-					if (file_exists($mxfile = APPDIR . '/Modules/' . $module . '/Model/_' . $model . '_.php')) {
+			$model  = ucfirst($model);
+			$_nsm   = ($namespace != null) ? implode([$namespace, $model], '/') : $model;
+			$_model = (App::$namespaces['model'] . str_replace(['/', '//'], '\\', $_nsm));
 
-						require_once $mxfile;
-
-						$mxmodel = '_' . $module . '_';
-
-						if (strpos($mxmodel, "/") || strpos($mxmodel, "\\")) {
-							$mxmodel = explode('/', $mxmodel);
-							$mxmodel = end($mxmodel);
-						}
-
-						$_mxmodel = (App::$namespaces['model'] . $mxmodel);
-
-						if (class_exists($_mxmodel)) {
-							new $_mxmodel();
-						} else {
-							MError::title('Model Error!')::print('Class Not Defined in Model File!', 'Model Name: ' . $module . '/' . $mxmodel);
-						}
-					}
-
-					if (file_exists($file = APPDIR . '/Modules/' . $module . '/Model/' . $model . '.php')) {
-
-						require_once $file;
-
-						if (strpos($model, "/") || strpos($model, "\\")) {
-							$model = explode('/', $model);
-							$model = end($model);
-						}
-
-						$_model = (App::$namespaces['model'] . $model);
-
-						if (class_exists($_model)) {
-							if (is_array(self::$params) && !empty(self::$params)) {
-								return $return = new $_model(self::$params);
-							} else {
-								return $return = new $_model();
-							}
-						} else {
-							MError::title('Model Error!')::print('Class Not Defined in Model File!', 'Model Name: ' . $module . '/' . $model);
-						}
-					} else {
-						MError::title('Model Error!')::print('Model Not Found!', 'Model Name: ' . $module . '/' . $model);
-					}
-				} else {
-					MError::title('Model Error!')::print('Model Dir Not Found!');
-				}
+			if (is_array(self::$params) && !empty(self::$params)) {
+				return $return = new $_model(self::$params);
 			} else {
-				MError::title('Model Error!')::print('Module Not Found!', 'Module Name: ' . $module);
+				return $return = new $_model();
 			}
 		}
 	}
 
-	static function par($params=[])
+	/**
+	 * @param  array $params
+	 * @return Model
+	 */
+	public static function par(array $params=[]): Model
 	{
 		self::$params = $params;
 		return new self;
 	}
-}
 
-# Initialize - AutoInitialize
-# new Model;
+	/**
+	 * @param mixed       $action
+	 * @param array       $params
+	 * @param object|null &$return
+	 */
+	public static function call($action, array $params=[], object &$return=null)
+	{
+		$method    = null;
+		$model     = null;
+		$namespace = null;
+
+		if (@strstr($action, '@')) {
+			$action = explode('@', $action);
+		} elseif (@strstr($action, '/')) {
+			$action = explode('/', $action);
+		} elseif (@strstr($action, '.')) {
+			$action = explode('.', $action);
+		}
+
+		$method    = @array_pop($action);
+		$model     = @array_pop($action);
+		$namespace = @implode($action, '\\');
+
+		if (isset($namespace) && $model != null && $method != null) {
+
+			$class = self::import([$namespace, $model]);
+			
+			if (method_exists($class, $method)) {
+				if ($params == null) {
+					return $return = call_user_func([$class, $method]);
+				} else {
+					return $return = call_user_func_array([$class, $method], array_values($params));
+				}
+			} else {
+				$model = ucfirst($model);
+				$_nsm  = ($namespace != null) ? implode([$namespace, $model], '/') : $model;
+				throw new Exception('Model Method Not Found! | Model: ' . $_nsm . ' - Method: ' . $method);
+			}
+		}
+	}
+}

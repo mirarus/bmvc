@@ -8,23 +8,40 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 5.0
+ * @version 5.2
  */
 
 namespace BMVC\Libs;
+
+use Exception;
 use BMVC\Core\Route;
+use BMVC\Libs\Request;
 
 class Lang
 {
-
+	/**
+	 * @var array
+	 */
 	private static $langs = [];
-	static $lang = 'en';
+
+	/**
+	 * @var string
+	 */
+	public static $lang = 'en';
+
+	/**
+	 * @var string
+	 */
 	private static $current_lang = 'en';
+
+	/**
+	 * @var [type]
+	 */
 	private static $lang_dir = (APPDIR . '/Languages/');
 
-	function __construct()
+	public function __construct()
 	{
-		$_lang = config('default/lang');
+		$_lang = config('general/lang');
 
 		if ($_lang != null) {
 
@@ -47,7 +64,7 @@ class Lang
 		self::routes();
 	}
 
-	private static function routes()
+	private static function routes(): void
 	{
 		Route::prefix('lang')::group(function() {
 
@@ -71,7 +88,13 @@ class Lang
 		});
 	}
 
-	private static function _init($text, $return=true, $replace=null)
+	/**
+	 * @param  string            $text
+	 * @param  bool|boolean      $return
+	 * @param  array|string|null $replace
+	 * @return string
+	 */
+	private static function _init(string $text, bool $return=true, $replace=null): string
 	{
 		if ($return == true) {
 			if ($replace != null) {
@@ -96,62 +119,62 @@ class Lang
 		}
 	}
 
-	private static function _get_text($text)
+	/**
+	 * @param  string $text
+	 * @return array|false
+	 */
+	private static function _get_text(string $text)
 	{
-		if ($text != null) {
+		if (_dir(self::$lang_dir)) {
 
-			if (_dir(self::$lang_dir)) {
+			if (self::$current_lang == 'index') return false;
 
-				if (self::$current_lang == 'index') return false;
+			$_config = false;
 
-				$_config = false;
+			if (file_exists($file = self::$lang_dir . 'config.php')) {
 
-				if (file_exists($file = self::$lang_dir . 'config.php')) {
+				$inc_file = include ($file);
 
-					$inc_file = include ($file);
+				if (is_array($inc_file) && !empty($inc_file)) {
 
-					if (is_array($inc_file) && !empty($inc_file)) {
-						
-						$_config = true;
-						$_lang = $inc_file[self::$current_lang];
+					$_config = true;
+					$_lang = $inc_file[self::$current_lang];
 
-						if (isset($_lang)) {
-							$_lang = $_lang['langs'];
-							if (isset($_lang[$text])) {
-								return $_lang[$text];
-							} else {
-								return $text;
-								// MError::print('Language Not Found!', 'Language Text: ' . $text);
-							}
-						} else {
-							MError::print('Language Not Found!', 'Language Name: ' . self::$current_lang);
-						}
-					}
-				}
-
-				if ($_config == false) {
-					if (file_exists($file = self::$lang_dir . self::$current_lang . '.php')) {
-
-						$_lang = [];
-						include $file;
+					if (isset($_lang)) {
+						$_lang = $_lang['langs'];
 						if (isset($_lang[$text])) {
 							return $_lang[$text];
 						} else {
 							return $text;
-							// MError::print('Language Not Found!', 'Language Text: ' . $text);
 						}
 					} else {
-						MError::print('Language Not Found!', 'Language Name: ' . self::$current_lang);
+						throw new Exception('Language Not Found! | Language: ' . self::$current_lang);
 					}
 				}
-			} else {
-				MError::print('Language Dir Not Found!');
+			}
+
+			if ($_config == false) {
+				if (file_exists($file = self::$lang_dir . self::$current_lang . '.php')) {
+
+					$_lang = [];
+					include $file;
+					if (isset($_lang[$text])) {
+						return $_lang[$text];
+					} else {
+						return $text;
+					}
+				} else {
+					throw new Exception('Language Not Found! | Language: ' . self::$current_lang);
+				}
 			}
 		} else {
-			MError::print('Language Not Found!', 'Language Text: ' . $text);
+			throw new Exception('Language Dir Not Found!');
 		}
 	}
 
+	/**
+	 * @return array|false
+	 */
 	private static function _get_langs()
 	{
 		if (_dir(self::$lang_dir)) {
@@ -187,11 +210,16 @@ class Lang
 				return $files;
 			}
 		} else {
-			MError::print('Language Dir Not Found!');
+			throw new Exception('Language Dir Not Found!');
 		}
 	}
 
-	private static function _get_lang_info($_xlang, $par=null)
+	/**
+	 * @param  string      $_xlang
+	 * @param  string|null $par
+	 * @return array|false
+	 */
+	private static function _get_lang_info(string $_xlang, string $par=null)
 	{
 		if (_dir(self::$lang_dir)) {
 
@@ -221,7 +249,7 @@ class Lang
 							'name-local' => @$_lang_['info']['name-local']
 						];
 					} else {
-						MError::print('Language Not Found!', 'Language Name: ' . $_xlang);
+						throw new Exception('Language Not Found! | Language: ' . $_xlang);
 					}
 				}
 			}
@@ -237,7 +265,7 @@ class Lang
 						'name-local' => @$_lang_name[1]
 					];
 				} else {
-					MError::print('Language Not Found!', 'Language Name: ' . $_xlang);
+					throw new Exception('Language Not Found! | Language: ' . $_xlang);
 				}
 			}
 
@@ -249,18 +277,22 @@ class Lang
 				}
 			}
 		} else {
-			MError::print('Language Dir Not Found!');
+			throw new Exception('Language Dir Not Found!');
 		}
 	}
 
-	static function get_lang($lang)
+	/**
+	 * @param  string $lang
+	 * @return array
+	 */
+	public static function get_lang(string $lang): array
 	{
 		$info = self::_get_lang_info($lang);
 		$current = self::$current_lang == $lang ? true : false;
 		$name = $current ? $info['name-local'] : $info['name-global'];
 		$url = url('lang/set/' . $info['code']);
 
-		if ($info == null) return false;
+		if ($info == null) return [];
 
 		return [
 			'info' => $info,
@@ -270,7 +302,10 @@ class Lang
 		];
 	}
 
-	static function get_langs()
+	/**
+	 * @return array
+	 */
+	public static function get_langs(): array
 	{
 		$_langs = [];
 		foreach (self::$langs as $lang) {
@@ -279,7 +314,10 @@ class Lang
 		return $_langs;
 	}
 
-	static function get()
+	/**
+	 * @return string
+	 */
+	public static function get(): string
 	{
 		if (isset($_SESSION[md5('language')])) {
 			return $_SESSION[md5('language')];
@@ -288,27 +326,35 @@ class Lang
 		return self::$lang;
 	}
 
-	static function set($lang='')
+	/**
+	 * @param string|null $lang
+	 */
+	public static function set(string $lang=null): void
 	{
-		if (!is_string($lang)) {
-			return false;
-		} if (empty($lang)) {
+		if (empty($lang)) {
 			$lang = self::$current_lang;
 		} if (in_array($lang, self::$langs)) {
 			$_SESSION[md5('language')] = $lang;
 		}
 	}
 
-	static function __($text, $replace=null)
+	/**
+	 * @param  string $text
+	 * @param  mixed $replace
+	 * @return string
+	 */
+	public static function __(string $text, $replace=null): string
 	{
 		self::_init($text, false, $replace);
 	}
 
-	static function ___($text, $replace=null)
+	/**
+	 * @param  string $text
+	 * @param  mixed $replace
+	 * @return string
+	 */
+	public static function ___(string $text, $replace=null): string
 	{
 		return self::_init($text, true, $replace);
 	}
 }
-
-# Initialize - AutoInitialize
-# new Lang;

@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 use BMVC\Core\{View, Controller, Model};
-use BMVC\Libs\{MError, Hash, Request, Csrf};
+use BMVC\Libs\{Lib, MError, Hash, Request, Csrf, Lang, Log, Session};
 
 class Main
 {
@@ -10,11 +10,23 @@ class Main
 	public function index()
 	{
 
-		// pr(Model::import('default/Main')->settings());
+	//	Log::error(["test", "bmvc"]);
+
+	//	pr(Session::get());
+		
+		ob_start();
+		pr(Request::request());
+		$Request = ob_get_contents();
+		ob_clean();
+		Lib::MError()::color("warning")::print("Request", $Request);
+
+		pr(Lang::___("error"));
+
+		pr(Model::import('main')->index());
 
 		MError::print("Example");
 
-		View::load("default@index", [
+		View::load("test@index", [
 			'title' => 'BMVC'
 		]);
 
@@ -56,5 +68,10 @@ class Main
 		$benchmark_area = ob_get_contents();
 		ob_clean();
 		MError::color("info")::print("Benchmark", $benchmark_area);
+	}
+
+	function tex()
+	{
+		return "Current Controller [Main::tex]";
 	}
 }

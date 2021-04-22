@@ -8,15 +8,22 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.1
+ * @version 1.2
  */
 
 namespace BMVC\Libs;
 
+use Closure;
+
 class Hook
 {
 
-	public static function hook_load($name, $callback=null, $value=null)
+	/**
+	 * @param string       $name
+	 * @param Closure|null $callback
+	 * @param string|null  $value
+	 */
+	public static function hook_load(string $name, Closure $callback=null, string $value=null)
 	{
 		static $events = [];
 		if ($callback !== null) {
@@ -34,17 +41,28 @@ class Hook
 		}
 	}
 
-	public static function add_action($name, $callback=null)
+	/**
+	 * @param string       $name
+	 * @param Closure|null $callback
+	 */
+	public static function add_action(string $name, Closure $callback=null)
 	{
 		return self::hook_load($name, $callback, null);
 	}
 
-	public static function do_action($name, $value=null)
+	/**
+	 * @param string      $name
+	 * @param string|null $value
+	 */
+	public static function do_action(string $name, string $value=null)
 	{
 		return self::hook_load($name, null, $value);
 	}
 
-	public static function remove_action($name)
+	/**
+	 * @param string $name
+	 */
+	public static function remove_action(string $name)
 	{
 		return self::hook_load($name, false);
 	}

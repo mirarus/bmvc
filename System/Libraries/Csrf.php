@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.4
+ * @version 1.6
  */
 
 namespace BMVC\Libs;
@@ -16,19 +16,25 @@ namespace BMVC\Libs;
 class Csrf
 {
 
-	private static $page;
+	/**
+	 * @var string
+	 */
+	private static $page = "b4e27faacd7a7d7ed04aecb30bd29451";
 
-	function __construct()
-	{
-		self::$page = "b4e27faacd7a7d7ed04aecb30bd29451";
-	}
-
-	static function token(int $expiry=3600)
+	/**
+	 * @param  int|integer $expiry
+	 * @return mixed
+	 */
+	public static function token(int $expiry=3600)
 	{
 		return self::getToken(null, $expiry);
 	}
 
-	static function input(int $expiry=3600)
+	/**
+	 * @param  int|integer $expiry
+	 * @return mixed
+	 */
+	public static function input(int $expiry=3600)
 	{
 		$token = self::getToken(null, $expiry);
 		if ($token) {
@@ -36,12 +42,21 @@ class Csrf
 		}
 	}
 
-	static function verify($token=null)
+	/**
+	 * @param  string|null $token
+	 * @return mixed
+	 */
+	public static function verify(string $token=null)
 	{
 		return self::verifyToken(null, false, $token);
 	}
 
-	private static function getToken(string $page=null, int $expiry=3600*24*7)
+	/**
+	 * @param  string|null $page
+	 * @param  int|integer $expiry
+	 * @return mixed
+	 */
+	private static function getToken(string $page=null, int $expiry=3600)
 	{
 		$page = $page ? $page : self::$page;
 
@@ -56,7 +71,13 @@ class Csrf
 		return $token->sessiontoken;
 	}
 
-	private static function verifyToken(string $page=null, $removeToken=false, $requestToken=null) : bool
+	/**
+	 * @param  string|null  $page
+	 * @param  bool|boolean $removeToken
+	 * @param  string|null  $requestToken
+	 * @return bool
+	 */
+	private static function verifyToken(string $page=null, bool $removeToken=false, string $requestToken=null): bool
 	{
 		$page = $page ? $page : self::$page;
 
@@ -90,7 +111,11 @@ class Csrf
 		return false;
 	}
 
-	private static function removeToken(string $page) : bool
+	/**
+	 * @param  string $page
+	 * @return bool
+	 */
+	private static function removeToken(string $page): bool
 	{
 		self::confirmSessionStarted();
 
@@ -103,6 +128,11 @@ class Csrf
 		return true;
 	}
 
+	/**
+	 * @param string $page
+	 * @param int    $expiry
+	 * @return mixed
+	 */
 	private static function setNewToken(string $page, int $expiry)
 	{
 		$token = new \stdClass();
@@ -116,18 +146,30 @@ class Csrf
 		return $_SESSION['csrf_tokens'][$page] = $token;
 	}
 
+	/**
+	 * @param  string|null $page
+	 * @return mixed
+	 */
 	private static function getSessionToken(string $page=null)
 	{
 		return !empty($_SESSION['csrf_tokens'][$page]) ? $_SESSION['csrf_tokens'][$page] : null;
 	}
 
+	/**
+	 * @param  string $page
+	 * @return string
+	 */
 	private static function getCookieToken(string $page) : string
 	{
 		$value = self::makeCookieName($page);
 		return !empty($_COOKIE[$value]) ? $_COOKIE[$value] : '';
 	}
 
-	private static function makeCookieName(string $page) : string
+	/**
+	 * @param  string $page
+	 * @return string
+	 */
+	private static function makeCookieName(string $page): string
 	{
 		if (empty($page)) {
 			return '';
@@ -135,7 +177,10 @@ class Csrf
 		return 'csrf_token-' . substr(md5($page), 0, 10);
 	}
 
-	private static function confirmSessionStarted() : bool
+	/**
+	 * @return bool
+	 */
+	private static function confirmSessionStarted(): bool
 	{
 		if (!isset($_SESSION)) {
 			return false;
@@ -143,8 +188,3 @@ class Csrf
 		return true;
 	}
 }
-
-# Initialize
-new Csrf;
-
-app()->csrf = new Csrf();

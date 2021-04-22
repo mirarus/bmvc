@@ -8,14 +8,15 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.3
+ * @version 1.4
  */
 
 namespace BMVC\Libs;
 
-use \PDO;
+use PDO;
+use Exception;
 
-set_time_limit(0);
+@set_time_limit(0);
 
 /**
  * Class BasicDB
@@ -30,7 +31,7 @@ set_time_limit(0);
  * @author Midori Koçak
  * @update 2 July 2015
  */
-class BasicDB extends \PDO
+class BasicDB extends PDO
 {
 
 	protected $dbc,
@@ -572,35 +573,9 @@ class BasicDB extends \PDO
 		return $this;
 	}
 
-	function error_print($message=null)
-	{
-		mb_internal_encoding("UTF-8");
-		?><!DOCTYPE html>
-		<html lang="en">
-		<head>
-			<meta charset="utf-8" />
-			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-			<title>Database Error!</title>
-			<style type="text/css">
-				.error-msg-content { padding: 15px; border-left: 5px solid rgb(33 150 243 / 80%); border-top: 5px solid rgb(33 150 243 / 60%); background: #f8f8f8; margin-bottom: 10px; border-radius: 5px 5px 0 3px; }
-				.error-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 16px; font-weight: 500; color: black; }
-				.error-msg { margin-top: 15px; font-size: 14px; font-family: Consolas, Monaco, Menlo, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif; color: #ac0e10; }
-			</style>
-		</head>
-		<body>
-			<div class="error-msg-content">
-				<div class='error-text'>Database Error!</div>
-				<?php echo isset($message) && !empty($message) ? "<div class='error-msg'>" . $message . "</div>\n" : null; ?>
-			</div>
-		</body>
-		</html>
-		<?php exit();
-	}
-
-
 	public function __call($name, $args)
 	{
-		$this->error_print($name . ' Method Not Found.');
+		throw new Exception('BasicDB Error! | ' . $name . ' Method Not Found.');
 	}
 
 	private function showError(PDOException $error)
@@ -610,50 +585,41 @@ class BasicDB extends \PDO
 
 	private function errorTemplate($errorMsg)
 	{
-		$this->error_print($errorMsg);
+		throw new Exception('BasicDB Error! | ' . $errorMsg);
 	}
 
-    /**
-     * Belirtilen tabloyu temizler
-     *
-     * @param $tableName
-     * @return bool|PDOStatement
-     */
-    public function truncate($tableName)
-    {
-    	return $this->query('TRUNCATE TABLE ' . $this->dbName . '.' . $tableName);
-    }
+	/**
+	 * @param  string $tableName
+	 */
+	public function truncate(string $tableName)
+	{
+		return $this->query('TRUNCATE TABLE ' . $this->dbName . '.' . $tableName);
+	}
 
-    /**
-     * Tüm tabloları temizler
-     *
-     * @param array $dbs
-     * @return mixed
-     */
-    public function truncateAll($dbs = [])
-    {
-    	if (count($dbs) == 0) $dbs[] = $this->dbName;
-    	$query = $this->from('INFORMATION_SCHEMA.TABLES')
-    	->select('CONCAT("TRUNCATE TABLE `", table_schema, "`.`", TABLE_NAME, "`;") as query, TABLE_NAME as tableName')
-    	->in('table_schema', implode(',', $dbs))
-    	->all();
-    	$this->query('SET FOREIGN_KEY_CHECKS=0;')->fetch();
-    	foreach ($query as $row) {
-    		$this->setAutoIncrement($row['tableName']);
-    		$this->query($row['query'])->fetch();
-    	}
-    	$this->query('SET FOREIGN_KEY_CHECKS=1;')->fetch();
-    }
+	/**
+	 * @param  array  $dbs
+	 */
+	public function truncateAll(array $dbs=[])
+	{
+		if (count($dbs) == 0) $dbs[] = $this->dbName;
+		$query = $this->from('INFORMATION_SCHEMA.TABLES')
+		->select('CONCAT("TRUNCATE TABLE `", table_schema, "`.`", TABLE_NAME, "`;") as query, TABLE_NAME as tableName')
+		->in('table_schema', implode(',', $dbs))
+		->all();
+		$this->query('SET FOREIGN_KEY_CHECKS=0;')->fetch();
+		foreach ($query as $row) {
+			$this->setAutoIncrement($row['tableName']);
+			$this->query($row['query'])->fetch();
+		}
+		$this->query('SET FOREIGN_KEY_CHECKS=1;')->fetch();
+	}
 
-    /**
-     * Belirtilen tablonun auto_increment değerini ayarlar
-     *
-     * @param $tableName
-     * @return mixed
-     */
-    public function setAutoIncrement($tableName, $ai = 1)
-    {
-    	return $this->query("ALTER TABLE `{$tableName}` AUTO_INCREMENT = {$ai}")->fetch();
-    }
-
+	/**
+	 * @param string      $tableName
+	 * @param int|integer $ai
+	 */
+	public function setAutoIncrement(string $tableName, int $ai=1)
+	{
+		return $this->query("ALTER TABLE `{$tableName}` AUTO_INCREMENT = {$ai}")->fetch();
+	}
 }

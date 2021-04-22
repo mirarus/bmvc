@@ -8,34 +8,51 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.1
+ * @version 1.2
  */
 
 namespace BMVC\Libs;
 
+use Exception;
+
 class Hash
 {
 
+	/**
+	 * @var integer
+	 */
 	private static $cost = 10;
 
-	static function make($value, array $options=[])
+	/**
+	 * @param string $value
+	 * @param array  $options
+	 */
+	public static function make(string $value, array $options=[])
 	{
 		if (!array_key_exists('cost', $options)) {
 			$options['cost'] = self::$cost;
 		}
 		$hash = password_hash($value, PASSWORD_DEFAULT, $options);
 		if ($hash === false) {
-			MError::title('Hash Error!')::print('Bcrypt hash is not supported.');
+			throw new Exception('Hash Error! | Bcrypt hash is not supported.');
 		}
 		return $hash;
 	}
 
-	static function check($value, $hashedValue)
+	/**
+	 * @param string $value
+	 * @param string $hashedValue
+	 */
+	public static function check(string $value, string $hashedValue)
 	{
 		return password_verify($value, $hashedValue);
 	}
 
-	static function rehash($hashedValue, array $options=[])
+	/**
+	 * @param string $hashedValue
+	 * @param array  $options
+	 */
+	public static function rehash(string $hashedValue, array $options=[])
 	{
 		if (!array_key_exists('cost', $options)) {
 			$options['cost'] = self::$cost;
