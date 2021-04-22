@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 4.0
+ * @version 4.1
  */
 
 namespace BMVC\Core;
@@ -37,24 +37,26 @@ final class Controller
 		$controller = null;
 		$namespace  = null;
 
-		if (@strstr($action, '@')) {
-			$action = explode('@', $action);
-		} elseif (@strstr($action, '/')) {
-			$action = explode('/', $action);
-		} elseif (@strstr($action, '.')) {
-			$action = explode('.', $action);
+		if (@is_string($action)) {
+			if (@strstr($action, '@')) {
+				$action = explode('@', $action);
+			} elseif (@strstr($action, '/')) {
+				$action = explode('/', $action);
+			} elseif (@strstr($action, '.')) {
+				$action = explode('.', $action);
+			}
 		}
 
 		if ($action > 1) {
-			$controller = @array_pop($action);
+			$controller = !is_string($action) ? @array_pop($action) : $action;
 		} else {
 			$controller = $action;
 		}
-		$namespace = @implode($action, '\\');
+		$namespace = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
 
 		if (($namespace === null || $namespace !== null) && $controller != null) {
 
-			$_nsc_ = ($namespace != null) ? implode([$namespace, '_controller_'], '/') : '_controller_';
+			$_nsc_ = ($namespace != null) ? implode('/', [$namespace, '_controller_']) : '_controller_';
 			
 			if (file_exists(self::$dir . $_nsc_ . '.php')) {
 				$_controller_ = (App::$namespaces['controller'] . str_replace(['/', '//'], '\\', $_nsc_));
@@ -62,9 +64,9 @@ final class Controller
 			}
 
 			$controller  = ucfirst($controller);
-			$_nsc				 = ($namespace != null) ? implode([$namespace, $controller], '/') : $controller;
+			$_nsc				 = ($namespace != null) ? implode('/', [$namespace, $controller]) : $controller;
 			$_controller = (App::$namespaces['controller'] . str_replace(['/', '//'], '\\', $_nsc));
-	
+
 			if (is_array(self::$params) && !empty(self::$params)) {
 				return $return = new $_controller(self::$params);
 			} else {
@@ -94,18 +96,24 @@ final class Controller
 		$controller = null;
 		$namespace  = null;
 
-		if (@strstr($action, '@')) {
-			$action = explode('@', $action);
-		} elseif (@strstr($action, '/')) {
-			$action = explode('/', $action);
-		} elseif (@strstr($action, '.')) {
-			$action = explode('.', $action);
+		if (@is_string($action)) {
+			if (@strstr($action, '@')) {
+				$action = explode('@', $action);
+			} elseif (@strstr($action, '/')) {
+				$action = explode('/', $action);
+			} elseif (@strstr($action, '.')) {
+				$action = explode('.', $action);
+			}
 		}
 
 		$method     = @array_pop($action);
 		$controller = @array_pop($action);
+<<<<<<< HEAD
 		pr($action);
 		$namespace  = @implode($action, '\\');
+=======
+		$namespace  = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
+>>>>>>> composer
 
 		if (isset($namespace) && $controller != null && $method != null) {
 
@@ -119,7 +127,7 @@ final class Controller
 				}
 			} else {
 				$controller = ucfirst($controller);
-				$_nsc = ($namespace != null) ? implode([$namespace, $controller], '/') : $controller;
+				$_nsc = ($namespace != null) ? implode('/', [$namespace, $controller]) : $controller;
 				throw new Exception('Controller Method Not Found! | Controller: ' . $_nsc . ' - Method: ' . $method);
 			}
 		}

@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 3.6
+ * @version 3.7
  */
 
 namespace BMVC\Core;
@@ -38,24 +38,26 @@ final class View
 			$engine = 'php';
 		}
 
-		if (@strstr($action, '@')) {
-			$action = explode('@', $action);
-		} elseif (@strstr($action, '/')) {
-			$action = explode('/', $action);
-		} elseif (@strstr($action, '.')) {
-			$action = explode('.', $action);
+		if (@is_string($action)) {
+			if (@strstr($action, '@')) {
+				$action = explode('@', $action);
+			} elseif (@strstr($action, '/')) {
+				$action = explode('/', $action);
+			} elseif (@strstr($action, '.')) {
+				$action = explode('.', $action);
+			}
 		}
 
 		if ($action > 1) {
-			$view = @array_pop($action);
+			$view = !is_string($action) ? @array_pop($action) : $action;
 		} else {
 			$view = $action;
 		}
-		$namespace = @implode($action, '\\');
+		$namespace = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
 
 		if (($namespace === null || $namespace !== null) && $view != null) {
 
-			$_nsv     = ($namespace != null) ? implode([$namespace, $view], '/') : $view;
+			$_nsv     = ($namespace != null) ? implode('/', [$namespace, $view]) : $view;
 			$cacheDir = self::$dir . $namespace . '/Cache';
 
 			if (!_dir($cacheDir)) {
@@ -102,20 +104,22 @@ final class View
 		$view      = null;
 		$namespace = null;
 
-		if (@strstr($action, '@')) {
-			$action = explode('@', $action);
-		} elseif (@strstr($action, '/')) {
-			$action = explode('/', $action);
-		} elseif (@strstr($action, '.')) {
-			$action = explode('.', $action);
+		if (@is_string($action)) {
+			if (@strstr($action, '@')) {
+				$action = explode('@', $action);
+			} elseif (@strstr($action, '/')) {
+				$action = explode('/', $action);
+			} elseif (@strstr($action, '.')) {
+				$action = explode('.', $action);
+			}
 		}
 
 		if ($action > 1) {
-			$view = @array_pop($action);
+			$view = !is_string($action) ? @array_pop($action) : $action;
 		} else {
 			$view = $action;
 		}
-		$namespace = @implode($action, '\\');
+		$namespace = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
 
 		if (($namespace === null || $namespace !== null) && $view != null) {
 

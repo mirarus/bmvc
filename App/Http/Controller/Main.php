@@ -13,6 +13,9 @@ class Main
 	//	Log::error(["test", "bmvc"]);
 
 	//	pr(Session::get());
+	//	
+		pr(Controller::import('main')->tex());
+
 		
 		ob_start();
 		pr(Request::request());
