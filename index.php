@@ -12,7 +12,7 @@
 */
 
 define("BMVC_START", microtime(true));
-define("ROOTDIR", __DIR__ . '/');
+define("ROOTDIR", __DIR__ . DIRECTORY_SEPARATOR);
 define("PUBLICDIR", ROOTDIR . "Public");
 define("APPDIR", ROOTDIR . "App");
 
