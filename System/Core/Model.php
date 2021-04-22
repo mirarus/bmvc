@@ -130,7 +130,7 @@ final class Model
 
 		$method    = @array_pop($action);
 		$model     = @array_pop($action);
-		$namespace = ($action !== null) ? @implode('\\', $action) : null;
+		$namespace = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
 
 		if (isset($namespace) && $model != null && $method != null) {
 

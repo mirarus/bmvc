@@ -48,11 +48,11 @@ final class Controller
 		}
 
 		if ($action > 1) {
-			$controller = @array_pop($action);
+			$controller = !is_string($action) ? @array_pop($action) : $action;
 		} else {
 			$controller = $action;
 		}
-		$namespace = ($action !== null) ? @implode('\\', $action) : null;
+		$namespace = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
 
 		if (($namespace === null || $namespace !== null) && $controller != null) {
 
@@ -108,7 +108,7 @@ final class Controller
 
 		$method     = @array_pop($action);
 		$controller = @array_pop($action);
-		$namespace  = ($action !== null) ? @implode('\\', $action) : null;
+		$namespace  = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
 
 		if (isset($namespace) && $controller != null && $method != null) {
 

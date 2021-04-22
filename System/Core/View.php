@@ -49,11 +49,11 @@ final class View
 		}
 
 		if ($action > 1) {
-			$view = @array_pop($action);
+			$view = !is_string($action) ? @array_pop($action) : $action;
 		} else {
 			$view = $action;
 		}
-		$namespace = ($action !== null) ? @implode('\\', $action) : null;
+		$namespace = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
 
 		if (($namespace === null || $namespace !== null) && $view != null) {
 
@@ -115,11 +115,11 @@ final class View
 		}
 
 		if ($action > 1) {
-			$view = @array_pop($action);
+			$view = !is_string($action) ? @array_pop($action) : $action;
 		} else {
 			$view = $action;
 		}
-		$namespace = ($action !== null) ? @implode('\\', $action) : null;
+		$namespace = ($action !== null && !is_string($action)) ? @implode('\\', $action) : null;
 
 		if (($namespace === null || $namespace !== null) && $view != null) {
 
