@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 use BMVC\Core\{View, Controller, Model};
-use BMVC\Libs\{Lib, MError, Hash, Request, Csrf, Lang, Log, Session};
+use BMVC\Libs\{Lib, MError, Hash, Request, Csrf, Lang, Log, Session, Benchmark};
 
 class Main
 {
@@ -62,15 +62,7 @@ class Main
 		MError::color("success")::print("CSRF", $csrf_area);
 		#
 
-		ob_start();
-		echo "<br>";
-		echo "Page Load Time: " . BMVC_LOAD . " Sn";; 
-		echo "<br>";
-		echo "Memory Usage: " . round(memory_get_usage() / 1024, 2) . " Kb";
-		echo "<br>";
-		$benchmark_area = ob_get_contents();
-		ob_clean();
-		MError::color("info")::print("Benchmark", $benchmark_area);
+		MError::color("info")::print("Benchmark", Benchmark::Run());
 	}
 
 	function tex()
