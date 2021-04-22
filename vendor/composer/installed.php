@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'ae0f404f3f39807bfb8f5c12f25db50fd78fd503',
+    'reference' => '4bb75245cca0a60ac724c5fdaa37848aaaac2fb0',
     'name' => 'mirarus/bmvc',
   ),
   'versions' => 
@@ -135,7 +135,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'ae0f404f3f39807bfb8f5c12f25db50fd78fd503',
+      'reference' => '4bb75245cca0a60ac724c5fdaa37848aaaac2fb0',
     ),
     'mirarus/bmvc-core' => 
     array (
