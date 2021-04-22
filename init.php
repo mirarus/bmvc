@@ -13,7 +13,7 @@
 
 require_once 'vendor/autoload.php';
 
-return BMVC\Core\App::Run([
+BMVC\Core\App::Run([
 	'files' => [
 		APPDIR . '/routes.php',
 		APPDIR . '/config.php'

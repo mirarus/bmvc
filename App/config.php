@@ -19,7 +19,7 @@ $_config['db'] = [
 ];
 
 $_config['init'] = [
-//	"BMVC\Core\Model",
-	"BMVC\Libs\MError",
-	"BMVC\Libs\Lang",
+//BMVC\Core\Model::class,
+	BMVC\Libs\MError::class,
+	BMVC\Libs\Lang::class,
 ];
