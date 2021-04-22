@@ -8,12 +8,11 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.6
+ * @version 1.7
 */
 
 define("BMVC_START", microtime(true));
-
-define("ROOTDIR", @str_replace("Public", null, __DIR__) . '\\');
+define("ROOTDIR", __DIR__ . '/');
 define("PUBLICDIR", ROOTDIR . "Public");
 define("APPDIR", ROOTDIR . "App");
 
