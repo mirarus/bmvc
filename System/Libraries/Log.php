@@ -90,7 +90,7 @@ class Log
 	private static function write(string $level, $message): void
 	{
 		if (is_array($message)) {
-			$message = @implode($message, ', ');
+			$message = @implode(', ', $message);
 		}
 		self::save('[' . date('Y-m-d\TH:i:sP') . '] ' . $level . '.' . Request::getRequestMethod() . ': ' . $message);
 	}
