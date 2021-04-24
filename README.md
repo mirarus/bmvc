@@ -9,7 +9,7 @@ Mirarus BMVC (Basic MVC)
 [![PHP Composer](https://img.shields.io/github/workflow/status/mirarus/bmvc/PHP%20Composer/main?style=flat-square&logo=php)](https://github.com/mirarus/bmvc/actions/workflows/php.yml)
 
 
-Core Library [https://github.com/mirarus/bmvc-core](BMVC Core)
+Core Library [![https://github.com/mirarus/bmvc-core](BMVC Core)]
 
 ## Installation
 
