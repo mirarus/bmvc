@@ -3,6 +3,4 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use BMVC\Libs\Console;
-
-echo Console::Run($argv);
+new BMVC\Libs\Console(__DIR__ . '/init.php');
