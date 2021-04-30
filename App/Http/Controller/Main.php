@@ -12,13 +12,16 @@ class Main
 
 	//	Log::error(["test", "bmvc"]);
 
-	//	pr(Session::get());
+	//
+	//		pr(Session::get());
 	//	
 		pr(Controller::import('main')->tex());
 
 		
 		ob_start();
-		pr(Request::request());
+		Request::request() ? pr('Request:') . pr(Request::request()) : null;
+		Request::get() ? pr('<hr>GET:') . pr(Request::get()) : null;
+		Request::post() ? pr('<hr>POST:') . pr(Request::post()) : null;
 		$Request = ob_get_contents();
 		ob_clean();
 		Lib::MError()::color("warning")::print("Request", $Request);
