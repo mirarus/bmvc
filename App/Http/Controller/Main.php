@@ -39,11 +39,7 @@ class Main
 		echo "<br>";
 
 		#
-		ob_start();
-		echo Hash::make("ass");
-		$pasword_hash_area = ob_get_contents();
-		ob_clean();
-		MError::color("danger")::print("Password Hash", $pasword_hash_area);
+		MError::color("danger")::print("Password Hash", Hash::make("BMVC"));
 		#
 		#
 		ob_start();
