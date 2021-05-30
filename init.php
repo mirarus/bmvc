@@ -19,4 +19,4 @@ BMVC\Core\App::namespace([
   'model' => 'Model\\',
   'view' => 'View\\'
 ], 'App\Http\\');
-BMVC\Core\App::Run($_config);
+BMVC\Core\App::init($_config);
