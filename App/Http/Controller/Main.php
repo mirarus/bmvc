@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Http\Controller;
 use BMVC\Core\{View, Controller, Model};
 use BMVC\Libs\{Lib, MError, Hash, Request, Csrf, Lang, Log, Session, Benchmark};
 

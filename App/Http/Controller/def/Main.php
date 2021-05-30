@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\def;
+namespace App\Http\Controller\def;
 use BMVC\Libs\MError;
 
 class Main

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace App\Http\Model;
 use BMVC\Core\Model;
 
 class Main
