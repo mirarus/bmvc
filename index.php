@@ -8,7 +8,7 @@
  * @author  Ali Güçlü (Mirarus) <aliguclutr@gmail.com>
  * @link https://github.com/mirarus/bmvc
  * @license http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version 1.8
+ * @version 1.9
 */
 
 define("ROOTDIR", __DIR__ . DIRECTORY_SEPARATOR);
@@ -21,7 +21,7 @@ if (!is_file(ROOTDIR . '.htaccess')) {
 	die('The App directory not found.');
 } elseif (!is_file(ROOTDIR . 'init.php')) {
 	die('init.php file not found!');
-} elseif (!file_exists(ROOTDIR . 'vendor/autoload.php')) {
+} elseif (!file_exists(ROOTDIR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')) {
 	die('This software requires composer');
 } else {
 	require_once ROOTDIR . 'init.php';
