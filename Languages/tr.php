@@ -2,4 +2,4 @@
 
 $_lang_name = ['Turkish', 'Türkçe'];
 
-# $_lang['error'] = 'Hata!';
+$_lang['error'] = 'Hata!';
