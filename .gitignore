@@ -1,7 +1,4 @@
-composer.phar
-*-lock.json
-*.lock
-
-/vendor
-/.github
-/.git
+vendor/
+.github/
+.git/
+.env
