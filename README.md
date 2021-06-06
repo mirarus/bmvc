@@ -18,6 +18,8 @@ Install using composer:
 composer create-project mirarus/bmvc
 ```
 
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 ## License
 
 Licensed under the MIT license, see [LICENSE](LICENSE)
