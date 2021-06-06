@@ -889,7 +889,7 @@
             "description": "Mirarus BMVC Core (Basic MVC Core)",
             "support": {
                 "issues": "https://github.com/mirarus/bmvc-core/issues",
-                "source": "https://github.com/mirarus/bmvc-core/tree/0.52"
+                "source": "https://github.com/mirarus/bmvc-core/tree/main"
             },
             "time": "2021-06-06T17:04:06+00:00"
         },
