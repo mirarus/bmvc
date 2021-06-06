@@ -845,12 +845,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mirarus/bmvc-core.git",
-                "reference": "93d21c53ced412d4a7b930c32cd21d2d3f205fef"
+                "reference": "main"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mirarus/bmvc-core/zipball/93d21c53ced412d4a7b930c32cd21d2d3f205fef",
-                "reference": "93d21c53ced412d4a7b930c32cd21d2d3f205fef",
+                "url": "https://api.github.com/repos/mirarus/bmvc-core/zipball/main",
+                "reference": "main",
                 "shasum": ""
             },
             "require": {
