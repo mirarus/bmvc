@@ -1,4 +1,3 @@
-vendor/
-.github/
-.git/
+/vendor
+/.github
 .env
