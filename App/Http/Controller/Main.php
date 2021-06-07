@@ -34,7 +34,8 @@ class Main
 
 		View::load("test@index", [
 			'title' => 'BMVC'
-		]);
+		])
+		->render();
 
 		echo "<br>";
 
