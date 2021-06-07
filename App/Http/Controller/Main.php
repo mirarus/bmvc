@@ -19,9 +19,9 @@ class Main
 
 		
 		ob_start();
-		Request::request() ? pr('Request:') . pr(Request::request()) : null;
-		Request::get() ? pr('<hr>GET:') . pr(Request::get()) : null;
-		Request::post() ? pr('<hr>POST:') . pr(Request::post()) : null;
+		$_REQUEST ? pr('Request:') . pr($_REQUEST) : null;
+		$_GET ? pr('<hr>GET:') . pr($_GET) : null;
+		$_POST ? pr('<hr>POST:') . pr($_POST) : null;
 		$Request = ob_get_contents();
 		ob_clean();
 		Lib::MError()::color("warning")::print("Request - " . Request::getRequestMethod(), $Request);
