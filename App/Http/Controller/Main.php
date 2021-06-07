@@ -24,7 +24,7 @@ class Main
 		Request::post() ? pr('<hr>POST:') . pr(Request::post()) : null;
 		$Request = ob_get_contents();
 		ob_clean();
-		Lib::MError()::color("warning")::print("Request", $Request);
+		Lib::MError()::color("warning")::print("Request - " . Request::getRequestMethod(), $Request);
 
 		pr(Lang::___("error"));
 
