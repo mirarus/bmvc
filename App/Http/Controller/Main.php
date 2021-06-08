@@ -43,8 +43,6 @@ class Main
 		#
 		#
 		ob_start();
-		pr(Request::post());
-
 		if (Csrf::verify()) {
 			echo "Result: Pass";
 		} else {
