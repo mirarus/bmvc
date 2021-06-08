@@ -43,6 +43,8 @@ class Main
 		#
 		#
 		ob_start();
+		echo Request::post('csrf_token');
+
 		if (Csrf::verify()) {
 			echo "Result: Pass";
 		} else {
