@@ -61,7 +61,7 @@ class Main
 		MError::color("success")::print("CSRF", $csrf_area);
 		#
 
-		MError::color("info")::print("Benchmark", "Memory Usage: " . Benchmark::memory());
+		MError::color("info")::print("Benchmark", Benchmark::memory(true));
 	}
 
 	function tex()
