@@ -3,17 +3,12 @@
 namespace App\Http\Controller;
 use BMVC\Core\{View, Controller, Model};
 use BMVC\Libs\{Lib, MError, Hash, Request, Csrf, Lang, Log, Session, Benchmark};
-use Exception;
 
 class Main
 {
 
 	public function index()
 	{
-
-		if (Request::getRequestMethod() == "POST") {
-			throw new Exception('BMVC');
-		}
 
 	//	Log::error(["test", "bmvc"]);
 
@@ -24,9 +19,9 @@ class Main
 
 		
 		ob_start();
-		$_REQUEST ? pr('Request:') . pr($_REQUEST) : null;
-		$_GET ? pr('<hr>GET:') . pr($_GET) : null;
-		$_POST ? pr('<hr>POST:') . pr($_POST) : null;
+		Request::request() ? pr('Request:') . pr(Request::request()) : null;
+		Request::get() ? pr('<hr>GET:') . pr(Request::get()) : null;
+		Request::post() ? pr('<hr>POST:') . pr(Request::post()) : null;
 		$Request = ob_get_contents();
 		ob_clean();
 		Lib::MError()::color("warning")::print("Request - " . Request::getRequestMethod(), $Request);
@@ -48,6 +43,8 @@ class Main
 		#
 		#
 		ob_start();
+		pr(Request::post());
+
 		if (Csrf::verify()) {
 			echo "Result: Pass";
 		} else {
@@ -64,7 +61,7 @@ class Main
 		MError::color("success")::print("CSRF", $csrf_area);
 		#
 
-		MError::color("info")::print("Benchmark", Benchmark::memory(true));
+		MError::color("info")::print("Benchmark", "Memory Usage: " . Benchmark::memory());
 	}
 
 	function tex()
