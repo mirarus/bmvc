@@ -45,9 +45,7 @@ class Main
 		ob_start();
 
 		if (Csrf::verify()) {
-			echo "Result: Pass\n";
-
-			echo Request::post('csrf_token');
+			echo "Result: Pass\n\r" . Request::post('csrf_token');
 		} else {
 			echo "Result: Fail";
 		} ?>
