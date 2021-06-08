@@ -11,7 +11,7 @@ class Main
 	public function index()
 	{
 
-		throw new Exception('BMVC');
+		throw $_POST ? (new Exception('BMVC')) : null;
 
 	//	Log::error(["test", "bmvc"]);
 
