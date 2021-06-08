@@ -20,7 +20,7 @@ composer create-project mirarus/bmvc
 
 Install using heroku:
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/mirarus/bmvc/?target=_blank)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/mirarus/bmvc)
 
 ## License
 
