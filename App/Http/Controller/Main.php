@@ -3,12 +3,15 @@
 namespace App\Http\Controller;
 use BMVC\Core\{View, Controller, Model};
 use BMVC\Libs\{Lib, MError, Hash, Request, Csrf, Lang, Log, Session, Benchmark};
+use Exception;
 
 class Main
 {
 
 	public function index()
 	{
+
+		throw new Exception('BMVC');
 
 	//	Log::error(["test", "bmvc"]);
 
@@ -59,7 +62,7 @@ class Main
 		MError::color("success")::print("CSRF", $csrf_area);
 		#
 
-		MError::color("info")::print("Benchmark", "Memory Usage: " . Benchmark::memory());
+		MError::color("info")::print("Benchmark", Benchmark::memory(true));
 	}
 
 	function tex()
