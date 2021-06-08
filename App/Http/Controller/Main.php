@@ -11,7 +11,7 @@ class Main
 	public function index()
 	{
 
-		if ($_POST) {
+		if (Request::getRequestMethod() == "POST") {
 			throw new Exception('BMVC');
 		}
 
