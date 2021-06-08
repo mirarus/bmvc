@@ -43,7 +43,7 @@ class Main
 		#
 		#
 		ob_start();
-		echo Request::post('csrf_token');
+		echo Request::post('csrf_token') . PHP_EOL;
 
 		if (Csrf::verify()) {
 			echo "Result: Pass";
