@@ -15,8 +15,8 @@ require_once 'vendor/autoload.php';
 require_once 'App/config.php';
 
 BMVC\Core\App::namespace([
-  'controller' => 'Controller\\',
-  'model' => 'Model\\',
-  'view' => 'View\\'
-], 'App\Http\\');
+  'controller' => 'Controller',
+  'model' => 'Model',
+  'view' => 'View'
+], 'App\Http');
 BMVC\Core\App::init($_config);
