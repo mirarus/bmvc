@@ -2,4 +2,4 @@
 
 use BMVC\Core\Route;
 
-Route::any('/', 'main@index');
+Route::any('/', [Main::class, 'index']);
