@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca36f39badcc276948c73eaec2c296d9",
+    "content-hash": "767da0ef19a7b5bd30057c1ae2a2da2a",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -891,7 +891,7 @@
                 "issues": "https://github.com/mirarus/bmvc-core/issues",
                 "source": "https://github.com/mirarus/bmvc-core/tree/main"
             },
-            "time": "2021-06-12T21:51:55+00:00"
+            "time": "2021-06-12T22:03:46+00:00"
         },
         {
             "name": "monolog/monolog",
