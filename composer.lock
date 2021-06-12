@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0f1a45c53faa0e5318077e6babf0c65",
+    "content-hash": "ca36f39badcc276948c73eaec2c296d9",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -861,7 +861,7 @@
                 "filp/whoops": "^2.12",
                 "jenssegers/blade": "^1.4",
                 "monolog/monolog": "^2.2",
-                "php": "^7.3",
+                "php": "^7.3 || ^8.0",
                 "symfony/console": "^5.2",
                 "vlucas/phpdotenv": "^5.3"
             },
@@ -891,7 +891,7 @@
                 "issues": "https://github.com/mirarus/bmvc-core/issues",
                 "source": "https://github.com/mirarus/bmvc-core/tree/main"
             },
-            "time": "2021-06-12T21:00:24+00:00"
+            "time": "2021-06-12T21:51:55+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2557,7 +2557,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.3"
+        "php": "^7.2 || ^8.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"
