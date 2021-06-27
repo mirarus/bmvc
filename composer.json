@@ -26,9 +26,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"App\\": "App",
-			"App\\Controller\\": "App/Http/Controller",
-			"App\\Model\\": "App/Http/Model"
+			"App\\": "App"
 		}
 	}
 }
