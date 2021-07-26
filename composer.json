@@ -13,9 +13,6 @@
 		"php": "^7.3 || ^8.0",
 		"mirarus/bmvc-core": "dev-main"
 	},
-	"require-dev": {
-		"heroku/heroku-buildpack-php": "*"
-	},
 	"scripts": {
 		"post-install-cmd": [
 			"@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
