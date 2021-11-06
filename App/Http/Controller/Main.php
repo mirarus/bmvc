@@ -2,7 +2,7 @@
 
 namespace App\Http\Controller;
 use BMVC\Core\{View, Controller, Model};
-use BMVC\Libs\{Lib, MError, Hash, Request, Csrf, Lang, Log, Session, Benchmark};
+use BMVC\Libs\{Util, MError, Hash, Request, Csrf, Lang, Log, Session, Benchmark};
 
 class Main
 {
@@ -24,7 +24,7 @@ class Main
 		Request::post() ? pr('<hr>POST:') . pr(Request::post()) : null;
 		$Request = ob_get_contents();
 		ob_clean();
-		Lib::MError()::color("warning")::print("Method: " . Request::getRequestMethod(), $Request);
+		Util::MError()::color("warning")::print("Method: " . Request::getRequestMethod(), $Request);
 
 		pr(Lang::___("error"));
 
