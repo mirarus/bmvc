@@ -1,5 +1,7 @@
 <?php
 
+$_helpers = [];
+
 foreach (glob(__DIR__ . "/Helpers/*.php") as $file) {
 	if ($file == __DIR__ . "/Helpers/index.php") return;
 	$_helpers[] = $file;
